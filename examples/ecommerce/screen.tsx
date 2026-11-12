@@ -55,6 +55,21 @@ const ecommerceClientScript = (initial: EcommerceState) => {
         }
     };
 
+    const syncState = () => {
+        try {
+            if (W?.chatData) {
+                const d = JSON.parse(W.chatData);
+                if (d && typeof d === 'object') {
+                    state = { ...state, ...d };
+                    updateEcomUI();
+                }
+            }
+        } catch {}
+    };
+
+    syncState();
+    W?.onEvent?.('chatDataChanged', syncState);
+
     // Слушатели размеров
     [41, 42, 43, 44].forEach((s) => {
         document.getElementById(`size-${s}`)?.addEventListener('click', () => {

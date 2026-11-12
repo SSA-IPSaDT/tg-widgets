@@ -62,6 +62,18 @@ const pollClientScript = (initial: PollState) => {
         }
     };
 
+    const syncState = () => {
+        try {
+            if (W?.chatData) {
+                const d = JSON.parse(W.chatData);
+                if (d && typeof d === 'object') updatePollUI(d);
+            }
+        } catch {}
+    };
+
+    syncState();
+    W?.onEvent?.('chatDataChanged', syncState);
+
     const registerVote = (choice: 'grammy' | 'telegraf' | 'aiogram') => {
         if (state.userVote === choice) return;
         W?.HapticFeedback?.impactOccurred?.('medium');
@@ -71,7 +83,14 @@ const pollClientScript = (initial: PollState) => {
         state.votes[choice]++;
         state.userVote = choice;
         updatePollUI(state);
-        W?.request?.(`vote:${choice}`);
+        W?.request?.(`vote:${choice}`).then((res: { result?: string }) => {
+            if (res?.result) {
+                try {
+                    const d = JSON.parse(res.result);
+                    if (d && typeof d === 'object') updatePollUI(d);
+                } catch {}
+            }
+        });
     };
 
     document.getElementById('poll-row-grammy')?.addEventListener('click', () => registerVote('grammy'));

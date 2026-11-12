@@ -24,23 +24,47 @@ const clientCounterScript = (args: { count: number }) => {
     const btnInc = document.getElementById('btn-inc');
     const btnDec = document.getElementById('btn-dec');
     const valEl = document.getElementById('counter-val');
+    let count = args.count;
+
+    const setCount = (val: number) => {
+        count = val;
+        if (valEl) valEl.textContent = String(count);
+    };
+
+    const syncState = () => {
+        try {
+            if (W?.chatData) {
+                const d = JSON.parse(W.chatData);
+                if (typeof d?.count === 'number') setCount(d.count);
+            }
+        } catch {}
+    };
+
+    syncState();
+    W?.onEvent?.('chatDataChanged', syncState);
 
     btnInc?.addEventListener('click', () => {
         W?.HapticFeedback?.impactOccurred?.('light');
+        setCount(count + 1);
         W?.request?.('inc').then((res: { result?: string }) => {
-            if (res?.result && valEl) {
-                const data = JSON.parse(res.result);
-                valEl.textContent = String(data.count);
+            if (res?.result) {
+                try {
+                    const data = JSON.parse(res.result);
+                    if (typeof data?.count === 'number') setCount(data.count);
+                } catch {}
             }
         });
     });
 
     btnDec?.addEventListener('click', () => {
         W?.HapticFeedback?.impactOccurred?.('light');
+        setCount(count - 1);
         W?.request?.('dec').then((res: { result?: string }) => {
-            if (res?.result && valEl) {
-                const data = JSON.parse(res.result);
-                valEl.textContent = String(data.count);
+            if (res?.result) {
+                try {
+                    const data = JSON.parse(res.result);
+                    if (typeof data?.count === 'number') setCount(data.count);
+                } catch {}
             }
         });
     });

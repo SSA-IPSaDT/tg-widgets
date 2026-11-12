@@ -65,7 +65,7 @@ export interface WidgetActionContext<TState> {
         languageCode?: string;
     };
     state: TState;
-    setState: (newState: TState) => Promise<void>;
+    setState: (newState: Partial<TState> | TState) => Promise<void>;
     answer: (data?: unknown) => Promise<void>;
     rawApi: RawWidgetApiMethods;
 }

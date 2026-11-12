@@ -18,7 +18,7 @@ import {
     Switch,
     type WidgetActionContext,
     WidgetLayout,
-} from '../../src';
+} from "../../src";
 
 export interface ProfileState {
     name: string;
@@ -30,22 +30,52 @@ export interface ProfileState {
 
 const profileClientScript = () => {
     const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
-
-    const bindToggle = (id: string, action: string) => {
-        document.getElementById(id)?.addEventListener('click', function (this: HTMLElement) {
-            W?.HapticFeedback?.impactOccurred?.('light');
-            this.querySelector('.tg-switch-track')?.classList.toggle('active');
-            W?.request?.(action);
-        });
+    const M: Record<string, [string, string]> = {
+        notify: ["notifications", "Notify"],
+        private: ["privateMode", "Private"],
+        sound: ["soundEffects", "Sound"],
     };
+    const U = (d?: Record<string, unknown> | null) => {
+        if (!d) return;
+        for (const k in M) {
+            const v = d[M[k][0]];
+            if (v !== undefined) {
+                document
+                    .getElementById("profile-" + k)
+                    ?.querySelector(".tg-switch-track")
+                    ?.classList.toggle("active", Boolean(v));
+            }
+        }
+    };
+    const C = () => {
+        try {
+            if (W?.chatData) U(JSON.parse(W.chatData));
+        } catch {}
+    };
+    C();
+    W?.onEvent?.("chatDataChanged", C);
 
-    bindToggle('profile-notify', 'toggleProfileNotify');
-    bindToggle('profile-private', 'toggleProfilePrivate');
-    bindToggle('profile-sound', 'toggleProfileSound');
+    for (const k in M) {
+        document
+            .getElementById("profile-" + k)
+            ?.addEventListener("click", function (this: HTMLElement) {
+                W?.HapticFeedback?.impactOccurred?.("light");
+                this.querySelector(".tg-switch-track")?.classList.toggle(
+                    "active",
+                );
+                W?.request?.("toggleProfile" + M[k][1]).then(
+                    (r: { result?: string }) => {
+                        try {
+                            if (r?.result) U(JSON.parse(r.result));
+                        } catch {}
+                    },
+                );
+            });
+    }
 
-    document.getElementById('btn-fallback')?.addEventListener('click', () => {
-        W?.HapticFeedback?.notificationOccurred?.('warning');
-        W?.request?.('fallbackToText');
+    document.getElementById("btn-fallback")?.addEventListener("click", () => {
+        W?.HapticFeedback?.notificationOccurred?.("warning");
+        W?.request?.("fallbackToText");
     });
 };
 
@@ -53,39 +83,46 @@ const profileClientScript = () => {
  * Экран профиля пользователя с интерактивными настройками и плашкой fallback
  */
 export const profileScreen = defineWidgetScreen({
-    id: 'profile',
+    id: "profile",
     component: (props: ProfileState) => (
-        <WidgetLayout fullWidth padding="6px 8px">
+        <WidgetLayout fullWidth padding="4px 6px">
             <Card fullWidth>
                 <CardHeader>
                     <div
                         style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
                         }}
                     >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                        <div
+                            style={{
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 10,
+                            }}
+                        >
                             <div
                                 style={{
-                                    width: 38,
-                                    height: 38,
-                                    borderRadius: '50%',
+                                    width: 34,
+                                    height: 34,
+                                    borderRadius: 17,
                                     background:
-                                        'linear-gradient(135deg, var(--tg-theme-button-color, #2481cc), #8b5cf6)',
-                                    color: '#ffffff',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center',
+                                        "var(--tg-theme-button-color, #2481cc)",
+                                    color: "#fff",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                     fontWeight: 700,
-                                    fontSize: 15,
                                     flexShrink: 0,
                                 }}
                             >
                                 {props.name.charAt(0)}
                             </div>
                             <div>
-                                <CardTitle style={{ fontSize: 15 }}>{props.name}</CardTitle>
+                                <CardTitle style={{ fontSize: 15 }}>
+                                    {props.name}
+                                </CardTitle>
                                 <CardDescription style={{ fontSize: 12 }}>
                                     {props.username}
                                 </CardDescription>
@@ -96,19 +133,25 @@ export const profileScreen = defineWidgetScreen({
                             icon={LucideIcon({
                                 icon: LucideIcons.Shield,
                                 size: 15,
-                                color: 'var(--tg-theme-link-color, #2481cc)',
+                                color: "var(--tg-theme-link-color, #2481cc)",
                             })}
                         />
                     </div>
                 </CardHeader>
                 <CardContent>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 10,
+                        }}
+                    >
                         <Switch
                             id="profile-notify"
                             checked={props.notifications}
                             action="toggleProfileNotify"
                             label="Уведомления бота"
-                            description="Мгновенные оповещения о событиях"
+                            description="Оповещения о событиях"
                         />
 
                         <Divider />
@@ -118,7 +161,7 @@ export const profileScreen = defineWidgetScreen({
                             checked={props.privateMode}
                             action="toggleProfilePrivate"
                             label="Приватный профиль"
-                            description="Скрыть активность из общего рейтинга"
+                            description="Скрыть из общего рейтинга"
                         />
 
                         <Divider />
@@ -128,15 +171,15 @@ export const profileScreen = defineWidgetScreen({
                             checked={props.soundEffects}
                             action="toggleProfileSound"
                             label="Звуковые сигналы"
-                            description="Звуковое сопровождение интерфейса"
+                            description="Звуки интерфейса"
                         />
                     </div>
 
                     <div style={{ marginTop: 14 }}>
                         <Alert
                             variant="warning"
-                            title="Экспериментальная функция"
-                            description="Виджеты находятся на стадии тестирования. При неполадках переключите режим."
+                            title="Бета-функция"
+                            description="При неполадках переключите режим."
                         />
                     </div>
                 </CardContent>
@@ -152,7 +195,7 @@ export const profileScreen = defineWidgetScreen({
                             style: { marginRight: 4 },
                         })}
                     >
-                        Обычное представление
+                        Текстовый режим
                     </Button>
                 </CardFooter>
             </Card>
@@ -160,23 +203,28 @@ export const profileScreen = defineWidgetScreen({
         </WidgetLayout>
     ),
     initialState: () => ({
-        name: 'Алексей Смирнов',
-        username: '@alex_dev',
+        name: "Алексей Смирнов",
+        username: "@alex_dev",
         notifications: true,
         privateMode: false,
         soundEffects: true,
     }),
     actions: {
-        toggleProfileNotify: (ctx: WidgetActionContext<ProfileState>) => {
-            ctx.setState({ notifications: !ctx.state.notifications });
+        toggleProfileNotify: async (ctx: WidgetActionContext<ProfileState>) => {
+            const nextVal = !ctx.state.notifications;
+            await ctx.setState({ notifications: nextVal });
             return ctx.answer();
         },
-        toggleProfilePrivate: (ctx: WidgetActionContext<ProfileState>) => {
-            ctx.setState({ privateMode: !ctx.state.privateMode });
+        toggleProfilePrivate: async (
+            ctx: WidgetActionContext<ProfileState>,
+        ) => {
+            const nextVal = !ctx.state.privateMode;
+            await ctx.setState({ privateMode: nextVal });
             return ctx.answer();
         },
-        toggleProfileSound: (ctx: WidgetActionContext<ProfileState>) => {
-            ctx.setState({ soundEffects: !ctx.state.soundEffects });
+        toggleProfileSound: async (ctx: WidgetActionContext<ProfileState>) => {
+            const nextVal = !ctx.state.soundEffects;
+            await ctx.setState({ soundEffects: nextVal });
             return ctx.answer();
         },
         fallbackToText: async (ctx: WidgetActionContext<ProfileState>) => {
@@ -189,17 +237,17 @@ export const profileScreen = defineWidgetScreen({
                             `👤 *Профиль пользователя (текстовый режим)*\n\n` +
                             `*Имя:* ${ctx.state.name}\n` +
                             `*Юзернейм:* ${ctx.state.username}\n\n` +
-                            `🔔 *Уведомления:* ${ctx.state.notifications ? 'Включены' : 'Выключены'}\n` +
-                            `🔒 *Приватный режим:* ${ctx.state.privateMode ? 'Включен' : 'Выключен'}\n` +
-                            `🔊 *Звуковые эффекты:* ${ctx.state.soundEffects ? 'Включены' : 'Выключены'}\n\n` +
+                            `🔔 *Уведомления:* ${ctx.state.notifications ? "Включены" : "Выключены"}\n` +
+                            `🔒 *Приватный режим:* ${ctx.state.privateMode ? "Включен" : "Выключен"}\n` +
+                            `🔊 *Звуковые эффекты:* ${ctx.state.soundEffects ? "Включены" : "Выключены"}\n\n` +
                             `_Сообщение переведено в классический текстовый режим._`,
-                        parse_mode: 'Markdown',
+                        parse_mode: "Markdown",
                         reply_markup: {
                             inline_keyboard: [
                                 [
                                     {
-                                        text: '📱 Вернуть интерактивный виджет',
-                                        callback_data: 'show_profile',
+                                        text: "📱 Вернуть интерактивный виджет",
+                                        callback_data: "show_profile",
                                     },
                                 ],
                             ],
@@ -209,7 +257,9 @@ export const profileScreen = defineWidgetScreen({
                     // ignore if already edited
                 }
             }
-            return ctx.answer({ text: 'Переключено в обычный текстовый режим' });
+            return ctx.answer({
+                text: "Переключено в обычный текстовый режим",
+            });
         },
     },
 });

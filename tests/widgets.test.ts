@@ -505,6 +505,116 @@ describe('@ipsadt/tg-widgets', () => {
         expect(updatedState.__screen).toBe('counter');
     });
 
+    test('plugin merges state shallowly and passes full state on answer() to prevent toggle desync', async () => {
+        interface ProfileState {
+            notifications: boolean;
+            sound: boolean;
+            name: string;
+        }
+
+        const profileScreen = defineWidgetScreen({
+            id: 'prof',
+            component: () => '<div>Profile</div>',
+            initialState: () => ({
+                notifications: true,
+                sound: false,
+                name: 'Alex',
+            }),
+            actions: {
+                toggleNotify: async (ctx: WidgetActionContext<ProfileState>) => {
+                    await ctx.setState({ notifications: !ctx.state.notifications });
+                    return ctx.answer();
+                },
+                toggleSound: async (ctx: WidgetActionContext<ProfileState>) => {
+                    await ctx.setState({ sound: !ctx.state.sound });
+                    return ctx.answer();
+                },
+            },
+        });
+
+        const storage = new MemoryWidgetsStorage();
+        const plugin = createTelegramWidgetsPlugin({
+            screens: { prof: profileScreen },
+            storage,
+        });
+
+        let answeredData: string | undefined;
+        let editedChatData: string | undefined;
+
+        const fakeApi = {
+            raw: {
+                sendWidget: async () => ({ message_id: 300 }),
+                editMessageWidgetData: async (p: { chat_data?: string }) => {
+                    editedChatData = p.chat_data;
+                    return true;
+                },
+                answerWidgetQuery: async (p: { data?: string }) => {
+                    answeredData = p.data;
+                    return true;
+                },
+            },
+        };
+
+        const ctx = {
+            chat: { id: 777 },
+            api: fakeApi,
+        } as unknown as Context & WidgetsFlavor<{ prof: typeof profileScreen }>;
+
+        await plugin.middleware(ctx, async () => {});
+
+        // Send screen
+        await ctx.widgets.send('prof', {
+            chatId: 777,
+            props: undefined,
+        });
+
+        // 1. Toggle notify
+        const queryCtx1 = {
+            update: {
+                widget_query: {
+                    id: 'q-toggle-1',
+                    data: 'toggleNotify',
+                    chat: { id: 777, type: 'private' },
+                    message_id: 300,
+                    chat_instance: 'inst',
+                    from: { id: 1, first_name: 'Alex' },
+                },
+            },
+            api: fakeApi,
+        } as unknown as Context & WidgetsFlavor<{ prof: typeof profileScreen }>;
+
+        await plugin.middleware(queryCtx1, async () => {});
+
+        const stateAfterFirst = JSON.parse(editedChatData!);
+        expect(stateAfterFirst.notifications).toBe(false);
+        expect(stateAfterFirst.sound).toBe(false); // Preserved!
+        expect(stateAfterFirst.name).toBe('Alex'); // Preserved!
+        expect(JSON.parse(answeredData!).notifications).toBe(false);
+
+        // 2. Toggle sound without losing notifications=false
+        const queryCtx2 = {
+            update: {
+                widget_query: {
+                    id: 'q-toggle-2',
+                    data: 'toggleSound',
+                    chat: { id: 777, type: 'private' },
+                    message_id: 300,
+                    chat_instance: 'inst',
+                    from: { id: 1, first_name: 'Alex' },
+                },
+            },
+            api: fakeApi,
+        } as unknown as Context & WidgetsFlavor<{ prof: typeof profileScreen }>;
+
+        await plugin.middleware(queryCtx2, async () => {});
+
+        const stateAfterSecond = JSON.parse(editedChatData!);
+        expect(stateAfterSecond.notifications).toBe(false); // Preserved!
+        expect(stateAfterSecond.sound).toBe(true);
+        expect(stateAfterSecond.name).toBe('Alex'); // Preserved!
+        expect(JSON.parse(answeredData!).sound).toBe(true);
+    });
+
     test('cross-runtime entrypoints (mod.ts, jsx-runtime, jsx-dev-runtime) export all required primitives', async () => {
         const mod = await import('../mod');
         expect(mod.WidgetLayout).toBeDefined();

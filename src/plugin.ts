@@ -460,12 +460,15 @@ export const createTelegramWidgetsPlugin = <
                 isPremium: query.from.is_premium,
                 languageCode: query.from.language_code,
             },
-            state: currentState,
-            setState: async (nextState: Record<string, unknown>) => {
-                currentState = nextState;
+            get state() {
+                return currentState;
+            },
+            setState: async (nextState: Partial<Record<string, unknown>> | Record<string, unknown>) => {
+                const merged = { ...currentState, ...nextState };
+                currentState = merged;
                 await storage.set(storageKey, {
                     screenId: screen.id,
-                    state: nextState,
+                    state: merged,
                     updatedAt: Date.now(),
                 });
                 try {
@@ -474,7 +477,7 @@ export const createTelegramWidgetsPlugin = <
                         message_id: messageId,
                         inline_message_id: inlineMessageId,
                         chat_data: JSON.stringify({
-                            ...nextState,
+                            ...merged,
                             __screen: screen.id,
                         }),
                     });
@@ -505,12 +508,11 @@ export const createTelegramWidgetsPlugin = <
                         // ignore if query is handled as raw widget_query
                     }
                 }
+                const responseData = data !== undefined ? data : currentState;
                 const serialized =
-                    data !== undefined
-                        ? typeof data === 'string'
-                            ? data
-                            : JSON.stringify(data)
-                        : undefined;
+                    typeof responseData === 'string'
+                        ? responseData
+                        : JSON.stringify(responseData);
                 await rawApi.answerWidgetQuery({
                     widget_query_id: query.id,
                     data: serialized,

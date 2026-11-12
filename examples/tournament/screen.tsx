@@ -45,6 +45,21 @@ const tournamentClientScript = (initial: TournamentState) => {
         }
     };
 
+    const syncState = () => {
+        try {
+            if (W?.chatData) {
+                const d = JSON.parse(W.chatData);
+                if (d && typeof d === 'object') {
+                    state = { ...state, ...d };
+                    updateCounts();
+                }
+            }
+        } catch {}
+    };
+
+    syncState();
+    W?.onEvent?.('chatDataChanged', syncState);
+
     document.getElementById('btn-volunteer')?.addEventListener('click', () => {
         W?.HapticFeedback?.notificationOccurred?.('success');
         if (state.registeredRole !== 'volunteer') {
@@ -281,9 +296,9 @@ export const tournamentScreen = defineWidgetScreen({
         volunteersCount: 7,
     }),
     actions: {
-        registerVolunteer: (ctx: WidgetActionContext<TournamentState>) => {
+        registerVolunteer: async (ctx: WidgetActionContext<TournamentState>) => {
             const nextVolunteers = ctx.state.volunteersCount + 1;
-            ctx.setState({
+            await ctx.setState({
                 registeredRole: 'volunteer',
                 volunteersCount: nextVolunteers,
             });
@@ -291,9 +306,9 @@ export const tournamentScreen = defineWidgetScreen({
                 text: 'Спасибо за заявку волонтёра! Ссылка на подтверждение отправлена.',
             });
         },
-        registerParticipant: (ctx: WidgetActionContext<TournamentState>) => {
+        registerParticipant: async (ctx: WidgetActionContext<TournamentState>) => {
             const nextParticipants = ctx.state.participantsCount + 1;
-            ctx.setState({
+            await ctx.setState({
                 registeredRole: 'participant',
                 participantsCount: nextParticipants,
             });
