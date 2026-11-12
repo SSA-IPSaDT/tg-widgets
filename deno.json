@@ -1,0 +1,14 @@
+{
+    "name": "@ipsadt/tg-widgets",
+    "version": "0.1.0",
+    "exports": {
+        ".": "./mod.ts",
+        "./components": "./src/components/index.ts",
+        "./jsx-runtime": "./src/jsx-runtime.ts",
+        "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts"
+    },
+    "compilerOptions": {
+        "jsx": "react-jsx",
+        "jsxImportSource": "@ipsadt/tg-widgets"
+    }
+}

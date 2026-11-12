@@ -1,0 +1,100 @@
+{
+    "name": "@ipsadt/tg-widgets",
+    "version": "0.1.0",
+    "description": "Zero-runtime TSX UI Kit and type-safe grammY plugin for Telegram Bot API 10.4 HTML Widgets (Interactive Bubbles)",
+    "type": "module",
+    "main": "./dist/index.cjs",
+    "module": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.js",
+            "require": "./dist/index.cjs",
+            "default": "./dist/index.js"
+        },
+        "./components": {
+            "types": "./dist/components/index.d.ts",
+            "import": "./dist/components/index.js",
+            "require": "./dist/components/index.cjs",
+            "default": "./dist/components/index.js"
+        },
+        "./jsx-runtime": {
+            "types": "./dist/jsx-runtime.d.ts",
+            "import": "./dist/jsx-runtime.js",
+            "require": "./dist/jsx-runtime.cjs",
+            "default": "./dist/jsx-runtime.js"
+        },
+        "./jsx-dev-runtime": {
+            "types": "./dist/jsx-dev-runtime.d.ts",
+            "import": "./dist/jsx-dev-runtime.js",
+            "require": "./dist/jsx-dev-runtime.cjs",
+            "default": "./dist/jsx-dev-runtime.js"
+        },
+        "./mod": {
+            "types": "./mod.ts",
+            "import": "./mod.ts",
+            "default": "./mod.ts"
+        },
+        "./mod.ts": {
+            "types": "./mod.ts",
+            "import": "./mod.ts",
+            "default": "./mod.ts"
+        }
+    },
+    "files": [
+        "dist",
+        "mod.ts",
+        "deno.json",
+        "README.md",
+        "LICENSE",
+        "CHANGELOG.md"
+    ],
+    "scripts": {
+        "build": "bun run build:clean && bun run build:bundle && bun run build:types",
+        "build:clean": "rm -rf dist",
+        "build:bundle": "bun build src/index.ts --outfile dist/index.js --format esm --target node --external grammy && bun build src/index.ts --outfile dist/index.cjs --format cjs --target node --external grammy && bun build src/components/index.ts --outfile dist/components/index.js --format esm --target node --external grammy && bun build src/components/index.ts --outfile dist/components/index.cjs --format cjs --target node --external grammy && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.js --format esm --target node --external grammy && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.cjs --format cjs --target node --external grammy && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.js --format esm --target node --external grammy && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.cjs --format cjs --target node --external grammy",
+        "build:types": "tsc --project tsconfig.build.json && rm -rf dist/src",
+        "check": "tsc --noEmit",
+        "test": "bun test",
+        "prepublishOnly": "bun run build"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "license": "MIT",
+    "author": {
+        "name": "naylour",
+        "email": "naylour@tuta.io",
+        "url": "https://github.com/naylour"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/SSA-IPSaDT/tg-widgets.git"
+    },
+    "bugs": {
+        "url": "https://github.com/SSA-IPSaDT/tg-widgets/issues"
+    },
+    "homepage": "https://github.com/SSA-IPSaDT/tg-widgets#readme",
+    "keywords": [
+        "telegram",
+        "telegram-bot",
+        "telegram-widgets",
+        "tg-widgets",
+        "html-bubbles",
+        "grammy",
+        "grammy-plugin",
+        "tsx",
+        "zero-runtime",
+        "ui-kit",
+        "deno"
+    ],
+    "peerDependencies": {
+        "grammy": ">=1.20.0"
+    },
+    "devDependencies": {
+        "@types/bun": "^1.2.0",
+        "grammy": "^1.46.0",
+        "typescript": "^5.7.0"
+    }
+}
