@@ -18,10 +18,12 @@
  */
 
 export * from './src/index';
+export * from './src/action';
 export * from './src/components/index';
 export * from './src/jsx';
 export * from './src/plugin';
 export * from './src/screen';
+export * from './src/storage';
 export * from './src/widget-bridge';
 
 // Export JSX runtime primitives for Deno & Node manual pragma usage

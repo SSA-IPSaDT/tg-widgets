@@ -10,14 +10,17 @@ import {
     Checkbox,
     ChevronRightIcon,
     createTelegramWidgetsPlugin,
+    decodeWidgetAction,
     defineWidgetScreen,
     Divider,
+    encodeWidgetAction,
     formatStyle,
     h,
     Input,
     inspectWidgetSize,
     List,
     ListItem,
+    MemoryWidgetsStorage,
     ProgressBar,
     Radio,
     RadioGroup,
@@ -26,9 +29,11 @@ import {
     Skeleton,
     Switch,
     Typography,
+    validateWidgetActionData,
     type WidgetActionContext,
     WidgetLayout,
     type WidgetsFlavor,
+    type WidgetsStorage,
 } from '../src';
 
 describe('@ipsadt/tg-widgets', () => {
@@ -171,7 +176,70 @@ describe('@ipsadt/tg-widgets', () => {
         expect(html).toContain('<div>Test</div>');
     });
 
-    test('plugin sends widget, answers actions, and supports reply and update', async () => {
+    test('encodeWidgetAction and decodeWidgetAction handle 64-byte Telegram limit', () => {
+        expect(encodeWidgetAction('increment')).toBe('increment');
+        expect(encodeWidgetAction('set', 42)).toBe('set:42');
+        expect(encodeWidgetAction('toggle', true)).toBe('toggle:true');
+        expect(encodeWidgetAction('open', { id: 'x' })).toBe('open:{"id":"x"}');
+
+        expect(validateWidgetActionData('increment')).toBe(true);
+        expect(validateWidgetActionData('a'.repeat(64))).toBe(true);
+        expect(validateWidgetActionData('a'.repeat(65))).toBe(false);
+        expect(validateWidgetActionData('')).toBe(false);
+
+        expect(decodeWidgetAction('increment')).toEqual({
+            action: 'increment',
+            payload: undefined,
+        });
+        expect(decodeWidgetAction('set:42')).toEqual({
+            action: 'set',
+            payload: 42,
+        });
+        expect(decodeWidgetAction('flag:true')).toEqual({
+            action: 'flag',
+            payload: true,
+        });
+        expect(decodeWidgetAction('flag:false')).toEqual({
+            action: 'flag',
+            payload: false,
+        });
+        expect(decodeWidgetAction('msg:hello')).toEqual({
+            action: 'msg',
+            payload: 'hello',
+        });
+        expect(decodeWidgetAction('{"action":"vote","payload":{"id":1}}')).toEqual(
+            { action: 'vote', payload: { id: 1 } },
+        );
+    });
+
+    test('MemoryWidgetsStorage supports LRU eviction and TTL', async () => {
+        const storage = new MemoryWidgetsStorage({
+            maxEntries: 2,
+            defaultTtlSeconds: 1,
+        });
+
+        storage.set('k1', { screenId: 's1', state: { v: 1 }, updatedAt: 100 });
+        storage.set('k2', { screenId: 's2', state: { v: 2 }, updatedAt: 200 });
+        expect(storage.get('k1')?.state).toEqual({ v: 1 });
+
+        // k1 is touched, so k2 should be evicted when k3 is added
+        storage.set('k3', { screenId: 's3', state: { v: 3 }, updatedAt: 300 });
+        expect(storage.has('k1')).toBe(true);
+        expect(storage.has('k2')).toBe(false);
+        expect(storage.has('k3')).toBe(true);
+
+        // Test delete
+        storage.delete('k1');
+        expect(storage.has('k1')).toBe(false);
+
+        // Test TTL
+        storage.set('k4', { screenId: 's4', state: { v: 4 }, updatedAt: 400 }, 0.05);
+        expect(storage.has('k4')).toBe(true);
+        await new Promise((res) => setTimeout(res, 60));
+        expect(storage.get('k4')).toBeUndefined();
+    });
+
+    test('plugin sends widget, answers actions, and supports pluggable storage', async () => {
         const testScreen = defineWidgetScreen({
             id: 'counter',
             component: (props: { initial: number }) =>
@@ -182,9 +250,11 @@ describe('@ipsadt/tg-widgets', () => {
             actions: {
                 increment: async (
                     ctx: WidgetActionContext<{ count: number }>,
+                    payload?: unknown,
                 ) => {
+                    const step = typeof payload === 'number' ? payload : 1;
                     const next = {
-                        count: ctx.state.count + 1,
+                        count: ctx.state.count + step,
                     };
                     await ctx.setState(next);
                     return next;
@@ -192,10 +262,13 @@ describe('@ipsadt/tg-widgets', () => {
             },
         });
 
+        const customStorage: WidgetsStorage = new MemoryWidgetsStorage();
+
         const plugin = createTelegramWidgetsPlugin({
             screens: {
                 counter: testScreen,
             },
+            storage: customStorage,
         });
 
         let sentParams: Record<string, unknown> | undefined;
@@ -250,6 +323,11 @@ describe('@ipsadt/tg-widgets', () => {
         expect(chatData.count).toBe(5);
         expect(chatData.__screen).toBe('counter');
 
+        // Verify storage received the record
+        const stored = await customStorage.get('100:200');
+        expect(stored?.screenId).toBe('counter');
+        expect((stored?.state as { count: number }).count).toBe(5);
+
         // Test reply helper
         await ctx.widgets.reply('counter', {
             props: { initial: 7 },
@@ -267,21 +345,19 @@ describe('@ipsadt/tg-widgets', () => {
         );
         expect(updatedManualState.count).toBe(42);
 
-        // Simulate incoming widget_query update
+        // Verify storage updated
+        const updatedStored = await customStorage.get('100:200');
+        expect((updatedStored?.state as { count: number }).count).toBe(42);
+
+        // Simulate incoming official Telegram 10.4 WidgetQuery (without query.message)
         const queryCtx = {
             update: {
                 widget_query: {
                     id: 'q-1',
-                    data: 'increment',
-                    chat: { id: 100 },
-                    message: {
-                        message_id: 200,
-                        chat: { id: 100 },
-                        chat_data: JSON.stringify({
-                            __screen: 'counter',
-                            count: 5,
-                        }),
-                    },
+                    data: 'increment:3',
+                    chat: { id: 100, type: 'private' },
+                    message_id: 200,
+                    chat_instance: 'instance-abc',
                     from: { id: 1, first_name: 'Test' },
                 },
             },
@@ -295,7 +371,7 @@ describe('@ipsadt/tg-widgets', () => {
         expect(editedParams?.message_id).toBe(200);
 
         const updatedState = JSON.parse(editedParams?.chat_data as string);
-        expect(updatedState.count).toBe(43);
+        expect(updatedState.count).toBe(45); // 42 + 3
         expect(updatedState.__screen).toBe('counter');
     });
 
@@ -304,6 +380,9 @@ describe('@ipsadt/tg-widgets', () => {
         expect(mod.WidgetLayout).toBeDefined();
         expect(mod.Button).toBeDefined();
         expect(mod.Card).toBeDefined();
+        expect(mod.MemoryWidgetsStorage).toBeDefined();
+        expect(mod.encodeWidgetAction).toBeDefined();
+        expect(mod.decodeWidgetAction).toBeDefined();
         expect(mod.jsx).toBeDefined();
         expect(mod.jsxDEV).toBeDefined();
         expect(mod.Fragment).toBeDefined();

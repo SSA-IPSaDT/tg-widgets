@@ -1,11 +1,13 @@
 import type { Context, MiddlewareFn } from 'grammy';
 
+import { decodeWidgetAction } from './action';
 import { inspectWidgetSize, renderWidget, type WidgetSizeReport } from './jsx';
 import type {
     AnyWidgetScreen,
     RawWidgetApiMethods,
     WidgetActionContext,
 } from './screen';
+import { MemoryWidgetsStorage, type WidgetsStorage } from './storage';
 
 export interface WidgetsLogger {
     info(message: string, ...args: unknown[]): void;
@@ -20,6 +22,9 @@ const defaultLogger: WidgetsLogger = {
         console.error(`[telegram-widgets] ${msg}`, ...args),
 };
 
+/**
+ * Структура входящего Update.widget_query в Telegram Bot API 10.4
+ */
 export interface TelegramWidgetQueryPayload {
     id: string;
     from: {
@@ -27,31 +32,42 @@ export interface TelegramWidgetQueryPayload {
         first_name: string;
         last_name?: string;
         username?: string;
+        is_premium?: boolean;
+        language_code?: string;
     };
     chat?: {
         id: number;
         type: string;
-    };
-    message?: {
-        message_id: number;
-        chat: {
-            id: number;
-        };
-        chat_data?: string;
+        title?: string;
+        username?: string;
     };
     message_id?: number;
-    chat_instance?: string;
-    widget_id?: string;
+    inline_message_id?: string;
+    chat_instance: string;
+    chat_type?:
+        | 'sender'
+        | 'private'
+        | 'group'
+        | 'supergroup'
+        | 'channel'
+        | string;
+    type?: unknown;
     data?: string;
 }
 
 export interface SendWidgetOptions<TProps> {
     chatId?: number | string;
     props: TProps;
+    messageThreadId?: number;
+    width?: number;
+    height?: number;
     caption?: string;
+    captionEntities?: unknown[];
+    publicData?: string;
     replyMarkup?: unknown;
     allowQueries?: boolean;
-    replyParameters?: { message_id: number };
+    isShared?: boolean;
+    replyParameters?: { message_id: number; [key: string]: unknown };
 }
 
 export type SendBubbleOptions<TProps> = SendWidgetOptions<TProps>;
@@ -71,7 +87,7 @@ export interface WidgetsController<
     send: <K extends keyof TScreens & string>(
         screenId: K,
         options: SendWidgetOptions<Parameters<TScreens[K]['component']>[0]>,
-    ) => Promise<{ message_id: number }>;
+    ) => Promise<{ message_id: number; [key: string]: unknown }>;
 
     /**
      * Отвечает виджетом на текущее сообщение в чате
@@ -79,7 +95,7 @@ export interface WidgetsController<
     reply: <K extends keyof TScreens & string>(
         screenId: K,
         options: SendWidgetOptions<Parameters<TScreens[K]['component']>[0]>,
-    ) => Promise<{ message_id: number }>;
+    ) => Promise<{ message_id: number; [key: string]: unknown }>;
 
     /**
      * Рендерит и инспектирует размер HTML разметки виджета без отправки
@@ -102,6 +118,11 @@ export interface WidgetsController<
      * Возвращает зарегистрированный экран по его ID
      */
     getScreen: (screenId: string) => AnyWidgetScreen | undefined;
+
+    /**
+     * Подключенное хранилище состояний виджетов
+     */
+    storage: WidgetsStorage;
 }
 
 export type BubblesController<
@@ -120,8 +141,23 @@ export interface CreateWidgetsPluginOptions<
     TScreens extends Record<string, AnyWidgetScreen>,
 > {
     screens: TScreens;
+    storage?: WidgetsStorage;
     logger?: WidgetsLogger;
 }
+
+const getStorageKey = (
+    chatId?: number | string,
+    messageId?: number,
+    inlineMessageId?: string,
+): string | undefined => {
+    if (inlineMessageId) {
+        return `inline:${inlineMessageId}`;
+    }
+    if (chatId !== undefined && messageId !== undefined) {
+        return `${chatId}:${messageId}`;
+    }
+    return undefined;
+};
 
 export const createTelegramWidgetsPlugin = <
     TScreens extends Record<string, AnyWidgetScreen>,
@@ -130,9 +166,11 @@ export const createTelegramWidgetsPlugin = <
 ): {
     middleware: MiddlewareFn<Context & WidgetsFlavor<TScreens>>;
     screens: TScreens;
+    storage: WidgetsStorage;
 } => {
     const logger = options.logger ?? defaultLogger;
     const screens = options.screens;
+    const storage = options.storage ?? new MemoryWidgetsStorage();
     const screensById = new Map<string, AnyWidgetScreen>();
 
     for (const [key, screen] of Object.entries(screens)) {
@@ -142,12 +180,6 @@ export const createTelegramWidgetsPlugin = <
         }
     }
 
-    // Хранилище активных состояний: `${chatId}:${messageId}` -> { screenId, state }
-    const stateRegistry = new Map<
-        string,
-        { screenId: string; state: Record<string, unknown> }
-    >();
-
     const middleware: MiddlewareFn<Context & WidgetsFlavor<TScreens>> = async (
         ctx,
         next,
@@ -155,6 +187,8 @@ export const createTelegramWidgetsPlugin = <
         const rawApi = ctx.api.raw as unknown as RawWidgetApiMethods;
 
         const controller: WidgetsController<TScreens> = {
+            storage,
+
             send: async (screenId, sendOpts) => {
                 const screen = screensById.get(screenId);
                 if (!screen) {
@@ -183,18 +217,32 @@ export const createTelegramWidgetsPlugin = <
 
                 const result = await rawApi.sendWidget({
                     chat_id: targetChatId,
+                    message_thread_id: sendOpts.messageThreadId,
                     html,
+                    width: sendOpts.width,
+                    height: sendOpts.height,
                     chat_data: chatData,
+                    public_data: sendOpts.publicData,
                     allow_queries: sendOpts.allowQueries ?? true,
+                    is_shared: sendOpts.isShared,
                     caption: sendOpts.caption,
+                    caption_entities: sendOpts.captionEntities,
                     reply_markup: sendOpts.replyMarkup,
+                    reply_parameters: sendOpts.replyParameters,
                 });
 
                 if (result && typeof result.message_id === 'number') {
-                    stateRegistry.set(`${targetChatId}:${result.message_id}`, {
-                        screenId: screen.id,
-                        state: initState,
-                    });
+                    const storageKey = getStorageKey(
+                        targetChatId,
+                        result.message_id,
+                    );
+                    if (storageKey) {
+                        await storage.set(storageKey, {
+                            screenId: screen.id,
+                            state: initState,
+                            updatedAt: Date.now(),
+                        });
+                    }
                 }
 
                 return result;
@@ -239,23 +287,31 @@ export const createTelegramWidgetsPlugin = <
                     );
                 }
 
-                const messageKey = `${targetChatId}:${messageId}`;
+                const storageKey = getStorageKey(targetChatId, messageId);
+                if (!storageKey) {
+                    throw new Error(
+                        `[telegram-widgets] Cannot resolve storage key for chat ${targetChatId} and message ${messageId}`,
+                    );
+                }
+
+                const existingRecord = await storage.get(storageKey);
                 const currentState =
                     updateOpts.state ??
                     (updateOpts.props
                         ? (screen.initialState(
                               updateOpts.props as never,
                           ) as Record<string, unknown>)
-                        : (stateRegistry.get(messageKey)?.state ?? {}));
+                        : (existingRecord?.state ?? {}));
 
                 const chatData = JSON.stringify({
                     ...currentState,
                     __screen: screen.id,
                 });
 
-                stateRegistry.set(messageKey, {
+                await storage.set(storageKey, {
                     screenId: screen.id,
                     state: currentState,
+                    updatedAt: Date.now(),
                 });
 
                 return rawApi.editMessageWidgetData({
@@ -291,10 +347,16 @@ export const createTelegramWidgetsPlugin = <
             return;
         }
 
-        const chatId = query.chat?.id ?? query.message?.chat.id;
-        const messageId = query.message_id ?? query.message?.message_id;
+        const chatId = query.chat?.id;
+        const messageId = query.message_id;
+        const inlineMessageId = query.inline_message_id;
 
-        if (!chatId || !messageId) {
+        const storageKey = getStorageKey(chatId, messageId, inlineMessageId);
+
+        if (!storageKey) {
+            logger.warn(
+                '[telegram-widgets] Missing chat/message identifier in widget_query.',
+            );
             await rawApi.answerWidgetQuery({
                 widget_query_id: query.id,
                 data: JSON.stringify({ error: 'MISSING_MESSAGE_CONTEXT' }),
@@ -302,25 +364,12 @@ export const createTelegramWidgetsPlugin = <
             return;
         }
 
-        const messageKey = `${chatId}:${messageId}`;
-        let registeredRecord = stateRegistry.get(messageKey);
-
-        // Восстановление из query.message.chat_data, если в памяти нет (например, после рестарта)
-        if (!registeredRecord && query.message?.chat_data) {
-            try {
-                const parsed = JSON.parse(query.message.chat_data);
-                if (parsed.__screen && screensById.has(parsed.__screen)) {
-                    registeredRecord = {
-                        screenId: parsed.__screen,
-                        state: parsed,
-                    };
-                    stateRegistry.set(messageKey, registeredRecord);
-                }
-            } catch {}
-        }
+        const registeredRecord = await storage.get(storageKey);
 
         if (!registeredRecord) {
-            logger.warn(`No registered screen found for message ${messageKey}`);
+            logger.warn(
+                `[telegram-widgets] No registered screen found for storage key ${storageKey}. Consider configuring persistent storage.`,
+            );
             await rawApi.answerWidgetQuery({
                 widget_query_id: query.id,
                 data: JSON.stringify({ error: 'SCREEN_NOT_FOUND' }),
@@ -337,17 +386,10 @@ export const createTelegramWidgetsPlugin = <
             return;
         }
 
-        // Парсинг экшена и полезной нагрузки
-        let actionName = query.data ?? '';
-        let payload: unknown = undefined;
-
-        if (actionName.startsWith('{')) {
-            try {
-                const parsed = JSON.parse(actionName);
-                actionName = parsed.action ?? '';
-                payload = parsed.payload;
-            } catch {}
-        }
+        // Парсинг экшена и полезной нагрузки согласно компактному протоколу
+        const { action: actionName, payload } = decodeWidgetAction(
+            query.data ?? '',
+        );
 
         const actions = screen.actions as Record<
             string,
@@ -359,7 +401,7 @@ export const createTelegramWidgetsPlugin = <
         const handler = actions[actionName];
         if (!handler) {
             logger.warn(
-                `Unhandled action "${actionName}" for screen "${screen.id}"`,
+                `[telegram-widgets] Unhandled action "${actionName}" for screen "${screen.id}".`,
             );
             await rawApi.answerWidgetQuery({
                 widget_query_id: query.id,
@@ -375,20 +417,30 @@ export const createTelegramWidgetsPlugin = <
             queryId: query.id,
             chatId,
             messageId,
+            inlineMessageId,
+            chatInstance: query.chat_instance,
+            chatType: query.chat_type,
             from: {
                 id: query.from.id,
                 firstName: query.from.first_name,
                 lastName: query.from.last_name,
                 username: query.from.username,
+                isPremium: query.from.is_premium,
+                languageCode: query.from.language_code,
             },
             state: currentState,
             setState: async (nextState: Record<string, unknown>) => {
                 currentState = nextState;
-                registeredRecord!.state = nextState;
+                await storage.set(storageKey, {
+                    screenId: screen.id,
+                    state: nextState,
+                    updatedAt: Date.now(),
+                });
                 try {
                     await rawApi.editMessageWidgetData({
                         chat_id: chatId,
                         message_id: messageId,
+                        inline_message_id: inlineMessageId,
                         chat_data: JSON.stringify({
                             ...nextState,
                             __screen: screen.id,
@@ -398,7 +450,7 @@ export const createTelegramWidgetsPlugin = <
                     const msg = String(err);
                     if (!msg.includes('message is not modified')) {
                         logger.warn(
-                            `Failed to editMessageWidgetData for ${messageKey}`,
+                            `Failed to editMessageWidgetData for ${storageKey}`,
                             err,
                         );
                     }
@@ -406,9 +458,15 @@ export const createTelegramWidgetsPlugin = <
             },
             answer: async (data?: unknown) => {
                 isAnswered = true;
+                const serialized =
+                    data !== undefined
+                        ? typeof data === 'string'
+                            ? data
+                            : JSON.stringify(data)
+                        : undefined;
                 await rawApi.answerWidgetQuery({
                     widget_query_id: query.id,
-                    data: data !== undefined ? JSON.stringify(data) : undefined,
+                    data: serialized,
                 });
             },
             rawApi,
@@ -421,7 +479,7 @@ export const createTelegramWidgetsPlugin = <
             }
         } catch (error) {
             logger.error(
-                `Error executing action "${actionName}" on screen "${screen.id}"`,
+                `[telegram-widgets] Error executing action "${actionName}" on screen "${screen.id}":`,
                 error,
             );
             if (!isAnswered) {
@@ -430,7 +488,7 @@ export const createTelegramWidgetsPlugin = <
         }
     };
 
-    return { middleware, screens };
+    return { middleware, screens, storage };
 };
 
 export const createWidgetsPlugin = createTelegramWidgetsPlugin;

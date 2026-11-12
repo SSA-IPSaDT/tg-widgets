@@ -2,12 +2,27 @@ export interface RawWidgetApiMethods {
     sendWidget(params: {
         chat_id: number | string;
         html: string;
+        message_thread_id?: number;
+        width?: number;
+        height?: number;
         chat_data?: string;
         public_data?: string;
         allow_queries?: boolean;
+        is_shared?: boolean;
+        caption?: string;
+        caption_entities?: unknown[];
+        reply_markup?: unknown;
+        reply_parameters?: { message_id: number; [key: string]: unknown };
+    }): Promise<{ message_id: number; [key: string]: unknown }>;
+
+    sendSharedWidget?(params: {
+        chat_id: number | string;
+        widget_id: string;
+        message_thread_id?: number;
         caption?: string;
         reply_markup?: unknown;
-    }): Promise<{ message_id: number }>;
+    }): Promise<{ message_id: number; [key: string]: unknown }>;
+
     editMessageWidgetData(params: {
         chat_id?: number | string;
         message_id?: number;
@@ -15,6 +30,12 @@ export interface RawWidgetApiMethods {
         chat_data?: string;
         public_data?: string;
     }): Promise<unknown>;
+
+    editSharedWidgetData?(params: {
+        widget_id?: string;
+        public_data: string;
+    }): Promise<unknown>;
+
     answerWidgetQuery(params: {
         widget_query_id: string;
         data?: string;
@@ -23,13 +44,24 @@ export interface RawWidgetApiMethods {
 
 export interface WidgetActionContext<TState> {
     queryId: string;
-    chatId: number | string;
-    messageId: number;
+    chatId?: number | string;
+    messageId?: number;
+    inlineMessageId?: string;
+    chatInstance: string;
+    chatType?:
+        | 'sender'
+        | 'private'
+        | 'group'
+        | 'supergroup'
+        | 'channel'
+        | string;
     from: {
         id: number;
         firstName: string;
         lastName?: string;
         username?: string;
+        isPremium?: boolean;
+        languageCode?: string;
     };
     state: TState;
     setState: (newState: TState) => Promise<void>;
