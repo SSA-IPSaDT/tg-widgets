@@ -2,13 +2,11 @@ import { h } from '../jsx';
 
 export interface CheckboxProps {
     id?: string;
-    name?: string;
     checked?: boolean;
     disabled?: boolean;
     label?: unknown;
     description?: unknown;
     action?: string;
-    value?: string;
     style?: Record<string, string | number | undefined | null>;
     className?: string;
     [key: `data-${string}`]: string | undefined;
@@ -16,18 +14,15 @@ export interface CheckboxProps {
 
 /**
  * Чекбокс для Telegram Widgets (QuickJS Profile 1).
- * Реализован на семантической кнопке с SVG-иконками без использования <input>
- * (поскольку нативные <input> вырезаются песочницей Telegram).
+ * Генерирует чистый, компактный HTML на базе SVG без лишних атрибутов.
  */
 export const Checkbox = ({
     id,
-    name,
     checked = false,
     disabled = false,
     label,
     description,
     action,
-    value,
     style,
     className = '',
     ...dataAttrs
@@ -41,7 +36,6 @@ export const Checkbox = ({
             style={{
                 flexShrink: 0,
                 marginTop: description ? 2 : 0,
-                borderRadius: 5,
             }}
         >
             <rect
@@ -67,7 +61,6 @@ export const Checkbox = ({
             style={{
                 flexShrink: 0,
                 marginTop: description ? 2 : 0,
-                borderRadius: 5,
             }}
         >
             <rect
@@ -78,7 +71,6 @@ export const Checkbox = ({
                 rx="5"
                 stroke="var(--tg-theme-hint-color, rgba(120, 120, 128, 0.4))"
                 strokeWidth="1.5"
-                fill="transparent"
             />
         </svg>
     );
@@ -87,12 +79,7 @@ export const Checkbox = ({
         <button
             type="button"
             id={id}
-            name={name ?? id}
-            role="checkbox"
-            aria-checked={checked ? 'true' : 'false'}
-            data-checked={checked ? 'true' : 'false'}
             data-action={action}
-            data-value={value}
             disabled={disabled}
             class={`tg-checkbox ${className}`.trim()}
             style={{
@@ -107,8 +94,6 @@ export const Checkbox = ({
                 fontFamily: 'inherit',
                 cursor: disabled ? 'default' : 'pointer',
                 opacity: disabled ? 0.5 : 1,
-                userSelect: 'none',
-                touchAction: 'manipulation',
                 color: 'var(--tg-theme-text-color, inherit)',
                 width: '100%',
                 ...style,

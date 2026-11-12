@@ -14,7 +14,7 @@ export interface AlertProps {
 }
 
 /**
- * Компонент Alert (по образу shadcn/ui) для виджетов Telegram.
+ * Компонент Alert для виджетов Telegram.
  * Отображает важные сообщения, уведомления об ошибках и статусы.
  */
 export const Alert = ({
@@ -80,7 +80,6 @@ export const Alert = ({
     return (
         <div
             id={id}
-            role="alert"
             class={`tg-alert tg-alert-${variant} ${className}`.trim()}
             style={{
                 display: 'flex',

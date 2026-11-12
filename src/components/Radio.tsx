@@ -2,7 +2,6 @@ import { h } from '../jsx';
 
 export interface RadioProps {
     id?: string;
-    name?: string;
     value?: string;
     checked?: boolean;
     disabled?: boolean;
@@ -16,11 +15,10 @@ export interface RadioProps {
 
 /**
  * Радио-кнопка для Telegram Widgets (QuickJS Profile 1).
- * Реализована на семантической кнопке с SVG-иконками без использования <input>.
+ * Генерирует ультралегкий HTML без неиспользуемых ARIA-атрибутов.
  */
 export const Radio = ({
     id,
-    name,
     value,
     checked = false,
     disabled = false,
@@ -48,7 +46,6 @@ export const Radio = ({
                 r="9"
                 stroke="var(--tg-theme-button-color, #2481cc)"
                 strokeWidth="2"
-                fill="transparent"
             />
             <circle
                 cx="10"
@@ -74,7 +71,6 @@ export const Radio = ({
                 r="9"
                 stroke="var(--tg-theme-hint-color, rgba(120, 120, 128, 0.4))"
                 strokeWidth="1.5"
-                fill="transparent"
             />
         </svg>
     );
@@ -83,10 +79,6 @@ export const Radio = ({
         <button
             type="button"
             id={id}
-            name={name}
-            role="radio"
-            aria-checked={checked ? 'true' : 'false'}
-            data-checked={checked ? 'true' : 'false'}
             data-value={value}
             data-action={action}
             disabled={disabled}
@@ -103,8 +95,6 @@ export const Radio = ({
                 fontFamily: 'inherit',
                 cursor: disabled ? 'default' : 'pointer',
                 opacity: disabled ? 0.5 : 1,
-                userSelect: 'none',
-                touchAction: 'manipulation',
                 color: 'var(--tg-theme-text-color, inherit)',
                 width: '100%',
                 ...style,
@@ -159,7 +149,6 @@ export const RadioGroup = ({
     return (
         <div
             id={id}
-            role="radiogroup"
             class={`tg-radio-group ${className}`.trim()}
             style={{
                 display: 'flex',

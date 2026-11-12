@@ -2,31 +2,27 @@ import { h } from '../jsx';
 
 export interface SwitchProps {
     id?: string;
-    name?: string;
     checked?: boolean;
     disabled?: boolean;
     label?: unknown;
     description?: unknown;
     action?: string;
-    value?: string;
     style?: Record<string, string | number | undefined | null>;
     className?: string;
     [key: `data-${string}`]: string | undefined;
 }
 
 /**
- * Переключатель (Switch / Toggle) для Telegram Widgets (QuickJS Profile 1).
- * Реализован на семантической кнопке с анимацией положения ползунка без тега <input>.
+ * Переключатель (Switch / Toggle) для Telegram Widgets.
+ * Компактная разметка на базе кнопки с визуальным треком и бегунком.
  */
 export const Switch = ({
     id,
-    name,
     checked = false,
     disabled = false,
     label,
     description,
     action,
-    value,
     style,
     className = '',
     ...dataAttrs
@@ -35,12 +31,7 @@ export const Switch = ({
         <button
             type="button"
             id={id}
-            name={name ?? id}
-            role="switch"
-            aria-checked={checked ? 'true' : 'false'}
-            data-checked={checked ? 'true' : 'false'}
             data-action={action}
-            data-value={value}
             disabled={disabled}
             class={`tg-switch ${className}`.trim()}
             style={{
@@ -56,10 +47,7 @@ export const Switch = ({
                 textAlign: 'left',
                 fontFamily: 'inherit',
                 cursor: disabled ? 'default' : 'pointer',
-                userSelect: 'none',
-                touchAction: 'manipulation',
                 opacity: disabled ? 0.5 : 1,
-                fontSize: 14,
                 color: 'var(--tg-theme-text-color, inherit)',
                 width: label || description ? '100%' : undefined,
                 ...style,

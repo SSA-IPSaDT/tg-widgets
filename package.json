@@ -57,6 +57,7 @@
         "build:types": "tsc --project tsconfig.build.json && rm -rf dist/src",
         "check": "tsc --noEmit",
         "test": "bun test",
+        "example": "bun run examples/bot.tsx",
         "prepublishOnly": "bun run build"
     },
     "publishConfig": {

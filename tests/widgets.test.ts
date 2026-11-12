@@ -140,8 +140,7 @@ describe('@ipsadt/tg-widgets', () => {
             description: 'Terms of service',
             checked: true,
         });
-        expect(chk).toContain('role="checkbox"');
-        expect(chk).toContain('aria-checked="true"');
+        expect(chk).toContain('tg-checkbox');
         expect(chk).toContain('I agree');
         expect(chk).toContain('Terms of service');
         expect(chk).toContain('svg');
@@ -149,24 +148,20 @@ describe('@ipsadt/tg-widgets', () => {
 
         const radio = Radio({
             id: 'opt1',
-            name: 'choice',
             value: 'v1',
             label: 'Option 1',
             checked: true,
         });
-        expect(radio).toContain('role="radio"');
-        expect(radio).toContain('aria-checked="true"');
+        expect(radio).toContain('tg-radio');
         expect(radio).toContain('Option 1');
         expect(radio).toContain('svg');
         expect(radio).not.toContain('<input'); // Profile 1 compliant!
 
         const radioGroup = RadioGroup({ children: radio });
         expect(radioGroup).toContain('tg-radio-group');
-        expect(radioGroup).toContain('role="radiogroup"');
 
         const sw = Switch({ id: 'notifications', label: 'Alerts', checked: true });
-        expect(sw).toContain('role="switch"');
-        expect(sw).toContain('aria-checked="true"');
+        expect(sw).toContain('tg-switch');
         expect(sw).toContain('tg-switch-track');
         expect(sw).toContain('tg-switch-thumb');
         expect(sw).toContain('Alerts');
