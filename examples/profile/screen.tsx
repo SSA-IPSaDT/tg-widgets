@@ -29,53 +29,76 @@ export interface ProfileState {
 }
 
 const profileClientScript = () => {
-    const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
-    const M: Record<string, [string, string]> = {
-        notify: ["notifications", "Notify"],
-        private: ["privateMode", "Private"],
-        sound: ["soundEffects", "Sound"],
-    };
-    const U = (d?: Record<string, unknown> | null) => {
-        if (!d) return;
-        for (const k in M) {
-            const v = d[M[k][0]];
-            if (v !== undefined) {
-                document
-                    .getElementById("profile-" + k)
-                    ?.querySelector(".tg-switch-track")
-                    ?.classList.toggle("active", Boolean(v));
-            }
+    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+
+    const updateProfileUI = (data?: Record<string, unknown> | null) => {
+        if (!data) return;
+
+        if (typeof data.notifications === 'boolean') {
+            document
+                .getElementById('profile-notify')
+                ?.querySelector('.tg-switch-track')
+                ?.classList.toggle('active', data.notifications);
+        }
+
+        if (typeof data.privateMode === 'boolean') {
+            document
+                .getElementById('profile-private')
+                ?.querySelector('.tg-switch-track')
+                ?.classList.toggle('active', data.privateMode);
+        }
+
+        if (typeof data.soundEffects === 'boolean') {
+            document
+                .getElementById('profile-sound')
+                ?.querySelector('.tg-switch-track')
+                ?.classList.toggle('active', data.soundEffects);
         }
     };
-    const C = () => {
+
+    const syncFromChatData = () => {
         try {
-            if (W?.chatData) U(JSON.parse(W.chatData));
-        } catch {}
+            if (widget?.chatData) {
+                const parsed = JSON.parse(widget.chatData);
+                updateProfileUI(parsed);
+            }
+        } catch {
+            // ignore JSON parse errors
+        }
     };
-    C();
-    W?.onEvent?.("chatDataChanged", C);
 
-    for (const k in M) {
-        document
-            .getElementById("profile-" + k)
-            ?.addEventListener("click", function (this: HTMLElement) {
-                W?.HapticFeedback?.impactOccurred?.("light");
-                this.querySelector(".tg-switch-track")?.classList.toggle(
-                    "active",
-                );
-                W?.request?.("toggleProfile" + M[k][1]).then(
-                    (r: { result?: string }) => {
-                        try {
-                            if (r?.result) U(JSON.parse(r.result));
-                        } catch {}
-                    },
-                );
+    syncFromChatData();
+    widget?.onEvent?.('chatDataChanged', syncFromChatData);
+
+    const bindToggle = (elementId: string, actionName: string) => {
+        const element = document.getElementById(elementId);
+        if (!element) return;
+
+        element.addEventListener('click', () => {
+            widget?.HapticFeedback?.impactOccurred?.('light');
+            const track = element.querySelector('.tg-switch-track');
+            track?.classList.toggle('active');
+
+            widget?.request?.(actionName).then((response: { result?: string }) => {
+                if (response?.result) {
+                    try {
+                        const parsed = JSON.parse(response.result);
+                        updateProfileUI(parsed);
+                    } catch {
+                        // ignore JSON parse errors
+                    }
+                }
             });
-    }
+        });
+    };
 
-    document.getElementById("btn-fallback")?.addEventListener("click", () => {
-        W?.HapticFeedback?.notificationOccurred?.("warning");
-        W?.request?.("fallbackToText");
+    bindToggle('profile-notify', 'toggleProfileNotify');
+    bindToggle('profile-private', 'toggleProfilePrivate');
+    bindToggle('profile-sound', 'toggleProfileSound');
+
+    document.getElementById('btn-fallback')?.addEventListener('click', () => {
+        widget?.HapticFeedback?.notificationOccurred?.('warning');
+        widget?.request?.('fallbackToText');
     });
 };
 
@@ -83,37 +106,38 @@ const profileClientScript = () => {
  * Экран профиля пользователя с интерактивными настройками и плашкой fallback
  */
 export const profileScreen = defineWidgetScreen({
-    id: "profile",
+    id: 'profile',
     component: (props: ProfileState) => (
-        <WidgetLayout fullWidth padding="4px 6px">
+        <WidgetLayout fullWidth padding="6px 8px">
             <Card fullWidth>
                 <CardHeader>
                     <div
                         style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            alignItems: "center",
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
                         }}
                     >
                         <div
                             style={{
-                                display: "flex",
-                                alignItems: "center",
+                                display: 'flex',
+                                alignItems: 'center',
                                 gap: 10,
                             }}
                         >
                             <div
                                 style={{
-                                    width: 34,
-                                    height: 34,
-                                    borderRadius: 17,
+                                    width: 38,
+                                    height: 38,
+                                    borderRadius: '50%',
                                     background:
-                                        "var(--tg-theme-button-color, #2481cc)",
-                                    color: "#fff",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
+                                        'linear-gradient(135deg, var(--tg-theme-button-color, #2481cc), #8b5cf6)',
+                                    color: '#ffffff',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
                                     fontWeight: 700,
+                                    fontSize: 15,
                                     flexShrink: 0,
                                 }}
                             >
@@ -133,7 +157,7 @@ export const profileScreen = defineWidgetScreen({
                             icon={LucideIcon({
                                 icon: LucideIcons.Shield,
                                 size: 15,
-                                color: "var(--tg-theme-link-color, #2481cc)",
+                                color: 'var(--tg-theme-link-color, #2481cc)',
                             })}
                         />
                     </div>
@@ -141,8 +165,8 @@ export const profileScreen = defineWidgetScreen({
                 <CardContent>
                     <div
                         style={{
-                            display: "flex",
-                            flexDirection: "column",
+                            display: 'flex',
+                            flexDirection: 'column',
                             gap: 10,
                         }}
                     >
@@ -151,7 +175,7 @@ export const profileScreen = defineWidgetScreen({
                             checked={props.notifications}
                             action="toggleProfileNotify"
                             label="Уведомления бота"
-                            description="Оповещения о событиях"
+                            description="Мгновенные оповещения о событиях"
                         />
 
                         <Divider />
@@ -161,7 +185,7 @@ export const profileScreen = defineWidgetScreen({
                             checked={props.privateMode}
                             action="toggleProfilePrivate"
                             label="Приватный профиль"
-                            description="Скрыть из общего рейтинга"
+                            description="Скрыть активность из общего рейтинга"
                         />
 
                         <Divider />
@@ -171,15 +195,15 @@ export const profileScreen = defineWidgetScreen({
                             checked={props.soundEffects}
                             action="toggleProfileSound"
                             label="Звуковые сигналы"
-                            description="Звуки интерфейса"
+                            description="Звуковое сопровождение интерфейса"
                         />
                     </div>
 
                     <div style={{ marginTop: 14 }}>
                         <Alert
                             variant="warning"
-                            title="Бета-функция"
-                            description="При неполадках переключите режим."
+                            title="Экспериментальная функция"
+                            description="Виджеты находятся на стадии тестирования. При неполадках переключите режим."
                         />
                     </div>
                 </CardContent>
@@ -195,7 +219,7 @@ export const profileScreen = defineWidgetScreen({
                             style: { marginRight: 4 },
                         })}
                     >
-                        Текстовый режим
+                        Обычное представление
                     </Button>
                 </CardFooter>
             </Card>

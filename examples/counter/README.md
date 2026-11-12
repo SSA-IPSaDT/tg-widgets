@@ -42,27 +42,39 @@ export interface CounterState {
 }
 
 const clientCounterScript = (args: { count: number }) => {
-  const W = window.TelegramWidget;
-  const btnInc = document.getElementById('btn-inc');
-  const btnDec = document.getElementById('btn-dec');
-  const valEl = document.getElementById('counter-val');
+  const widget = window.TelegramWidget;
+  const incrementButton = document.getElementById('btn-inc');
+  const decrementButton = document.getElementById('btn-dec');
+  const counterValueElement = document.getElementById('counter-val');
+  let count = args.count;
 
-  btnInc?.addEventListener('click', () => {
-    W?.HapticFeedback?.impactOccurred?.('light');
-    W?.request?.('inc').then((res) => {
-      if (res?.result && valEl) {
-        const data = JSON.parse(res.result);
-        valEl.textContent = String(data.count);
+  const setCount = (newCount: number) => {
+    count = newCount;
+    if (counterValueElement) counterValueElement.textContent = String(count);
+  };
+
+  incrementButton?.addEventListener('click', () => {
+    widget?.HapticFeedback?.impactOccurred?.('light');
+    setCount(count + 1);
+    widget?.request?.('inc').then((response) => {
+      if (response?.result) {
+        try {
+          const parsed = JSON.parse(response.result);
+          if (typeof parsed?.count === 'number') setCount(parsed.count);
+        } catch {}
       }
     });
   });
 
-  btnDec?.addEventListener('click', () => {
-    W?.HapticFeedback?.impactOccurred?.('light');
-    W?.request?.('dec').then((res) => {
-      if (res?.result && valEl) {
-        const data = JSON.parse(res.result);
-        valEl.textContent = String(data.count);
+  decrementButton?.addEventListener('click', () => {
+    widget?.HapticFeedback?.impactOccurred?.('light');
+    setCount(count - 1);
+    widget?.request?.('dec').then((response) => {
+      if (response?.result) {
+        try {
+          const parsed = JSON.parse(response.result);
+          if (typeof parsed?.count === 'number') setCount(parsed.count);
+        } catch {}
       }
     });
   });

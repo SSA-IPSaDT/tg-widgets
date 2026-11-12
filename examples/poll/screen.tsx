@@ -25,28 +25,28 @@ export interface PollState {
 }
 
 const pollClientScript = (initial: PollState) => {
-    const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
     let state = { ...initial };
 
-    const updatePollUI = (s: typeof state) => {
-        state = { ...s };
+    const updatePollUI = (nextState: typeof state) => {
+        state = { ...nextState };
         const total = Math.max(1, state.votes.grammy + state.votes.telegraf + state.votes.aiogram);
 
-        const keys = ['grammy', 'telegraf', 'aiogram'] as const;
-        for (const k of keys) {
-            const count = state.votes[k];
-            const pct = Math.round((count / total) * 100);
+        const pollOptions = ['grammy', 'telegraf', 'aiogram'] as const;
+        for (const optionKey of pollOptions) {
+            const count = state.votes[optionKey];
+            const percentage = Math.round((count / total) * 100);
 
-            const row = document.getElementById(`poll-row-${k}`);
+            const row = document.getElementById(`poll-row-${optionKey}`);
             if (row) {
                 const bar = row.querySelector('.poll-bar') as HTMLElement | null;
-                const pctEl = row.querySelector('.poll-pct');
-                const countEl = row.querySelector('.poll-count');
-                if (bar) bar.style.width = `${pct}%`;
-                if (pctEl) pctEl.textContent = `${pct}%`;
-                if (countEl) countEl.textContent = `${count} гол.`;
+                const percentageElement = row.querySelector('.poll-pct');
+                const countElement = row.querySelector('.poll-count');
+                if (bar) bar.style.width = `${percentage}%`;
+                if (percentageElement) percentageElement.textContent = `${percentage}%`;
+                if (countElement) countElement.textContent = `${count} гол.`;
 
-                if (state.userVote === k) {
+                if (state.userVote === optionKey) {
                     row.style.borderColor = 'var(--tg-theme-button-color, #2481cc)';
                     row.style.background = 'rgba(36, 129, 204, 0.12)';
                 } else {
@@ -56,39 +56,43 @@ const pollClientScript = (initial: PollState) => {
             }
         }
 
-        const totalEl = document.getElementById('poll-total-votes');
-        if (totalEl) {
-            totalEl.textContent = `Всего голосов: ${state.votes.grammy + state.votes.telegraf + state.votes.aiogram}`;
+        const totalVotesElement = document.getElementById('poll-total-votes');
+        if (totalVotesElement) {
+            totalVotesElement.textContent = `Всего голосов: ${state.votes.grammy + state.votes.telegraf + state.votes.aiogram}`;
         }
     };
 
     const syncState = () => {
         try {
-            if (W?.chatData) {
-                const d = JSON.parse(W.chatData);
-                if (d && typeof d === 'object') updatePollUI(d);
+            if (widget?.chatData) {
+                const parsedData = JSON.parse(widget.chatData);
+                if (parsedData && typeof parsedData === 'object') updatePollUI(parsedData);
             }
-        } catch {}
+        } catch {
+            // ignore JSON parse errors
+        }
     };
 
     syncState();
-    W?.onEvent?.('chatDataChanged', syncState);
+    widget?.onEvent?.('chatDataChanged', syncState);
 
     const registerVote = (choice: 'grammy' | 'telegraf' | 'aiogram') => {
         if (state.userVote === choice) return;
-        W?.HapticFeedback?.impactOccurred?.('medium');
+        widget?.HapticFeedback?.impactOccurred?.('medium');
         if (state.userVote) {
             state.votes[state.userVote] = Math.max(0, state.votes[state.userVote] - 1);
         }
         state.votes[choice]++;
         state.userVote = choice;
         updatePollUI(state);
-        W?.request?.(`vote:${choice}`).then((res: { result?: string }) => {
-            if (res?.result) {
+        widget?.request?.(`vote:${choice}`).then((response: { result?: string }) => {
+            if (response?.result) {
                 try {
-                    const d = JSON.parse(res.result);
-                    if (d && typeof d === 'object') updatePollUI(d);
-                } catch {}
+                    const parsedData = JSON.parse(response.result);
+                    if (parsedData && typeof parsedData === 'object') updatePollUI(parsedData);
+                } catch {
+                    // ignore JSON parse errors
+                }
             }
         });
     };

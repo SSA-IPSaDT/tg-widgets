@@ -24,12 +24,12 @@ import {
 } from '../../src';
 
 const tableClientScript = () => {
-    const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
-    const btn = document.getElementById('btn-download');
+    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const downloadButton = document.getElementById('btn-download');
 
-    btn?.addEventListener('click', () => {
-        W?.HapticFeedback?.notificationOccurred?.('success');
-        W?.request?.('downloadReceipt');
+    downloadButton?.addEventListener('click', () => {
+        widget?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.request?.('downloadReceipt');
     });
 };
 

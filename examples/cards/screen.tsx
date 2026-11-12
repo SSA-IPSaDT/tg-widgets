@@ -20,16 +20,16 @@ import {
 } from '../../src';
 
 const cardsClientScript = () => {
-    const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
 
     document.getElementById('btn-statement')?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('light');
-        W?.request?.('statement');
+        widget?.HapticFeedback?.impactOccurred?.('light');
+        widget?.request?.('statement');
     });
 
     document.getElementById('btn-topup')?.addEventListener('click', () => {
-        W?.HapticFeedback?.notificationOccurred?.('success');
-        W?.request?.('topup');
+        widget?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.request?.('topup');
     });
 };
 

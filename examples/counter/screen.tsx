@@ -20,51 +20,57 @@ export interface CounterState {
 }
 
 const clientCounterScript = (args: { count: number }) => {
-    const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
-    const btnInc = document.getElementById('btn-inc');
-    const btnDec = document.getElementById('btn-dec');
-    const valEl = document.getElementById('counter-val');
+    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const incrementButton = document.getElementById('btn-inc');
+    const decrementButton = document.getElementById('btn-dec');
+    const counterValueElement = document.getElementById('counter-val');
     let count = args.count;
 
-    const setCount = (val: number) => {
-        count = val;
-        if (valEl) valEl.textContent = String(count);
+    const setCount = (newCount: number) => {
+        count = newCount;
+        if (counterValueElement) counterValueElement.textContent = String(count);
     };
 
     const syncState = () => {
         try {
-            if (W?.chatData) {
-                const d = JSON.parse(W.chatData);
-                if (typeof d?.count === 'number') setCount(d.count);
+            if (widget?.chatData) {
+                const parsedData = JSON.parse(widget.chatData);
+                if (typeof parsedData?.count === 'number') setCount(parsedData.count);
             }
-        } catch {}
+        } catch {
+            // ignore JSON parse errors
+        }
     };
 
     syncState();
-    W?.onEvent?.('chatDataChanged', syncState);
+    widget?.onEvent?.('chatDataChanged', syncState);
 
-    btnInc?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('light');
+    incrementButton?.addEventListener('click', () => {
+        widget?.HapticFeedback?.impactOccurred?.('light');
         setCount(count + 1);
-        W?.request?.('inc').then((res: { result?: string }) => {
-            if (res?.result) {
+        widget?.request?.('inc').then((response: { result?: string }) => {
+            if (response?.result) {
                 try {
-                    const data = JSON.parse(res.result);
-                    if (typeof data?.count === 'number') setCount(data.count);
-                } catch {}
+                    const parsedData = JSON.parse(response.result);
+                    if (typeof parsedData?.count === 'number') setCount(parsedData.count);
+                } catch {
+                    // ignore JSON parse errors
+                }
             }
         });
     });
 
-    btnDec?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('light');
+    decrementButton?.addEventListener('click', () => {
+        widget?.HapticFeedback?.impactOccurred?.('light');
         setCount(count - 1);
-        W?.request?.('dec').then((res: { result?: string }) => {
-            if (res?.result) {
+        widget?.request?.('dec').then((response: { result?: string }) => {
+            if (response?.result) {
                 try {
-                    const data = JSON.parse(res.result);
-                    if (typeof data?.count === 'number') setCount(data.count);
-                } catch {}
+                    const parsedData = JSON.parse(response.result);
+                    if (typeof parsedData?.count === 'number') setCount(parsedData.count);
+                } catch {
+                    // ignore JSON parse errors
+                }
             }
         });
     });

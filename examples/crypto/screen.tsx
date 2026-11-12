@@ -24,17 +24,17 @@ export interface CryptoState {
 }
 
 const cryptoClientScript = (initial: CryptoState) => {
-    const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
 
     document.getElementById('btn-send')?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('medium');
-        W?.request?.('sendTon');
+        widget?.HapticFeedback?.impactOccurred?.('medium');
+        widget?.request?.('sendTon');
     });
 
     document.getElementById('btn-receive')?.addEventListener('click', () => {
-        W?.HapticFeedback?.notificationOccurred?.('success');
-        W?.copyText?.('EQB_TON_WALLET_DEMO_ADDRESS_2026');
-        W?.request?.('receiveTon');
+        widget?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.copyText?.('EQB_TON_WALLET_DEMO_ADDRESS_2026');
+        widget?.request?.('receiveTon');
     });
 };
 

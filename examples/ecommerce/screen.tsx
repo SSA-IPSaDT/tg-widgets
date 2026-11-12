@@ -24,84 +24,86 @@ export interface EcommerceState {
 }
 
 const ecommerceClientScript = (initial: EcommerceState) => {
-    const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
     let state = { ...initial };
     const toast = document.getElementById('ecom-toast');
 
     const updateEcomUI = () => {
         // Обновление размеров
-        const sizes = [41, 42, 43, 44];
-        for (const s of sizes) {
-            const el = document.getElementById(`size-${s}`);
-            if (el) {
-                if (state.size === s) {
-                    el.style.background = 'var(--tg-theme-button-color, #2481cc)';
-                    el.style.color = '#ffffff';
-                    el.style.borderColor = 'var(--tg-theme-button-color, #2481cc)';
+        const availableSizes = [41, 42, 43, 44];
+        for (const sizeNumber of availableSizes) {
+            const sizeButton = document.getElementById(`size-${sizeNumber}`);
+            if (sizeButton) {
+                if (state.size === sizeNumber) {
+                    sizeButton.style.background = 'var(--tg-theme-button-color, #2481cc)';
+                    sizeButton.style.color = '#ffffff';
+                    sizeButton.style.borderColor = 'var(--tg-theme-button-color, #2481cc)';
                 } else {
-                    el.style.background = 'transparent';
-                    el.style.color = 'var(--tg-theme-text-color, inherit)';
-                    el.style.borderColor = 'rgba(120, 120, 128, 0.24)';
+                    sizeButton.style.background = 'transparent';
+                    sizeButton.style.color = 'var(--tg-theme-text-color, inherit)';
+                    sizeButton.style.borderColor = 'rgba(120, 120, 128, 0.24)';
                 }
             }
         }
 
         // Обновление количества и суммы
-        const qtyEl = document.getElementById('ecom-qty');
-        const totalEl = document.getElementById('ecom-total');
-        if (qtyEl) qtyEl.textContent = String(state.quantity);
-        if (totalEl) {
-            totalEl.textContent = `$${(state.quantity * state.pricePerUnit).toFixed(2)}`;
+        const quantityElement = document.getElementById('ecom-qty');
+        const totalPriceElement = document.getElementById('ecom-total');
+        if (quantityElement) quantityElement.textContent = String(state.quantity);
+        if (totalPriceElement) {
+            totalPriceElement.textContent = `$${(state.quantity * state.pricePerUnit).toFixed(2)}`;
         }
     };
 
     const syncState = () => {
         try {
-            if (W?.chatData) {
-                const d = JSON.parse(W.chatData);
-                if (d && typeof d === 'object') {
-                    state = { ...state, ...d };
+            if (widget?.chatData) {
+                const parsedData = JSON.parse(widget.chatData);
+                if (parsedData && typeof parsedData === 'object') {
+                    state = { ...state, ...parsedData };
                     updateEcomUI();
                 }
             }
-        } catch {}
+        } catch {
+            // ignore JSON parse errors
+        }
     };
 
     syncState();
-    W?.onEvent?.('chatDataChanged', syncState);
+    widget?.onEvent?.('chatDataChanged', syncState);
 
     // Слушатели размеров
-    [41, 42, 43, 44].forEach((s) => {
-        document.getElementById(`size-${s}`)?.addEventListener('click', () => {
-            W?.HapticFeedback?.selectionChanged?.();
-            state.size = s;
+    [41, 42, 43, 44].forEach((sizeNumber) => {
+        document.getElementById(`size-${sizeNumber}`)?.addEventListener('click', () => {
+            widget?.HapticFeedback?.selectionChanged?.();
+            state.size = sizeNumber;
             updateEcomUI();
-            W?.request?.(`setSize:${s}`);
+            widget?.request?.(`setSize:${sizeNumber}`);
         });
     });
 
     // Слушатели количества
     document.getElementById('ecom-minus')?.addEventListener('click', () => {
         if (state.quantity > 1) {
-            W?.HapticFeedback?.impactOccurred?.('light');
+            widget?.HapticFeedback?.impactOccurred?.('light');
             state.quantity--;
             updateEcomUI();
-            W?.request?.('qtyMinus');
+            widget?.request?.('qtyMinus');
         }
     });
 
     document.getElementById('ecom-plus')?.addEventListener('click', () => {
         if (state.quantity < 5) {
-            W?.HapticFeedback?.impactOccurred?.('light');
+            widget?.HapticFeedback?.impactOccurred?.('light');
             state.quantity++;
             updateEcomUI();
-            W?.request?.('qtyPlus');
+            widget?.request?.('qtyPlus');
         }
     });
 
     // Слушатель оформления заказа
     document.getElementById('btn-checkout')?.addEventListener('click', () => {
-        W?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.HapticFeedback?.notificationOccurred?.('success');
         if (toast) {
             toast.textContent = `🎉 Заказ оформлен! Размер: ${state.size}, ${state.quantity} шт. на $${(state.quantity * state.pricePerUnit).toFixed(2)}`;
             toast.style.display = 'block';
@@ -109,7 +111,7 @@ const ecommerceClientScript = (initial: EcommerceState) => {
                 toast.style.display = 'none';
             }, 3500);
         }
-        W?.request?.('checkout');
+        widget?.request?.('checkout');
     });
 };
 

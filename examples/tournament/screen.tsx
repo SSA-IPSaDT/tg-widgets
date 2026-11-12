@@ -24,13 +24,13 @@ export interface TournamentState {
 }
 
 const tournamentClientScript = (initial: TournamentState) => {
-    const W = (window as unknown as { TelegramWidget?: any; open?: any }).TelegramWidget;
+    const widget = (window as unknown as { TelegramWidget?: any; open?: any }).TelegramWidget;
     let state = { ...initial };
     const toast = document.getElementById('tour-toast');
 
-    const showToast = (msg: string) => {
+    const showToast = (message: string) => {
         if (toast) {
-            toast.textContent = msg;
+            toast.textContent = message;
             toast.style.display = 'block';
             setTimeout(() => {
                 toast.style.display = 'none';
@@ -39,29 +39,31 @@ const tournamentClientScript = (initial: TournamentState) => {
     };
 
     const updateCounts = () => {
-        const statsEl = document.getElementById('tour-stats');
-        if (statsEl) {
-            statsEl.textContent = `Участников: ${state.participantsCount} • Волонтёров: ${state.volunteersCount}`;
+        const statsElement = document.getElementById('tour-stats');
+        if (statsElement) {
+            statsElement.textContent = `Участников: ${state.participantsCount} • Волонтёров: ${state.volunteersCount}`;
         }
     };
 
     const syncState = () => {
         try {
-            if (W?.chatData) {
-                const d = JSON.parse(W.chatData);
-                if (d && typeof d === 'object') {
-                    state = { ...state, ...d };
+            if (widget?.chatData) {
+                const parsedData = JSON.parse(widget.chatData);
+                if (parsedData && typeof parsedData === 'object') {
+                    state = { ...state, ...parsedData };
                     updateCounts();
                 }
             }
-        } catch {}
+        } catch {
+            // ignore JSON parse errors
+        }
     };
 
     syncState();
-    W?.onEvent?.('chatDataChanged', syncState);
+    widget?.onEvent?.('chatDataChanged', syncState);
 
     document.getElementById('btn-volunteer')?.addEventListener('click', () => {
-        W?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.HapticFeedback?.notificationOccurred?.('success');
         if (state.registeredRole !== 'volunteer') {
             if (state.registeredRole === 'participant') state.participantsCount--;
             state.registeredRole = 'volunteer';
@@ -72,21 +74,21 @@ const tournamentClientScript = (initial: TournamentState) => {
 
         // Открываем Telegram Mini App через нативный вызов
         try {
-            if (W?.openTelegramLink) {
-                W.openTelegramLink('https://t.me/bot/tournament?startapp=volunteer');
-            } else if (W?.openLink) {
-                W.openLink('https://t.me/bot/tournament?startapp=volunteer');
+            if (widget?.openTelegramLink) {
+                widget.openTelegramLink('https://t.me/bot/tournament?startapp=volunteer');
+            } else if (widget?.openLink) {
+                widget.openLink('https://t.me/bot/tournament?startapp=volunteer');
             } else {
                 window.location.href = 'tg://resolve?domain=bot&app=tournament&startapp=volunteer';
             }
         } catch {
             // fallback
         }
-        W?.request?.('registerVolunteer');
+        widget?.request?.('registerVolunteer');
     });
 
     document.getElementById('btn-participant')?.addEventListener('click', () => {
-        W?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.HapticFeedback?.notificationOccurred?.('success');
         if (state.registeredRole !== 'participant') {
             if (state.registeredRole === 'volunteer') state.volunteersCount--;
             state.registeredRole = 'participant';
@@ -97,17 +99,17 @@ const tournamentClientScript = (initial: TournamentState) => {
 
         // Открываем Telegram Mini App через нативный вызов
         try {
-            if (W?.openTelegramLink) {
-                W.openTelegramLink('https://t.me/bot/tournament?startapp=participant');
-            } else if (W?.openLink) {
-                W.openLink('https://t.me/bot/tournament?startapp=participant');
+            if (widget?.openTelegramLink) {
+                widget.openTelegramLink('https://t.me/bot/tournament?startapp=participant');
+            } else if (widget?.openLink) {
+                widget.openLink('https://t.me/bot/tournament?startapp=participant');
             } else {
                 window.location.href = 'tg://resolve?domain=bot&app=tournament&startapp=participant';
             }
         } catch {
             // fallback
         }
-        W?.request?.('registerParticipant');
+        widget?.request?.('registerParticipant');
     });
 };
 
