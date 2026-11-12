@@ -52,7 +52,7 @@ const cardsClientScript = () => {
 export const cardsScreen = defineWidgetScreen({
     id: 'cards',
     component: () => (
-        <WidgetLayout expand>
+        <WidgetLayout fullWidth padding="6px 8px">
             <Card fullWidth style={{ position: 'relative' }}>
                 <CardHeader>
                     <div

@@ -93,7 +93,7 @@ export const pollScreen = defineWidgetScreen({
         ];
 
         return (
-            <WidgetLayout expand>
+            <WidgetLayout fullWidth padding="6px 8px">
                 <Card fullWidth>
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

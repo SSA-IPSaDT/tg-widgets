@@ -108,7 +108,7 @@ export const ecommerceScreen = defineWidgetScreen({
         const total = (props.quantity * props.pricePerUnit).toFixed(2);
 
         return (
-            <WidgetLayout expand>
+            <WidgetLayout fullWidth padding="6px 8px">
                 <Card fullWidth style={{ position: 'relative' }}>
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

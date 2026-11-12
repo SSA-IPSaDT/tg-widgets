@@ -132,7 +132,7 @@ const controlsClientScript = (initial: ControlsState) => {
 export const controlsScreen = defineWidgetScreen({
     id: 'controls',
     component: (props: ControlsState) => (
-        <WidgetLayout expand>
+        <WidgetLayout fullWidth padding="6px 8px">
             <Card fullWidth>
                 <CardHeader>
                     <div

@@ -20,7 +20,7 @@ import {
 export const accordionScreen = defineWidgetScreen({
     id: 'accordion',
     component: () => (
-        <WidgetLayout expand>
+        <WidgetLayout fullWidth padding="6px 8px">
             <Card fullWidth>
                 <CardHeader>
                     <div

@@ -46,7 +46,7 @@ const tableClientScript = () => {
 export const tableScreen = defineWidgetScreen({
     id: 'table',
     component: () => (
-        <WidgetLayout expand>
+        <WidgetLayout fullWidth padding="6px 8px">
             <Card fullWidth style={{ position: 'relative' }}>
                 <CardHeader>
                     <div

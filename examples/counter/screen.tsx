@@ -50,7 +50,7 @@ const clientCounterScript = (args: { count: number }) => {
 export const counterScreen = defineWidgetScreen({
     id: 'counter',
     component: (props: CounterState) => (
-        <WidgetLayout expand>
+        <WidgetLayout fullWidth padding="6px 8px">
             <Card fullWidth>
                 <CardHeader>
                     <div

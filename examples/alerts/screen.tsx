@@ -11,7 +11,7 @@ import {
 export const alertsScreen = defineWidgetScreen({
     id: 'alerts',
     component: () => (
-        <WidgetLayout gap={8} fullWidth padding={0}>
+        <WidgetLayout gap={8} fullWidth padding="8px 10px">
             <Alert
                 variant="info"
                 title="Информация"
