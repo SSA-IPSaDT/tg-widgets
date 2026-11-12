@@ -30,17 +30,6 @@ export interface ProfileState {
 const profileClientScript = (initial: ProfileState) => {
     const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
     let state = { ...initial };
-    const toast = document.getElementById('profile-toast');
-
-    const showToast = (msg: string) => {
-        if (toast) {
-            toast.textContent = msg;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-    };
 
     const updateSwitch = (id: string, active: boolean) => {
         const sw = document.getElementById(id);
@@ -58,7 +47,6 @@ const profileClientScript = (initial: ProfileState) => {
         W?.HapticFeedback?.impactOccurred?.('light');
         state.notifications = !state.notifications;
         updateSwitch('profile-notify', state.notifications);
-        showToast(state.notifications ? '🔔 Уведомления включены' : '🔕 Уведомления выключены');
         W?.request?.('toggleProfileNotify');
     });
 
@@ -66,7 +54,6 @@ const profileClientScript = (initial: ProfileState) => {
         W?.HapticFeedback?.impactOccurred?.('light');
         state.privateMode = !state.privateMode;
         updateSwitch('profile-private', state.privateMode);
-        showToast(state.privateMode ? '🔒 Приватный режим активирован' : '🌐 Профиль публичный');
         W?.request?.('toggleProfilePrivate');
     });
 
@@ -74,13 +61,11 @@ const profileClientScript = (initial: ProfileState) => {
         W?.HapticFeedback?.impactOccurred?.('light');
         state.soundEffects = !state.soundEffects;
         updateSwitch('profile-sound', state.soundEffects);
-        showToast(state.soundEffects ? '🔊 Звуковые сигналы включены' : '🔇 Звуки отключены');
         W?.request?.('toggleProfileSound');
     });
 
     document.getElementById('btn-fallback')?.addEventListener('click', () => {
         W?.HapticFeedback?.notificationOccurred?.('warning');
-        showToast('↩️ Переключаем на текстовый режим...');
         W?.request?.('fallbackToText');
     });
 };
@@ -193,27 +178,6 @@ export const profileScreen = defineWidgetScreen({
                         Обычное представление
                     </Button>
                 </CardFooter>
-
-                {/* Всплывающее уведомление */}
-                <div
-                    id="profile-toast"
-                    style={{
-                        display: 'none',
-                        position: 'absolute',
-                        top: 10,
-                        left: 10,
-                        right: 10,
-                        background: 'var(--tg-theme-button-color, #2481cc)',
-                        color: '#ffffff',
-                        padding: '8px 12px',
-                        borderRadius: 10,
-                        fontSize: 12.5,
-                        fontWeight: 600,
-                        textAlign: 'center',
-                        zIndex: 10,
-                        boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-                    }}
-                />
             </Card>
             <Script fn={profileClientScript} args={[props]} />
         </WidgetLayout>
@@ -238,10 +202,37 @@ export const profileScreen = defineWidgetScreen({
             ctx.setState({ soundEffects: !ctx.state.soundEffects });
             return ctx.answer();
         },
-        fallbackToText: (ctx: WidgetActionContext<ProfileState>) => {
-            return ctx.answer({
-                text: 'Переключение на текстовый режим...',
-            });
+        fallbackToText: async (ctx: WidgetActionContext<ProfileState>) => {
+            if (ctx.chatId && ctx.messageId) {
+                try {
+                    await (ctx.rawApi as any).editMessageText?.({
+                        chat_id: ctx.chatId,
+                        message_id: ctx.messageId,
+                        text:
+                            `👤 *Профиль пользователя (текстовый режим)*\n\n` +
+                            `*Имя:* ${ctx.state.name}\n` +
+                            `*Юзернейм:* ${ctx.state.username}\n\n` +
+                            `🔔 *Уведомления:* ${ctx.state.notifications ? 'Включены' : 'Выключены'}\n` +
+                            `🔒 *Приватный режим:* ${ctx.state.privateMode ? 'Включен' : 'Выключен'}\n` +
+                            `🔊 *Звуковые эффекты:* ${ctx.state.soundEffects ? 'Включены' : 'Выключены'}\n\n` +
+                            `_Сообщение переведено в классический текстовый режим._`,
+                        parse_mode: 'Markdown',
+                        reply_markup: {
+                            inline_keyboard: [
+                                [
+                                    {
+                                        text: '📱 Вернуть интерактивный виджет',
+                                        callback_data: 'show_profile',
+                                    },
+                                ],
+                            ],
+                        },
+                    });
+                } catch {
+                    // ignore if already edited
+                }
+            }
+            return ctx.answer({ text: 'Переключено в обычный текстовый режим' });
         },
     },
 });

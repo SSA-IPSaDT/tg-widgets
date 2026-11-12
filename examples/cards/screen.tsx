@@ -21,27 +21,14 @@ import {
 
 const cardsClientScript = () => {
     const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
-    const toast = document.getElementById('cards-toast');
-
-    const showToast = (text: string) => {
-        if (toast) {
-            toast.textContent = text;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-    };
 
     document.getElementById('btn-statement')?.addEventListener('click', () => {
         W?.HapticFeedback?.impactOccurred?.('light');
-        showToast('📄 Выписка формируется...');
         W?.request?.('statement');
     });
 
     document.getElementById('btn-topup')?.addEventListener('click', () => {
         W?.HapticFeedback?.notificationOccurred?.('success');
-        showToast('💳 Открываем шлюз пополнения...');
         W?.request?.('topup');
     });
 };
@@ -195,27 +182,6 @@ export const cardsScreen = defineWidgetScreen({
                         </Button>
                     </div>
                 </CardFooter>
-
-                {/* Всплывающее уведомление внутри виджета */}
-                <div
-                    id="cards-toast"
-                    style={{
-                        display: 'none',
-                        position: 'absolute',
-                        top: 10,
-                        left: 10,
-                        right: 10,
-                        background: 'var(--tg-theme-button-color, #2481cc)',
-                        color: '#ffffff',
-                        padding: '10px 14px',
-                        borderRadius: 10,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        textAlign: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-                        zIndex: 10,
-                    }}
-                />
             </Card>
             <Script fn={cardsClientScript} />
         </WidgetLayout>
@@ -223,12 +189,16 @@ export const cardsScreen = defineWidgetScreen({
     initialState: () => ({}),
     actions: {
         statement: async (ctx: WidgetActionContext<Record<string, unknown>>) => {
-            await ctx.answer('STATEMENT_GENERATING');
-            return { ok: true };
+            return ctx.answer({
+                text: '📄 Выписка формируется...',
+                show_alert: false,
+            });
         },
         topup: async (ctx: WidgetActionContext<Record<string, unknown>>) => {
-            await ctx.answer('TOPUP_INITIATED');
-            return { ok: true };
+            return ctx.answer({
+                text: '💳 Открываем шлюз пополнения...',
+                show_alert: false,
+            });
         },
     },
 });

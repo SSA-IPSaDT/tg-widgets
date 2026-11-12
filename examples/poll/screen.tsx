@@ -123,10 +123,15 @@ export const pollScreen = defineWidgetScreen({
                                         style={{
                                             position: 'relative',
                                             overflow: 'hidden',
-                                            borderRadius: 10,
+                                            borderRadius: 'var(--tg-radius-md, 10px)',
                                             border: `1px solid ${isSelected ? 'var(--tg-theme-button-color, #2481cc)' : 'rgba(120, 120, 128, 0.16)'}`,
                                             background: isSelected ? 'rgba(36, 129, 204, 0.12)' : 'rgba(120, 120, 128, 0.06)',
-                                            padding: '8px 12px',
+                                            padding: '12px 14px',
+                                            minHeight: 46,
+                                            boxSizing: 'border-box',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            justifyContent: 'center',
                                             cursor: 'pointer',
                                             userSelect: 'none',
                                             transition: 'border-color 0.2s, background 0.2s',
@@ -142,7 +147,7 @@ export const pollScreen = defineWidgetScreen({
                                                 bottom: 0,
                                                 width: `${pct}%`,
                                                 background: 'rgba(36, 129, 204, 0.2)',
-                                                borderRadius: 9,
+                                                borderRadius: 'var(--tg-radius-md, 9px)',
                                                 transition: 'width 0.3s ease',
                                                 zIndex: 0,
                                             }}
@@ -156,14 +161,14 @@ export const pollScreen = defineWidgetScreen({
                                                 alignItems: 'center',
                                             }}
                                         >
-                                            <span style={{ fontSize: 13, fontWeight: 500 }}>
+                                            <span style={{ fontSize: 13.5, fontWeight: 500 }}>
                                                 {opt.label}
                                             </span>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                                <span class="poll-count" style={{ fontSize: 11, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
+                                                <span class="poll-count tg-description" style={{ fontSize: 12, fontWeight: 500, color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))', opacity: 0.85 }}>
                                                     {opt.count} гол.
                                                 </span>
-                                                <span class="poll-pct" style={{ fontSize: 13, fontWeight: 700, minWidth: 34, textAlign: 'right' }}>
+                                                <span class="poll-pct" style={{ fontSize: 13.5, fontWeight: 700, minWidth: 34, textAlign: 'right' }}>
                                                     {pct}%
                                                 </span>
                                             </div>
@@ -174,10 +179,10 @@ export const pollScreen = defineWidgetScreen({
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <span id="poll-total-votes" style={{ fontSize: 11, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
+                        <span id="poll-total-votes" class="tg-description" style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))', opacity: 0.85 }}>
                             Всего голосов: {props.votes.grammy + props.votes.telegraf + props.votes.aiogram}
                         </span>
-                        <span style={{ fontSize: 11, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
+                        <span class="tg-description" style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))', opacity: 0.85 }}>
                             Нажмите на вариант для выбора
                         </span>
                     </CardFooter>

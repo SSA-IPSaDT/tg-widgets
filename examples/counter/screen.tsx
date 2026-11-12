@@ -8,6 +8,8 @@ import {
     CardTitle,
     defineWidgetScreen,
     h,
+    LucideIcon,
+    LucideIcons,
     Script,
     WidgetActionContext,
     WidgetLayout,
@@ -61,7 +63,14 @@ export const counterScreen = defineWidgetScreen({
                         }}
                     >
                         <CardTitle>Живой счётчик</CardTitle>
-                        <Badge variant="default">Client IIFE</Badge>
+                        <Badge
+                            variant="accent"
+                            icon={LucideIcon({
+                                icon: LucideIcons.Zap,
+                                size: 15,
+                                color: 'var(--tg-theme-link-color, #2481cc)',
+                            })}
+                        />
                     </div>
                     <CardDescription>
                         Клиентский скрипт отправляет запросы серверу через

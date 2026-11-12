@@ -490,6 +490,21 @@ export const createTelegramWidgetsPlugin = <
             },
             answer: async (data?: unknown) => {
                 isAnswered = true;
+                if (data && typeof data === 'object' && 'text' in data) {
+                    const notifyText = String((data as { text: unknown }).text);
+                    const showAlert = Boolean(
+                        (data as { show_alert?: boolean }).show_alert,
+                    );
+                    try {
+                        await (rawApi as any).answerCallbackQuery?.({
+                            callback_query_id: query.id,
+                            text: notifyText,
+                            show_alert: showAlert,
+                        });
+                    } catch {
+                        // ignore if query is handled as raw widget_query
+                    }
+                }
                 const serialized =
                     data !== undefined
                         ? typeof data === 'string'

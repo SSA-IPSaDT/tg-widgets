@@ -26,16 +26,9 @@ import {
 const tableClientScript = () => {
     const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
     const btn = document.getElementById('btn-download');
-    const toast = document.getElementById('receipt-toast');
 
     btn?.addEventListener('click', () => {
         W?.HapticFeedback?.notificationOccurred?.('success');
-        if (toast) {
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3500);
-        }
         W?.request?.('downloadReceipt');
     });
 };
@@ -57,7 +50,14 @@ export const tableScreen = defineWidgetScreen({
                         }}
                     >
                         <CardTitle>Чек заказа #4096</CardTitle>
-                        <Badge variant="success">Оплачено</Badge>
+                        <Badge
+                            variant="success"
+                            icon={LucideIcon({
+                                icon: LucideIcons.Check,
+                                size: 15,
+                                color: '#10b981',
+                            })}
+                        />
                     </div>
                     <CardDescription>
                         Пример нативной таблицы с системными границами ячеек
@@ -90,7 +90,7 @@ export const tableScreen = defineWidgetScreen({
                             </TableRow>
                         </TableBody>
                         <TableFooter>
-                            <TableRow>
+                            <TableRow borderBottom={false}>
                                 <TableCell colspan={2}>Итого к оплате</TableCell>
                                 <TableCell align="right">24.00 $</TableCell>
                             </TableRow>
@@ -102,7 +102,7 @@ export const tableScreen = defineWidgetScreen({
                         id="btn-download"
                         variant="outline"
                         fullWidth
-                        size="sm"
+                        size="md"
                         icon={LucideIcon({
                             icon: LucideIcons.Download,
                             size: 14,
@@ -112,29 +112,6 @@ export const tableScreen = defineWidgetScreen({
                         Скачать квитанцию
                     </Button>
                 </CardFooter>
-
-                {/* Уведомление о скачивании прямо внутри виджета */}
-                <div
-                    id="receipt-toast"
-                    style={{
-                        display: 'none',
-                        position: 'absolute',
-                        top: 10,
-                        left: 10,
-                        right: 10,
-                        background: '#10b981',
-                        color: '#ffffff',
-                        padding: '10px 14px',
-                        borderRadius: 10,
-                        fontSize: 12,
-                        fontWeight: 600,
-                        textAlign: 'center',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.25)',
-                        zIndex: 10,
-                    }}
-                >
-                    🧾 Квитанция #4096 формируется и скачивается...
-                </div>
             </Card>
             <Script fn={tableClientScript} />
         </WidgetLayout>
@@ -142,8 +119,10 @@ export const tableScreen = defineWidgetScreen({
     initialState: () => ({}),
     actions: {
         downloadReceipt: async (ctx: WidgetActionContext<Record<string, unknown>>) => {
-            await ctx.answer('RECEIPT_DOWNLOAD_STARTED');
-            return { status: 'downloading', invoiceId: 4096 };
+            return ctx.answer({
+                text: '🧾 Квитанция #4096 успешно сформирована',
+                show_alert: false,
+            });
         },
     },
 });

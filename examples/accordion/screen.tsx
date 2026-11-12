@@ -67,10 +67,12 @@ export const accordionScreen = defineWidgetScreen({
                 </CardContent>
                 <CardFooter>
                     <span
+                        class="tg-description"
                         style={{
-                            fontSize: 11,
-                            color: 'var(--tg-theme-text-color, #111827)',
-                            opacity: 0.65,
+                            fontSize: 11.5,
+                            fontWeight: 500,
+                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
+                            opacity: 0.85,
                         }}
                     >
                         Нажмите на любой пункт, чтобы раскрыть

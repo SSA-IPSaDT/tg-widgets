@@ -119,16 +119,20 @@ export const CardTitle = ({
 export const CardDescription = ({
     children,
     style,
+    className = '',
 }: {
     children?: unknown;
     style?: Record<string, string | number | undefined | null>;
+    className?: string;
 }): string => (
     <div
+        class={`tg-description ${className}`.trim()}
         style={{
             fontSize: 12.5,
+            fontWeight: 500,
             color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
             opacity: 0.85,
-            lineHeight: 1.38,
+            lineHeight: 1.4,
             ...style,
         }}
     >

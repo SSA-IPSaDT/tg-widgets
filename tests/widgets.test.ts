@@ -23,6 +23,7 @@ import {
     createTelegramWidgetsPlugin,
     decodeWidgetAction,
     defineWidgetScreen,
+    DescriptionText,
     Divider,
     encodeWidgetAction,
     formatStyle,
@@ -580,5 +581,52 @@ describe('@ipsadt/tg-widgets', () => {
         expect(expandedLayout).toContain('width:100%');
         expect(expandedLayout).toContain('height:100%');
         expect(expandedLayout).toContain('flex:1');
+    });
+
+    test('WidgetLayout supports design token border radius system', () => {
+        const layoutWithPreset = WidgetLayout({
+            radius: 'lg',
+            children: 'Test',
+        });
+        expect(layoutWithPreset).toContain('--tg-radius-lg:18px');
+        expect(layoutWithPreset).toContain('--tg-radius-sm:10px');
+
+        const layoutWithNumeric = WidgetLayout({
+            radius: 20,
+            children: 'Test',
+        });
+        expect(layoutWithNumeric).toContain('--tg-radius-lg:20px');
+        expect(layoutWithNumeric).toContain('--tg-radius-sm:10px');
+        expect(layoutWithNumeric).toContain('--tg-radius-xs:5px');
+    });
+
+    test('Badge renders strictly square dimensions when icon is provided via JSX', () => {
+        const jsxBadge = h(Badge, {
+            variant: 'accent',
+            icon: LucideIcon({ icon: LucideIcons.HelpCircle, size: 15 }),
+        });
+        expect(jsxBadge).toContain('tg-badge-square');
+        expect(jsxBadge).toContain('width:26px');
+        expect(jsxBadge).toContain('height:26px');
+        expect(jsxBadge).toContain('aspect-ratio:1 / 1');
+        expect(jsxBadge).toContain('padding:0px');
+    });
+
+    test('Alert renders clean uniform border without borderLeft accent line', () => {
+        const alert = Alert({
+            variant: 'info',
+            title: 'Info Alert',
+            description: 'Uniform border',
+        });
+        expect(alert).not.toContain('border-left:4px');
+        expect(alert).toContain('border:1px solid');
+        expect(alert).toContain('font-weight:500');
+    });
+
+    test('DescriptionText renders unified typography with font-weight 500', () => {
+        const desc = DescriptionText({ children: 'Unified subtitle text' });
+        expect(desc).toContain('tg-description');
+        expect(desc).toContain('font-weight:500');
+        expect(desc).toContain('Unified subtitle text');
     });
 });

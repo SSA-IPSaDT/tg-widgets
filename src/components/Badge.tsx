@@ -3,15 +3,16 @@ import { h } from "../jsx";
 export interface BadgeProps {
     id?: string;
     variant?:
-        | "default"
-        | "accent"
-        | "destructive"
-        | "outline"
-        | "success"
-        | "warning";
-    size?: "sm" | "md";
+        | 'default'
+        | 'accent'
+        | 'destructive'
+        | 'outline'
+        | 'success'
+        | 'warning';
+    size?: 'sm' | 'md';
     dot?: boolean;
     pulse?: boolean;
+    square?: boolean;
     icon?: unknown;
     style?: Record<string, string | number | undefined | null>;
     className?: string;
@@ -20,25 +21,33 @@ export interface BadgeProps {
 
 export const Badge = ({
     id,
-    variant = "default",
-    size = "sm",
+    variant = 'default',
+    size = 'sm',
     dot = false,
     pulse = false,
+    square,
     icon,
     style,
-    className = "",
+    className = '',
     children,
 }: BadgeProps): string => {
-    const sizeClass = size === "md" ? "tg-badge-md" : "";
-    const isIconOnly = !children;
-    const squareDim = size === "md" ? 30 : 26;
+    const sizeClass = size === 'md' ? 'tg-badge-md' : '';
+    const hasChildren =
+        children !== undefined &&
+        children !== null &&
+        (Array.isArray(children)
+            ? children.length > 0
+            : String(children).trim().length > 0);
+    const isSquare = square ?? (Boolean(icon) && !hasChildren);
+    const squareDim = size === 'md' ? 30 : 26;
+    const squareClass = isSquare ? 'tg-badge-square' : '';
 
     return (
         <span
             id={id}
-            class={`tg-badge tg-badge-${variant} ${sizeClass} ${className}`.trim()}
+            class={`tg-badge tg-badge-${variant} ${sizeClass} ${squareClass} ${className}`.replace(/\s+/g, ' ').trim()}
             style={{
-                ...(isIconOnly
+                ...(isSquare
                     ? {
                           width: squareDim,
                           height: squareDim,
@@ -46,22 +55,23 @@ export const Badge = ({
                           minHeight: squareDim,
                           maxWidth: squareDim,
                           maxHeight: squareDim,
-                          aspectRatio: "1 / 1",
-                          padding: 2,
-                          borderRadius: 8,
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                          flex: `0 0 ${squareDim}px`,
+                          aspectRatio: '1 / 1',
+                          padding: 0,
+                          borderRadius: 'var(--tg-radius-sm, 8px)',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                           flexShrink: 0,
-                          boxSizing: "border-box",
+                          boxSizing: 'border-box',
                       }
                     : {
-                          minHeight: size === "md" ? 26 : 22,
-                          borderRadius: 7,
-                          padding: size === "md" ? "3px 8px" : "2px 7px",
-                          display: "inline-flex",
-                          alignItems: "center",
-                          justifyContent: "center",
+                          minHeight: size === 'md' ? 26 : 22,
+                          borderRadius: 'var(--tg-radius-sm, 7px)',
+                          padding: size === 'md' ? '3px 8px' : '2px 7px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
                       }),
                 ...style,
             }}

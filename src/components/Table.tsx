@@ -24,7 +24,7 @@ export const Table = ({
             style={{
                 width: '100%',
                 overflow: 'hidden',
-                borderRadius: 12,
+                borderRadius: 'var(--tg-radius-md, 12px)',
                 border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
             }}
         >
@@ -83,6 +83,7 @@ export const TableFooter = ({
     style?: Record<string, string | number | undefined | null>;
 }): string => (
     <tfoot
+        class="tg-table-footer"
         style={{
             borderTop:
                 '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
@@ -100,15 +101,21 @@ export const TableRow = ({
     children,
     style,
     interactive = false,
+    borderBottom = true,
 }: {
     children?: unknown;
     style?: Record<string, string | number | undefined | null>;
     interactive?: boolean;
+    borderBottom?: boolean;
 }): string => (
     <tr
         style={{
-            borderBottom:
-                '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.12))',
+            ...(borderBottom
+                ? {
+                      borderBottom:
+                          '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.12))',
+                  }
+                : {}),
             cursor: interactive ? 'pointer' : 'default',
             ...style,
         }}

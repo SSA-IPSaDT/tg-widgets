@@ -25,27 +25,15 @@ export interface CryptoState {
 
 const cryptoClientScript = (initial: CryptoState) => {
     const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
-    const toast = document.getElementById('crypto-toast');
-
-    const showToast = (msg: string) => {
-        if (toast) {
-            toast.textContent = msg;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000);
-        }
-    };
 
     document.getElementById('btn-send')?.addEventListener('click', () => {
         W?.HapticFeedback?.impactOccurred?.('medium');
-        showToast('🚀 Открываем отправку TON...');
         W?.request?.('sendTon');
     });
 
     document.getElementById('btn-receive')?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('light');
-        showToast('📥 Адрес кошелька скопирован!');
+        W?.HapticFeedback?.notificationOccurred?.('success');
+        W?.copyText?.('EQB_TON_WALLET_DEMO_ADDRESS_2026');
         W?.request?.('receiveTon');
     });
 };
@@ -152,27 +140,6 @@ export const cryptoScreen = defineWidgetScreen({
                             <span style={{ fontWeight: 600 }}>${props.rateUsd}</span>
                         </div>
                     </CardContent>
-
-                    {/* Всплывающее уведомление */}
-                    <div
-                        id="crypto-toast"
-                        style={{
-                            display: 'none',
-                            position: 'absolute',
-                            top: 10,
-                            left: 10,
-                            right: 10,
-                            background: 'var(--tg-theme-button-color, #2481cc)',
-                            color: '#ffffff',
-                            padding: '8px 12px',
-                            borderRadius: 10,
-                            fontSize: 12.5,
-                            fontWeight: 600,
-                            textAlign: 'center',
-                            zIndex: 10,
-                            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-                        }}
-                    />
                 </Card>
                 <Script fn={cryptoClientScript} args={[props]} />
             </WidgetLayout>

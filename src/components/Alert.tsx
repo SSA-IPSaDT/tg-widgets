@@ -32,7 +32,6 @@ export const Alert = ({
         default: {
             bg: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.12))',
             border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.20))',
-            borderLeft: '4px solid var(--tg-theme-subtitle-text-color, rgba(120, 120, 128, 0.6))',
             iconBg: 'rgba(120, 120, 128, 0.16)',
             iconColor: 'var(--tg-theme-text-color, inherit)',
             defaultIcon: null,
@@ -40,7 +39,6 @@ export const Alert = ({
         info: {
             bg: 'rgba(36, 129, 204, 0.10)',
             border: '1px solid rgba(36, 129, 204, 0.28)',
-            borderLeft: '4px solid var(--tg-theme-link-color, #2481cc)',
             iconBg: 'rgba(36, 129, 204, 0.18)',
             iconColor: 'var(--tg-theme-link-color, #2481cc)',
             defaultIcon: LucideIcon({
@@ -53,7 +51,6 @@ export const Alert = ({
         success: {
             bg: 'rgba(16, 185, 129, 0.10)',
             border: '1px solid rgba(16, 185, 129, 0.28)',
-            borderLeft: '4px solid #10b981',
             iconBg: 'rgba(16, 185, 129, 0.18)',
             iconColor: '#10b981',
             defaultIcon: LucideIcon({
@@ -66,7 +63,6 @@ export const Alert = ({
         warning: {
             bg: 'rgba(245, 158, 11, 0.10)',
             border: '1px solid rgba(245, 158, 11, 0.28)',
-            borderLeft: '4px solid #f59e0b',
             iconBg: 'rgba(245, 158, 11, 0.18)',
             iconColor: '#f59e0b',
             defaultIcon: LucideIcon({
@@ -79,7 +75,6 @@ export const Alert = ({
         destructive: {
             bg: 'rgba(239, 68, 68, 0.10)',
             border: '1px solid rgba(239, 68, 68, 0.28)',
-            borderLeft: '4px solid var(--tg-theme-destructive-text-color, #ef4444)',
             iconBg: 'rgba(239, 68, 68, 0.18)',
             iconColor: 'var(--tg-theme-destructive-text-color, #ef4444)',
             defaultIcon: LucideIcon({
@@ -102,10 +97,9 @@ export const Alert = ({
                 alignItems: 'flex-start',
                 gap: 12,
                 padding: '11px 14px',
-                borderRadius: 14,
+                borderRadius: 'var(--tg-radius-md, 14px)',
                 background: variantStyles.bg,
                 border: variantStyles.border,
-                borderLeft: variantStyles.borderLeft,
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
                 color: 'var(--tg-theme-text-color, inherit)',
                 width: '100%',
@@ -155,7 +149,7 @@ export const Alert = ({
                     <div
                         style={{
                             fontSize: 13,
-                            fontWeight: 400,
+                            fontWeight: 500,
                             color: 'var(--tg-theme-text-color, inherit)',
                             opacity: 0.90,
                             lineHeight: 1.4,

@@ -100,3 +100,34 @@ export const Typography = ({
 };
 
 export const Text = Typography;
+
+export interface DescriptionTextProps {
+    id?: string;
+    style?: Record<string, string | number | undefined | null>;
+    className?: string;
+    children?: unknown;
+    as?: 'div' | 'span' | 'p';
+}
+
+export const DescriptionText = ({
+    id,
+    style,
+    className = '',
+    children,
+    as: Tag = 'div',
+}: DescriptionTextProps): string => (
+    <Tag
+        id={id}
+        class={`tg-description ${className}`.trim()}
+        style={{
+            fontSize: 12.5,
+            fontWeight: 500,
+            lineHeight: 1.4,
+            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
+            opacity: 0.85,
+            ...style,
+        }}
+    >
+        {children}
+    </Tag>
+);

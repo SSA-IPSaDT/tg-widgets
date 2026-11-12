@@ -122,7 +122,15 @@ export const tournamentScreen = defineWidgetScreen({
                             })}
                         />
                     </div>
-                    <CardDescription>
+                    <CardDescription
+                        style={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            color: 'var(--tg-theme-text-color, #111827)',
+                            opacity: 0.90,
+                            lineHeight: 1.45,
+                        }}
+                    >
                         Приглашаем принять участие в весеннем шахматном турнире (Rapid 10+5).
                         Мы рады как активным игрокам, так и судьям-волонтёрам!
                     </CardDescription>

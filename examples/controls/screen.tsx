@@ -201,10 +201,12 @@ export const controlsScreen = defineWidgetScreen({
                                     Количество мест
                                 </div>
                                 <div
+                                    class="tg-description"
                                     style={{
                                         fontSize: 12,
-                                        color: 'var(--tg-theme-text-color, #111827)',
-                                        opacity: 0.65,
+                                        fontWeight: 500,
+                                        color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
+                                        opacity: 0.85,
                                     }}
                                 >
                                     Билеты на мероприятие

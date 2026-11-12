@@ -63,13 +63,24 @@ export const h = (
     ...children: unknown[]
 ): string => {
     if (typeof tag === 'function') {
-        const allChildren =
+        const rawChildren =
             children.length > 0
                 ? children
-                : props && 'children' in props
-                  ? [props.children]
+                : props && 'children' in props && props.children !== undefined
+                  ? Array.isArray(props.children)
+                      ? props.children
+                      : [props.children]
                   : [];
-        return tag({ ...(props ?? {}), children: allChildren });
+        const flatChildren = rawChildren
+            .flat(Infinity)
+            .filter((c) => c !== null && c !== undefined && c !== false && c !== '');
+        const componentProps = { ...(props ?? {}) };
+        if (flatChildren.length > 0) {
+            componentProps.children = flatChildren;
+        } else {
+            delete componentProps.children;
+        }
+        return tag(componentProps);
     }
 
     const attrs = props
