@@ -53,14 +53,16 @@ const tournamentClientScript = (initial: TournamentState) => {
             state.volunteersCount++;
             updateCounts();
         }
-        showToast('🤝 Заявка волонтёра принята! Открываем регистрацию...');
+        showToast('🤝 Заявка волонтёра принята! Запуск Telegram Mini App...');
 
-        // Открываем внешнюю Web App ссылку
+        // Открываем Telegram Mini App через нативный вызов
         try {
-            if (W?.openLink) {
-                W.openLink('https://google.com');
+            if (W?.openTelegramLink) {
+                W.openTelegramLink('https://t.me/bot/tournament?startapp=volunteer');
+            } else if (W?.openLink) {
+                W.openLink('https://t.me/bot/tournament?startapp=volunteer');
             } else {
-                window.open('https://google.com', '_blank');
+                window.location.href = 'tg://resolve?domain=bot&app=tournament&startapp=volunteer';
             }
         } catch {
             // fallback
@@ -76,14 +78,16 @@ const tournamentClientScript = (initial: TournamentState) => {
             state.participantsCount++;
             updateCounts();
         }
-        showToast('♟️ Заявка участника принята! Открываем регистрацию...');
+        showToast('♟️ Заявка участника принята! Запуск Telegram Mini App...');
 
-        // Открываем внешнюю Web App ссылку
+        // Открываем Telegram Mini App через нативный вызов
         try {
-            if (W?.openLink) {
-                W.openLink('https://google.com');
+            if (W?.openTelegramLink) {
+                W.openTelegramLink('https://t.me/bot/tournament?startapp=participant');
+            } else if (W?.openLink) {
+                W.openLink('https://t.me/bot/tournament?startapp=participant');
             } else {
-                window.open('https://google.com', '_blank');
+                window.location.href = 'tg://resolve?domain=bot&app=tournament&startapp=participant';
             }
         } catch {
             // fallback
@@ -113,7 +117,7 @@ export const tournamentScreen = defineWidgetScreen({
                             variant="warning"
                             icon={LucideIcon({
                                 icon: LucideIcons.Trophy,
-                                size: 13,
+                                size: 15,
                                 color: '#f59e0b',
                             })}
                         />

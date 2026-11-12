@@ -1,5 +1,4 @@
 import { h } from '../jsx';
-import { LucideIcon, LucideIcons } from './LucideIcon';
 
 export interface InputProps {
     id?: string;
@@ -126,7 +125,8 @@ export const Input = ({
                 <span
                     style={{
                         fontSize: 11,
-                        color: 'var(--tg-theme-hint-color, #888888)',
+                        color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, inherit))',
+                        opacity: 0.85,
                     }}
                 >
                     {hint}
@@ -138,134 +138,5 @@ export const Input = ({
 
 export const ActionInput = Input;
 
-export interface StepperProps {
-    id?: string;
-    value: number;
-    min?: number;
-    max?: number;
-    step?: number;
-    disabled?: boolean;
-    decrementAction?: string;
-    incrementAction?: string;
-    style?: Record<string, string | number | undefined | null>;
-    className?: string;
-    [key: `data-${string}`]: string | undefined;
-}
+export { Stepper, type StepperProps } from './Stepper';
 
-/**
- * Числовой степпер (Stepper / Counter Input) для виджетов Telegram.
- * Предоставляет кнопки «-» и «+» для инкремента и декремента числовых значений без клавиатуры.
- */
-export const Stepper = ({
-    id,
-    value,
-    min,
-    max,
-    decrementAction = 'decrement',
-    incrementAction = 'increment',
-    disabled = false,
-    style,
-    className = '',
-    ...dataAttrs
-}: StepperProps): string => {
-    const isMin = min !== undefined && value <= min;
-    const isMax = max !== undefined && value >= max;
-
-    return (
-        <div
-            id={id}
-            class={`tg-stepper ${className}`.trim()}
-            style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                background:
-                    'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.14))',
-                borderRadius: 20,
-                padding: 3,
-                gap: 2,
-                ...style,
-            }}
-            {...dataAttrs}
-        >
-            <button
-                type="button"
-                data-action={decrementAction}
-                disabled={disabled || isMin}
-                class="tg-stepper-btn"
-                style={{
-                    width: 26,
-                    height: 26,
-                    padding: 0,
-                    margin: 0,
-                    boxSizing: 'border-box',
-                    flexShrink: 0,
-                    border: 'none',
-                    borderRadius: '50%',
-                    background:
-                        'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
-                    color: 'var(--tg-theme-text-color, inherit)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    lineHeight: 0,
-                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-                    cursor: disabled || isMin ? 'default' : 'pointer',
-                    opacity: disabled || isMin ? 0.35 : 1,
-                    touchAction: 'manipulation',
-                }}
-            >
-                {LucideIcon({
-                    icon: LucideIcons.Minus,
-                    size: 13,
-                    strokeWidth: 2.2,
-                    style: { display: 'block', margin: 'auto' },
-                })}
-            </button>
-            <span
-                style={{
-                    minWidth: 28,
-                    textAlign: 'center',
-                    fontWeight: 600,
-                    fontSize: 13.5,
-                    color: 'var(--tg-theme-text-color, inherit)',
-                }}
-            >
-                {value}
-            </span>
-            <button
-                type="button"
-                data-action={incrementAction}
-                disabled={disabled || isMax}
-                class="tg-stepper-btn"
-                style={{
-                    width: 26,
-                    height: 26,
-                    padding: 0,
-                    margin: 0,
-                    boxSizing: 'border-box',
-                    flexShrink: 0,
-                    border: 'none',
-                    borderRadius: '50%',
-                    background:
-                        'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
-                    color: 'var(--tg-theme-text-color, inherit)',
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    lineHeight: 0,
-                    boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
-                    cursor: disabled || isMax ? 'default' : 'pointer',
-                    opacity: disabled || isMax ? 0.35 : 1,
-                    touchAction: 'manipulation',
-                }}
-            >
-                {LucideIcon({
-                    icon: LucideIcons.Plus,
-                    size: 13,
-                    strokeWidth: 2.2,
-                    style: { display: 'block', margin: 'auto' },
-                })}
-            </button>
-        </div>
-    );
-};

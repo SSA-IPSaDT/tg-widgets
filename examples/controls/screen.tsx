@@ -149,7 +149,7 @@ export const controlsScreen = defineWidgetScreen({
                             variant="accent"
                             icon={LucideIcon({
                                 icon: LucideIcons.Sliders,
-                                size: 13,
+                                size: 15,
                                 color: 'var(--tg-theme-link-color, #2481cc)',
                             })}
                         />

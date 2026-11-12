@@ -67,7 +67,7 @@ export const cardsScreen = defineWidgetScreen({
                             variant="accent"
                             icon={LucideIcon({
                                 icon: LucideIcons.Crown,
-                                size: 13,
+                                size: 15,
                                 color: '#f59e0b',
                             })}
                         />

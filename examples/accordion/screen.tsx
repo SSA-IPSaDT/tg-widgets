@@ -37,7 +37,7 @@ export const accordionScreen = defineWidgetScreen({
                             variant="accent"
                             icon={LucideIcon({
                                 icon: LucideIcons.HelpCircle,
-                                size: 13,
+                                size: 15,
                                 color: 'var(--tg-theme-link-color, #2481cc)',
                             })}
                         />

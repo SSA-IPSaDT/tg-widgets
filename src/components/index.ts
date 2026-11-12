@@ -20,3 +20,4 @@ export * from './Table';
 export * from './Typography';
 export * from './WidgetLayout';
 export * from './LucideIcon';
+export * from './Stepper';

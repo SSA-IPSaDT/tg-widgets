@@ -31,6 +31,7 @@ export const Badge = ({
 }: BadgeProps): string => {
     const sizeClass = size === 'md' ? 'tg-badge-md' : '';
     const isIconOnly = !children;
+    const squareDim = size === 'md' ? 30 : 26;
 
     return (
         <span
@@ -39,14 +40,29 @@ export const Badge = ({
             style={{
                 ...(isIconOnly
                     ? {
-                          padding: '3px 5px',
-                          gap: 3,
-                          borderRadius: 7,
+                          width: squareDim,
+                          height: squareDim,
+                          minWidth: squareDim,
+                          minHeight: squareDim,
+                          maxWidth: squareDim,
+                          maxHeight: squareDim,
+                          aspectRatio: '1 / 1',
+                          padding: 0,
+                          borderRadius: 8,
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          flexShrink: 0,
+                          boxSizing: 'border-box',
                       }
-                    : {}),
+                    : {
+                          minHeight: size === 'md' ? 26 : 22,
+                          borderRadius: 7,
+                          padding: size === 'md' ? '3px 8px' : '2px 7px',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                      }),
                 ...style,
             }}
         >

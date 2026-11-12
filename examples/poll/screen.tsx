@@ -103,7 +103,7 @@ export const pollScreen = defineWidgetScreen({
                                 pulse
                                 icon={LucideIcon({
                                     icon: LucideIcons.Flame,
-                                    size: 13,
+                                    size: 15,
                                     color: 'var(--tg-theme-link-color, #2481cc)',
                                 })}
                             />

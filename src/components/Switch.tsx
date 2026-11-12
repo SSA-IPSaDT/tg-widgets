@@ -71,7 +71,8 @@ export const Switch = ({
                         <span
                             style={{
                                 fontSize: 12,
-                                color: 'var(--tg-theme-hint-color, #888888)',
+                                color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, inherit))',
+                                opacity: 0.85,
                             }}
                         >
                             {description}

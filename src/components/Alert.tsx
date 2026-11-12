@@ -99,7 +99,7 @@ export const Alert = ({
             class={`tg-alert tg-alert-${variant} ${className}`.trim()}
             style={{
                 display: 'flex',
-                alignItems: 'center',
+                alignItems: 'flex-start',
                 gap: 12,
                 padding: '11px 14px',
                 borderRadius: 14,
@@ -125,6 +125,7 @@ export const Alert = ({
                         alignItems: 'center',
                         justifyContent: 'center',
                         flexShrink: 0,
+                        marginTop: 1,
                     }}
                 >
                     {currentIcon}

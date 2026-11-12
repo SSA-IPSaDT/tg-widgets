@@ -15,8 +15,17 @@ export const DEFAULT_MINIFY_OPTIONS: HtmlMinifierOptions = {
     removeScriptTypeAttributes: true,
     removeStyleLinkTypeAttributes: true,
     useShortDoctype: true,
-    minifyCSS: true,
-    minifyJS: true,
+    minifyCSS: {
+        level: 2,
+    },
+    minifyJS: {
+        mangle: {
+            toplevel: true,
+        },
+        compress: {
+            passes: 2,
+        },
+    },
     sortAttributes: true,
     sortClassName: true,
     collapseBooleanAttributes: true,

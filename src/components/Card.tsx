@@ -127,7 +127,7 @@ export const CardDescription = ({
         style={{
             fontSize: 12.5,
             color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
-            opacity: 0.72,
+            opacity: 0.85,
             lineHeight: 1.38,
             ...style,
         }}
