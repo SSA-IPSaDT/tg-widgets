@@ -14,8 +14,11 @@ export interface RadioProps {
 }
 
 /**
- * Радио-кнопка для Telegram Widgets (QuickJS Profile 1).
- * Генерирует ультралегкий HTML без неиспользуемых ARIA-атрибутов.
+ * Interactive Radio button control for Telegram Widgets (QuickJS Profile 1 compliant).
+ * Renders lightweight vector SVG circles without prohibited `<input>` tags.
+ *
+ * @example
+ * <Radio id="plan-pro" value="pro" checked={true} label="Pro Plan" description="Full access" />
  */
 export const Radio = ({
     id,

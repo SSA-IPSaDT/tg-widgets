@@ -13,8 +13,13 @@ export interface AccordionItemProps {
 }
 
 /**
- * Элемент аккордеона на базе нативного <details> и <summary>.
- * Поддерживается Profile 1 Telegram нативно, работает без дополнительного JS-кода.
+ * Accordion item based on native HTML `<details>` and `<summary>` elements.
+ * Fully compliant with Telegram QuickJS Profile 1; toggles natively without JavaScript.
+ *
+ * @example
+ * <AccordionItem title="FAQ Question" open={true}>
+ *   Detailed answer text here.
+ * </AccordionItem>
  */
 export const AccordionItem = ({
     id,
@@ -62,7 +67,7 @@ export const AccordionItem = ({
                         display: 'inline-flex',
                         alignItems: 'center',
                         color: 'var(--tg-theme-hint-color, #888888)',
-                        transition: 'transform 0.2s ease',
+                        transition: 'transform 0.12s cubic-bezier(0.2, 0, 0, 1)',
                     }}
                 >
                     {ChevronRightIcon({ size: 16 })}
@@ -90,6 +95,15 @@ export interface AccordionProps {
     className?: string;
 }
 
+/**
+ * Accordion container for grouping expandable `<details>` sections.
+ *
+ * @example
+ * <Accordion>
+ *   <AccordionItem title="Section 1">Content 1</AccordionItem>
+ *   <AccordionItem title="Section 2">Content 2</AccordionItem>
+ * </Accordion>
+ */
 export const Accordion = ({
     id,
     children,

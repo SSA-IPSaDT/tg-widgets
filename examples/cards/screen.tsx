@@ -34,7 +34,16 @@ const cardsClientScript = () => {
 };
 
 /**
- * Экран составных карточек shadcn/ui с метриками, прогрессом и быстрыми действиями
+ * State contract for the cards widget.
+ */
+export type CardsState = Record<string, never>;
+
+/**
+ * Metric cards screen featuring balance summaries, progress bars, and quick actions.
+ * Demonstrates shadcn/ui compound card architecture inside Telegram bubbles.
+ *
+ * @example
+ * await ctx.widgets.reply('cards', { props: {} });
  */
 export const cardsScreen = defineWidgetScreen({
     id: 'cards',
@@ -49,7 +58,7 @@ export const cardsScreen = defineWidgetScreen({
                             alignItems: 'center',
                         }}
                     >
-                        <CardTitle>Аналитика баланса</CardTitle>
+                        <CardTitle>Balance Analytics</CardTitle>
                         <Badge
                             variant="accent"
                             icon={LucideIcon({
@@ -60,7 +69,7 @@ export const cardsScreen = defineWidgetScreen({
                         />
                     </div>
                     <CardDescription>
-                        Сводка за последние 30 дней активности
+                        Summary of activity over the last 30 days
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -94,7 +103,7 @@ export const cardsScreen = defineWidgetScreen({
                             opacity: 0.65,
                         }}
                     >
-                        <span>Лимит запросов</span>
+                        <span>Request Limit</span>
                         <span>7,200 / 10,000</span>
                     </div>
 
@@ -121,7 +130,7 @@ export const cardsScreen = defineWidgetScreen({
                                     opacity: 0.65,
                                 }}
                             >
-                                Транзакций
+                                Transactions
                             </div>
                             <div style={{ fontSize: 16, fontWeight: 700 }}>
                                 142
@@ -141,7 +150,7 @@ export const cardsScreen = defineWidgetScreen({
                                     opacity: 0.65,
                                 }}
                             >
-                                Конверсия
+                                Conversion
                             </div>
                             <div style={{ fontSize: 16, fontWeight: 700 }}>
                                 98.4%
@@ -164,7 +173,7 @@ export const cardsScreen = defineWidgetScreen({
                             fullWidth
                             size="md"
                         >
-                            Выписка
+                            Statement
                         </Button>
                         <Button
                             id="btn-topup"
@@ -178,7 +187,7 @@ export const cardsScreen = defineWidgetScreen({
                                 style: { marginRight: 4 },
                             })}
                         >
-                            Пополнить
+                            Add Funds
                         </Button>
                     </div>
                 </CardFooter>
@@ -190,13 +199,13 @@ export const cardsScreen = defineWidgetScreen({
     actions: {
         statement: async (ctx: WidgetActionContext<Record<string, unknown>>) => {
             return ctx.answer({
-                text: '📄 Выписка формируется...',
+                text: '📄 Generating account statement...',
                 show_alert: false,
             });
         },
         topup: async (ctx: WidgetActionContext<Record<string, unknown>>) => {
             return ctx.answer({
-                text: '💳 Открываем шлюз пополнения...',
+                text: '💳 Opening payment gateway...',
                 show_alert: false,
             });
         },

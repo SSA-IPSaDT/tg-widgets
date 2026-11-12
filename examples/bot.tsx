@@ -4,37 +4,16 @@ import {
     inspectWidgetSizeAsync,
     type WidgetsFlavor,
 } from '../src';
-
-import { accordionScreen } from './accordion/screen';
-import { alertsScreen } from './alerts/screen';
-import { cardsScreen } from './cards/screen';
-import { controlsScreen } from './controls/screen';
-import { counterScreen } from './counter/screen';
-import { cryptoScreen } from './crypto/screen';
-import { ecommerceScreen } from './ecommerce/screen';
-import { pollScreen } from './poll/screen';
-import { profileScreen } from './profile/screen';
-import { tableScreen } from './table/screen';
-import { tournamentScreen } from './tournament/screen';
-
-// Реестр поддерживаемых экранов
-const screens = {
-    accordion: accordionScreen,
-    controls: controlsScreen,
-    table: tableScreen,
-    alerts: alertsScreen,
-    cards: cardsScreen,
-    counter: counterScreen,
-    poll: pollScreen,
-    ecommerce: ecommerceScreen,
-    profile: profileScreen,
-    tournament: tournamentScreen,
-    crypto: cryptoScreen,
-};
+import {
+    cryptoScreen,
+    profileScreen,
+    screens,
+    tournamentScreen,
+} from './index';
 
 type BotContext = Context & WidgetsFlavor<typeof screens>;
 
-// Конфигурация окружения
+// Environment configuration
 const token = process.env.BOT_TOKEN;
 const isTestEnv =
     process.env.TELEGRAM_TEST_ENV === 'true' ||
@@ -42,15 +21,15 @@ const isTestEnv =
 const apiRoot = process.env.BOT_API_ROOT;
 
 if (!token) {
-    console.error('❌ Пожалуйста, укажите переменную окружения BOT_TOKEN в файле .env или CLI!');
-    console.error('Пример запуска:');
+    console.error('❌ Please specify BOT_TOKEN in your environment variables or .env file!');
+    console.error('Run example:');
     console.error('  BOT_TOKEN=123456:ABC-DEF bun run examples/bot.tsx');
-    console.error('Для тестирования на тестовом сервере Telegram (Test DC):');
+    console.error('To test on the Telegram Test DC:');
     console.error('  TELEGRAM_TEST_ENV=true BOT_TOKEN=... bun run examples/bot.tsx');
     process.exit(1);
 }
 
-// Инициализация Telegram-бота с поддержкой Test DC
+// Initialize Telegram bot with optional Test DC support
 const bot = new Bot<BotContext>(token, {
     client: {
         environment: isTestEnv ? 'test' : 'prod',
@@ -58,13 +37,13 @@ const bot = new Bot<BotContext>(token, {
     },
 });
 
-// Подключение плагина интерактивных виджетов
+// Register Telegram widgets plugin
 const widgets = createTelegramWidgetsPlugin({ screens });
 bot.use(widgets.middleware);
 
 /**
- * Формирует техническую сводку по размеру сжатого виджета относительно лимита 4096 байт
- * с использованием промышленного минификатора html-minifier-terser
+ * Generates technical caption detailing widget size against the 4096-byte limit
+ * using the industrial html-minifier-terser compressor.
  */
 const getWidgetCaption = async (
     screenId: keyof typeof screens,
@@ -77,37 +56,37 @@ const getWidgetCaption = async (
     const free = report.maxAllowed - report.compressedByteLength;
 
     return (
-        `📊 *Размер виджета:* ${report.compressedByteLength} / ${report.maxAllowed} Б (${pct}%) | Свободно: ${free} Б\n` +
-        `📄 *Исходный HTML:* ${report.byteLength} Б`
+        `📊 *Widget Size:* ${report.compressedByteLength} / ${report.maxAllowed} B (${pct}%) | Free: ${free} B\n` +
+        `📄 *Raw HTML:* ${report.byteLength} B`
     );
 };
 
-// Команда /start
+// Command: /start
 bot.command('start', async (ctx) => {
     const keyboard = new InlineKeyboard()
-        .text('📖 Аккордеон (details)', 'show_accordion')
-        .text('🎛️ Контролы (switch/chk)', 'show_controls')
+        .text('📖 Accordion (details)', 'show_accordion')
+        .text('🎛️ Form Controls', 'show_controls')
         .row()
-        .text('👤 Профиль и fallback', 'show_profile')
-        .text('♟️ Шахматный турнир', 'show_tournament')
+        .text('👤 Profile & Fallback', 'show_profile')
+        .text('♟️ Chess Tournament', 'show_tournament')
         .row()
-        .text('💎 TON Кошелёк', 'show_crypto')
-        .text('🛍️ Корзина товаров', 'show_ecommerce')
+        .text('💎 TON Wallet', 'show_crypto')
+        .text('🛍️ E-Commerce Cart', 'show_ecommerce')
         .row()
-        .text('🔔 Алерты (Lucide)', 'show_alerts')
-        .text('💳 Карточки и метрики', 'show_cards')
+        .text('🔔 Alerts & Badges', 'show_alerts')
+        .text('💳 Cards & Metrics', 'show_cards')
         .row()
-        .text('🗳️ Живой опрос', 'show_poll')
-        .text('📊 Таблица чека', 'show_table')
+        .text('🗳️ Live Poll', 'show_poll')
+        .text('📊 Data Table', 'show_table')
         .row()
-        .text('🔢 Живой счётчик', 'show_counter');
+        .text('🔢 Interactive Counter', 'show_counter');
 
     const envInfo = isTestEnv ? ' 🧪 *(Telegram Test DC)*' : '';
 
     await ctx.reply(
-        `👋 *Демонстрация @ipsadt/tg-widgets (Bot API 10.4)*${envInfo}\n\n` +
-            'Выберите интересующий компонент для тестирования в Telegram.\n' +
-            'Каждое сообщение подписано точной технической сводкой занимаемого объема в байтах.',
+        `👋 *@ipsadt/tg-widgets Showcase (Bot API 10.4)*${envInfo}\n\n` +
+            'Select a component below to test interactive Telegram Widgets.\n' +
+            'Each message includes precise byte-level compression diagnostics.',
         {
             parse_mode: 'Markdown',
             reply_markup: keyboard,
@@ -115,7 +94,7 @@ bot.command('start', async (ctx) => {
     );
 });
 
-// Команды для прямого вызова каждого экрана с технической сводкой в caption
+// Commands for direct screen dispatch with compression metrics in caption
 bot.command('accordion', async (ctx) => {
     const props = {};
     await ctx.widgets.reply('accordion', {
@@ -212,7 +191,7 @@ bot.command(['crypto', 'wallet'], async (ctx) => {
     });
 });
 
-// Обработка нажатий инлайн-кнопок меню
+// Inline keyboard callback query handlers
 bot.callbackQuery('show_accordion', async (ctx) => {
     await ctx.answerCallbackQuery();
     const props = {};
@@ -320,8 +299,8 @@ bot.callbackQuery('show_ecommerce', async (ctx) => {
     });
 });
 
-console.log('🚀 Бот с интерактивными виджетами успешно инициализирован!');
-console.log(`🌐 Окружение Telegram: ${isTestEnv ? '🧪 TEST SERVER (Test DC)' : '🟢 PRODUCTION'}`);
+console.log('🚀 Telegram Widgets Bot successfully initialized!');
+console.log(`🌐 Telegram Environment: ${isTestEnv ? '🧪 TEST SERVER (Test DC)' : '🟢 PRODUCTION'}`);
 if (apiRoot) {
     console.log(`🔗 API Root: ${apiRoot}`);
 }

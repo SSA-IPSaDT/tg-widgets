@@ -5,7 +5,7 @@ import {
 
 export interface WidgetMinifyOptions extends HtmlMinifierOptions {
     /**
-     * Включает автоматическое удаление неиспользуемых CSS-правил из <style> (по умолчанию true)
+     * Enables automatic purging of unused CSS rules from `<style>` tags (default: true).
      */
     purgeCss?: boolean;
 }
@@ -13,11 +13,14 @@ export interface WidgetMinifyOptions extends HtmlMinifierOptions {
 export type { HtmlMinifierOptions };
 
 /**
- * Удаляет неиспользуемые селекторы и правила из тегов <style> на основе фактической разметки документа.
- * Существенно снижает объем CSS в баббле без ущерба для рендера.
+ * Removes unused CSS selectors and rules from `<style>` tags based on the actual HTML markup.
+ * Significantly reduces widget CSS payload size to stay safely under the 4096-byte deflate limit.
+ *
+ * @param html Complete HTML document string.
+ * @returns HTML string with pruned CSS.
  */
 export const purgeUnusedCss = (html: string): string => {
-    // Получаем тело документа без тегов <style> и <script> для точного сопоставления
+    // Extract document body without <style> and <script> tags for exact matching
     const bodyContent = html
         .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
         .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
@@ -25,7 +28,7 @@ export const purgeUnusedCss = (html: string): string => {
     return html.replace(
         /<style([^>]*)>([\s\S]*?)<\/style>/gi,
         (_, attrs, css) => {
-            // Разделяем CSS на правила
+            // Split CSS into top-level rules
             const rules: string[] = [];
             let depth = 0;
             let current = '';
@@ -48,7 +51,7 @@ export const purgeUnusedCss = (html: string): string => {
                 const selectorPart = rule.split('{')[0].trim();
                 if (!selectorPart) return false;
 
-                // Всегда сохраняем глобальные сбросы, переменные :root, body, html, *
+                // Always preserve global resets, :root tokens, body, html, and root widget classes
                 if (
                     selectorPart.startsWith(':root') ||
                     selectorPart.startsWith('html') ||
@@ -59,7 +62,7 @@ export const purgeUnusedCss = (html: string): string => {
                     return true;
                 }
 
-                // Анимации
+                // Animation keyframes
                 if (selectorPart.startsWith('@keyframes tg-pulse')) {
                     return bodyContent.includes('tg-badge-pulse');
                 }
@@ -67,7 +70,7 @@ export const purgeUnusedCss = (html: string): string => {
                     return true;
                 }
 
-                // Теговые селекторы
+                // Tag-based selectors
                 if (selectorPart.startsWith('details')) {
                     return (
                         bodyContent.includes('<details') ||
@@ -87,7 +90,7 @@ export const purgeUnusedCss = (html: string): string => {
                     );
                 }
 
-                // Селекторы классов
+                // Class selectors
                 const classMatches = selectorPart.match(/\.([a-zA-Z0-9_-]+)/g);
                 if (classMatches && classMatches.length > 0) {
                     return classMatches.some((cls) => {
@@ -109,7 +112,7 @@ export const purgeUnusedCss = (html: string): string => {
 };
 
 /**
- * Оптимальная конфигурация агрессивной минификации HTML, CSS и JS для Telegram Bot API 10.4
+ * Optimal default minification settings for Telegram Bot API 10.4 widgets.
  */
 export const DEFAULT_MINIFY_OPTIONS: WidgetMinifyOptions = {
     collapseWhitespace: true,
@@ -136,9 +139,12 @@ export const DEFAULT_MINIFY_OPTIONS: WidgetMinifyOptions = {
 };
 
 /**
- * Асинхронная минификация HTML, встроенных стилей (CSS) и скриптов (JS)
- * с помощью официальной промышленной библиотеки `html-minifier-terser` (CleanCSS + Terser)
- * и автоматической очистки неиспользуемого CSS (CSS Purge).
+ * Asynchronously minifies HTML markup, embedded CSS, and client JavaScript using
+ * `html-minifier-terser` (CleanCSS + Terser) and automated CSS purging.
+ *
+ * @param html Raw HTML markup.
+ * @param options Minification options.
+ * @returns Fully minified HTML string.
  */
 export const minifyHtml = async (
     html: string,
@@ -154,7 +160,11 @@ export const minifyHtml = async (
 };
 
 /**
- * Быстрая синхронная минификация (схлопывание пробелов, удаление комментариев и очистка неиспользуемого CSS)
+ * Fast synchronous HTML minifier (collapses whitespace, removes comments, and purges unused CSS).
+ *
+ * @param html Raw HTML markup.
+ * @param options Minification options.
+ * @returns Synchronously compressed HTML string.
  */
 export const minifyHtmlSync = (
     html: string,

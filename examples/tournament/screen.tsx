@@ -16,12 +16,18 @@ import {
     WidgetLayout,
 } from '../../src';
 
+/**
+ * State contract for the tournament registration widget.
+ */
 export interface TournamentState {
     registeredRole?: 'volunteer' | 'participant';
     participantsCount: number;
     volunteersCount: number;
 }
 
+/**
+ * Client-side script handling role selection, count updates, and Mini App navigation.
+ */
 const tournamentClientScript = (initial: TournamentState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
@@ -40,7 +46,7 @@ const tournamentClientScript = (initial: TournamentState) => {
     const updateCounts = () => {
         const statsElement = document.getElementById('tour-stats');
         if (statsElement) {
-            statsElement.textContent = `Участников: ${state.participantsCount} • Волонтёров: ${state.volunteersCount}`;
+            statsElement.textContent = `Participants: ${state.participantsCount} • Volunteers: ${state.volunteersCount}`;
         }
     };
 
@@ -69,9 +75,9 @@ const tournamentClientScript = (initial: TournamentState) => {
             state.volunteersCount++;
             updateCounts();
         }
-        showToast('🤝 Заявка волонтёра принята! Запуск Telegram Mini App...');
+        showToast('🤝 Volunteer application received! Launching Telegram Mini App...');
 
-        // Открываем Telegram Mini App через нативный вызов
+        // Launch Telegram Mini App via native widget bridge
         try {
             if (widget?.openTelegramLink) {
                 widget.openTelegramLink('https://t.me/bot/tournament?startapp=volunteer');
@@ -94,9 +100,9 @@ const tournamentClientScript = (initial: TournamentState) => {
             state.participantsCount++;
             updateCounts();
         }
-        showToast('♟️ Заявка участника принята! Запуск Telegram Mini App...');
+        showToast('♟️ Player registration received! Launching Telegram Mini App...');
 
-        // Открываем Telegram Mini App через нативный вызов
+        // Launch Telegram Mini App via native widget bridge
         try {
             if (widget?.openTelegramLink) {
                 widget.openTelegramLink('https://t.me/bot/tournament?startapp=participant');
@@ -113,7 +119,22 @@ const tournamentClientScript = (initial: TournamentState) => {
 };
 
 /**
- * Экран приглашения на шахматный турнир с выбором роли (Волонтёр / Участник)
+ * Chess championship registration screen featuring role selection (Volunteer vs Player),
+ * live registration counts, haptic feedback, and Telegram Mini App launcher.
+ *
+ * @example
+ * ```tsx
+ * import { tournamentScreen } from './tournament/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Tournament', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'Register',
+ *       callback_data: 'open_tournament'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const tournamentScreen = defineWidgetScreen({
     id: 'tournament',
@@ -128,7 +149,7 @@ export const tournamentScreen = defineWidgetScreen({
                             alignItems: 'center',
                         }}
                     >
-                        <CardTitle>Шахматный кубок 2026</CardTitle>
+                        <CardTitle>Chess Championship 2026</CardTitle>
                         <Badge
                             variant="warning"
                             icon={LucideIcon({
@@ -147,12 +168,12 @@ export const tournamentScreen = defineWidgetScreen({
                             lineHeight: 1.45,
                         }}
                     >
-                        Приглашаем принять участие в весеннем шахматном турнире (Rapid 10+5).
-                        Мы рады как активным игрокам, так и судьям-волонтёрам!
+                        Join our annual spring chess championship (Rapid 10+5).
+                        We welcome both competitive players and event volunteers!
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    {/* Параметры турнира в карточках */}
+                    {/* Tournament metadata tiles */}
                     <div
                         style={{
                             display: 'flex',
@@ -169,8 +190,8 @@ export const tournamentScreen = defineWidgetScreen({
                                     'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.10))',
                             }}
                         >
-                            <div style={{ fontSize: 11, opacity: 0.65 }}>Дата</div>
-                            <div style={{ fontSize: 13, fontWeight: 700 }}>25 мая</div>
+                            <div style={{ fontSize: 11, opacity: 0.65 }}>Date</div>
+                            <div style={{ fontSize: 13, fontWeight: 700 }}>May 25</div>
                         </div>
                         <div
                             style={{
@@ -181,8 +202,8 @@ export const tournamentScreen = defineWidgetScreen({
                                     'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.10))',
                             }}
                         >
-                            <div style={{ fontSize: 11, opacity: 0.65 }}>Регламент</div>
-                            <div style={{ fontSize: 13, fontWeight: 700 }}>7 туров</div>
+                            <div style={{ fontSize: 11, opacity: 0.65 }}>Format</div>
+                            <div style={{ fontSize: 13, fontWeight: 700 }}>7 Rounds</div>
                         </div>
                         <div
                             style={{
@@ -193,7 +214,7 @@ export const tournamentScreen = defineWidgetScreen({
                                     'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.10))',
                             }}
                         >
-                            <div style={{ fontSize: 11, opacity: 0.65 }}>Призовой фонд</div>
+                            <div style={{ fontSize: 11, opacity: 0.65 }}>Prize Pool</div>
                             <div
                                 style={{
                                     fontSize: 13,
@@ -201,14 +222,14 @@ export const tournamentScreen = defineWidgetScreen({
                                     color: 'var(--tg-theme-link-color, #2481cc)',
                                 }}
                             >
-                                50 000 ₽
+                                $1,000
                             </div>
                         </div>
                     </div>
 
                     <Divider />
 
-                    {/* Статистика набора */}
+                    {/* Registration tally */}
                     <div
                         id="tour-stats"
                         style={{
@@ -219,12 +240,12 @@ export const tournamentScreen = defineWidgetScreen({
                             opacity: 0.85,
                         }}
                     >
-                        Участников: {props.participantsCount} • Волонтёров: {props.volunteersCount}
+                        Participants: {props.participantsCount} • Volunteers: {props.volunteersCount}
                     </div>
 
                     <Divider />
 
-                    {/* Блок выбора роли */}
+                    {/* Role selection buttons */}
                     <div>
                         <div
                             style={{
@@ -234,7 +255,7 @@ export const tournamentScreen = defineWidgetScreen({
                                 marginBottom: 8,
                             }}
                         >
-                            Я хочу быть:
+                            Register As:
                         </div>
                         <div style={{ display: 'flex', gap: 8 }}>
                             <Button
@@ -248,7 +269,7 @@ export const tournamentScreen = defineWidgetScreen({
                                     style: { marginRight: 4 },
                                 })}
                             >
-                                Волонтёром
+                                Volunteer
                             </Button>
                             <Button
                                 id="btn-participant"
@@ -262,13 +283,13 @@ export const tournamentScreen = defineWidgetScreen({
                                     style: { marginRight: 4 },
                                 })}
                             >
-                                Участником
+                                Player
                             </Button>
                         </div>
                     </div>
                 </CardContent>
 
-                {/* Всплывающее уведомление */}
+                {/* Floating toast notification */}
                 <div
                     id="tour-toast"
                     style={{
@@ -304,7 +325,7 @@ export const tournamentScreen = defineWidgetScreen({
                 volunteersCount: nextVolunteers,
             });
             return ctx.answer({
-                text: 'Спасибо за заявку волонтёра! Ссылка на подтверждение отправлена.',
+                text: 'Volunteer application submitted! Confirmation link sent.',
             });
         },
         registerParticipant: async (ctx: WidgetActionContext<TournamentState>) => {
@@ -314,7 +335,7 @@ export const tournamentScreen = defineWidgetScreen({
                 participantsCount: nextParticipants,
             });
             return ctx.answer({
-                text: 'Вы зарегистрированы как участник турнира!',
+                text: 'You are now registered as a tournament player!',
             });
         },
     },

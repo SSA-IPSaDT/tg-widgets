@@ -20,6 +20,9 @@ import {
     WidgetLayout,
 } from '../../src';
 
+/**
+ * State contract for the subscription & form controls widget.
+ */
 export interface ControlsState {
     notifications: boolean;
     newsletter: boolean;
@@ -27,6 +30,9 @@ export interface ControlsState {
     tickets: number;
 }
 
+/**
+ * Client-side script providing instant optimistic UI feedback for controls.
+ */
 const controlsClientScript = (initial: ControlsState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
@@ -145,7 +151,22 @@ const controlsClientScript = (initial: ControlsState) => {
 };
 
 /**
- * Экран элементов управления: Switch, Checkbox, RadioGroup и Stepper с живой реактивностью
+ * Controls widget screen demonstrating Switch, Checkbox, RadioGroup, and Stepper
+ * components with client-side optimistic UI updates and haptic feedback.
+ *
+ * @example
+ * ```tsx
+ * import { controlsScreen } from './controls/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Settings', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'Open Controls',
+ *       callback_data: 'open_controls'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const controlsScreen = defineWidgetScreen({
     id: 'controls',
@@ -160,7 +181,7 @@ export const controlsScreen = defineWidgetScreen({
                             alignItems: 'center',
                         }}
                     >
-                        <CardTitle>Настройки подписки</CardTitle>
+                        <CardTitle>Subscription Settings</CardTitle>
                         <Badge
                             variant="accent"
                             icon={LucideIcon({
@@ -171,7 +192,7 @@ export const controlsScreen = defineWidgetScreen({
                         />
                     </div>
                     <CardDescription>
-                        Чекбоксы, переключатели и степпер без тега &lt;input&gt;
+                        Checkboxes, switches, and steppers without &lt;input&gt; tags
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -187,8 +208,8 @@ export const controlsScreen = defineWidgetScreen({
                             id="toggle-notify"
                             checked={props.notifications}
                             action="toggleNotifications"
-                            label="Уведомления"
-                            description="Получать сообщения о важных событиях"
+                            label="Notifications"
+                            description="Receive alerts for important updates"
                         />
 
                         <Divider />
@@ -198,8 +219,8 @@ export const controlsScreen = defineWidgetScreen({
                             id="chk-newsletter"
                             checked={props.newsletter}
                             action="toggleNewsletter"
-                            label="Дайджест обновлений"
-                            description="Еженедельная рассылка новостей"
+                            label="Weekly Newsletter"
+                            description="Product updates and feature highlights"
                         />
 
                         <Divider />
@@ -214,7 +235,7 @@ export const controlsScreen = defineWidgetScreen({
                         >
                             <div>
                                 <div style={{ fontSize: 14, fontWeight: 500 }}>
-                                    Количество мест
+                                    Seat Allocation
                                 </div>
                                 <div
                                     class="tg-description"
@@ -225,7 +246,7 @@ export const controlsScreen = defineWidgetScreen({
                                         opacity: 0.85,
                                     }}
                                 >
-                                    Билеты на мероприятие
+                                    Event entry passes
                                 </div>
                             </div>
                             <Stepper
@@ -249,7 +270,7 @@ export const controlsScreen = defineWidgetScreen({
                                     marginBottom: 6,
                                 }}
                             >
-                                Тарифный план
+                                Subscription Plan
                             </div>
                             <RadioGroup gap={6}>
                                 <Radio
@@ -257,16 +278,16 @@ export const controlsScreen = defineWidgetScreen({
                                     value="basic"
                                     action="setPlan:basic"
                                     checked={props.plan === 'basic'}
-                                    label="Базовый"
-                                    description="Бесплатный доступ к основным функциям"
+                                    label="Basic"
+                                    description="Free access to essential features"
                                 />
                                 <Radio
                                     id="plan-pro"
                                     value="pro"
                                     action="setPlan:pro"
                                     checked={props.plan === 'pro'}
-                                    label="Pro аккаунт"
-                                    description="Приоритетная поддержка и расширенные лимиты"
+                                    label="Pro Plan"
+                                    description="Priority support and expanded limits"
                                 />
                             </RadioGroup>
                         </div>

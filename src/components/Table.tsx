@@ -9,8 +9,14 @@ export interface TableProps {
 }
 
 /**
- * Таблица данных (Table по образу shadcn/ui) для виджетов Telegram.
- * Поддерживается нативно песочницей Profile 1 со встроенными разделителями ячеек.
+ * Data Table component (shadcn/ui style) for Telegram Widgets.
+ * Natively supported in Telegram QuickJS Profile 1 with clean cell borders and auto-wrapping.
+ *
+ * @example
+ * <Table>
+ *   <TableHeader><TableRow><TableHead>Item</TableHead><TableHead align="right">Price</TableHead></TableRow></TableHeader>
+ *   <TableBody><TableRow><TableCell>TON</TableCell><TableCell align="right">$5.40</TableCell></TableRow></TableBody>
+ * </Table>
  */
 export const Table = ({
     id,

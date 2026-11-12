@@ -1,66 +1,79 @@
-# 🚀 Примеры использования @ipsadt/tg-widgets (Bot API 10.4)
+# 🚀 @ipsadt/tg-widgets Showcase & Examples (Bot API 10.4)
 
-В этой папке содержится готовый интерактивный Telegram-бот [`bot.tsx`](./bot.tsx), демонстрирующий работу всех UI-компонентов библиотеки непосредственно внутри реального чата Telegram.
+Interactive showcase Telegram bot (`bot.tsx`) demonstrating all UI components, state management, client-side scripts, and server actions inside real Telegram messages.
 
 ---
 
-## 🛠️ Быстрый старт
+## 🛠️ Quick Start
 
-### 1. Настройте конфигурацию в `.env`
-Скопируйте шаблон окружения и укажите ваш токен:
+### 1. Configure Environment Variables
+Copy the sample environment file and provide your bot token:
 
 ```bash
 cp .env.example .env
 ```
 
-Отредактируйте `.env`:
+Edit `.env`:
 ```env
 BOT_TOKEN=123456789:ABCdefGhIJKlmNoPQRsTUVwxyZ
-# Для тестирования виджетов на тестовом сервере Telegram (Test DC):
+# Enable to test on the Telegram Test DC:
 TELEGRAM_TEST_ENV=false
 ```
 
-> **Совет по тестированию Bot API 10.4:**
-> Для тестирования виджетов в группах, пересылки или inline-режима рекомендуется использовать тестовое окружение Telegram (Test DC). Установите `TELEGRAM_TEST_ENV=true` в файле `.env`.
+> **Testing on Bot API 10.4 (Test DC):**
+> For testing widgets in test groups or channels, set `TELEGRAM_TEST_ENV=true` in `.env`.
 
-### 2. Запустите демонстрационного бота
+### 2. Run the Showcase Bot
 
 ```bash
-# Через Bun (автоматически подхватит .env)
+# Using Bun (loads .env automatically)
 bun run example
 
-# Или напрямую
+# Or run directly
 bun run examples/bot.tsx
 
-# Через Node.js (tsx)
+# Using Node.js with tsx
 npx tsx examples/bot.tsx
 ```
 
-### 3. Откройте Telegram
-Отправьте боту команду `/start`. Бот покажет интерактивное меню со списком всех компонентов. Каждую команду можно вызвать напрямую: `/accordion`, `/controls`, `/table`, `/alerts`, `/cards`, `/counter`.
+### 3. Open Telegram
+Send the `/start` command to your bot. The bot displays an interactive inline menu with all 11 screens. Each screen can also be invoked directly via its slash command.
 
 ---
 
-## 📁 Каталог примеров и скриншотов
+## 📁 Examples Catalog & Screen Directory
 
-Для каждого примера подготовлена отдельная папка с документацией и заготовкой под скриншот, который можно прикрепить после тестирования:
+Each example has a dedicated directory with source code, documentation, and a screenshot preview:
 
-| Компонент / Экран | Команда | Описание | Код экрана | Документация и скриншот |
+| Screen / Component | Command | Description | Source Code | Documentation & Preview |
 | :--- | :--- | :--- | :--- | :--- |
-| **Accordion** | `/accordion` | Нативные раскрывающиеся блоки (`<details>` / `<summary>`) без JS | [`screen.tsx`](./accordion/screen.tsx) | [📖 accordion/README.md](./accordion/README.md) |
-| **Controls** | `/controls` | Чекбоксы, переключатели, радио-кнопки и степпер с живой реактивностью | [`screen.tsx`](./controls/screen.tsx) | [📖 controls/README.md](./controls/README.md) |
-| **Table** | `/table` | Нативная таблица с чеком и кнопкой скачивания квитанции | [`screen.tsx`](./table/screen.tsx) | [📖 table/README.md](./table/README.md) |
-| **Alerts** | `/alerts` | Блоки статусов с официальными Lucide SVG иконками | [`screen.tsx`](./alerts/screen.tsx) | [📖 alerts/README.md](./alerts/README.md) |
-| **Cards & Metrics** | `/cards` | Составные карточки shadcn, прогресс-бар, сетка метрик и действия | [`screen.tsx`](./cards/screen.tsx) | [📖 cards/README.md](./cards/README.md) |
-| **Live Counter** | `/counter` | Интерактивный счетчик с кнопками `−1` / `+1` и виброоткликом | [`screen.tsx`](./counter/screen.tsx) | [📖 counter/README.md](./counter/README.md) |
-| **Live Poll** | `/poll` | Интерактивный опрос сообщества с анимированными полосами голосов | [`screen.tsx`](./poll/screen.tsx) | [📖 poll/README.md](./poll/README.md) |
-| **E-Commerce** | `/ecommerce` | Карточка товара, выбор размера, пересчет суммы и оформление заказа | [`screen.tsx`](./ecommerce/screen.tsx) | [📖 ecommerce/README.md](./ecommerce/README.md) |
+| **Accordion** | `/accordion` | Native collapsible cards (`<details>` / `<summary>`) without JS | [`screen.tsx`](./accordion/screen.tsx) | [📖 accordion/README.md](./accordion/README.md) |
+| **Form Controls** | `/controls` | Checkbox, Switch, RadioGroup, and Stepper without `<input>` tags | [`screen.tsx`](./controls/screen.tsx) | [📖 controls/README.md](./controls/README.md) |
+| **Data Table** | `/table` | Native data table with receipt rows and download action | [`screen.tsx`](./table/screen.tsx) | [📖 table/README.md](./table/README.md) |
+| **Alerts & Badges** | `/alerts` | Status alert banners and badges with Lucide SVG icons | [`screen.tsx`](./alerts/screen.tsx) | [📖 alerts/README.md](./alerts/README.md) |
+| **Cards & Metrics** | `/cards` | Compound shadcn cards, progress bar, metric grids, and actions | [`screen.tsx`](./cards/screen.tsx) | [📖 cards/README.md](./cards/README.md) |
+| **Live Counter** | `/counter` | Real-time counter with client IIFE script and haptic vibration | [`screen.tsx`](./counter/screen.tsx) | [📖 counter/README.md](./counter/README.md) |
+| **Live Poll** | `/poll` | Community poll with animated percentage bars and live vote counts | [`screen.tsx`](./poll/screen.tsx) | [📖 poll/README.md](./poll/README.md) |
+| **E-Commerce** | `/ecommerce` | Product card, size selector, quantity stepper, and order checkout | [`screen.tsx`](./ecommerce/screen.tsx) | [📖 ecommerce/README.md](./ecommerce/README.md) |
+| **User Profile** | `/profile` | Profile card with preference switches and plain text fallback mode | [`screen.tsx`](./profile/screen.tsx) | [📖 profile/README.md](./profile/README.md) |
+| **Chess Tournament** | `/tournament` | Event registration with role selection and Mini App deep links | [`screen.tsx`](./tournament/screen.tsx) | [📖 tournament/README.md](./tournament/README.md) |
+| **Crypto Wallet** | `/crypto` | TON balance card, currency conversion, copy address, and haptics | [`screen.tsx`](./crypto/screen.tsx) | [📖 crypto/README.md](./crypto/README.md) |
 
 ---
 
-## 📸 Как добавить скриншоты
+## 🏗️ Architecture & Organization
 
-1. Запустите бота и откройте чат с ним в Telegram (на смартфоне или Desktop).
-2. Вызовите интересующую команду (например, `/accordion`).
-3. Сделайте скриншот полученного сообщения-баббла.
-4. Поместите изображение в соответствующую папку под именем `screenshot.png` (например, `examples/accordion/screenshot.png`).
+All example screens follow the standard `@ipsadt/tg-widgets` contract:
+- **`defineWidgetScreen({ id, component, initialState, actions })`**: Typed definition connecting JSX rendering, initial state, and server action handlers.
+- **`WidgetLayout`**: Root container providing Telegram safe-area padding and responsive dimensions.
+- **`<Script fn={...} args={[...]} />`**: Inlines a typed client-side IIFE into the widget HTML for optimistic UI updates and haptic events.
+- **Compression Budget**: Every screen is optimized and minified with `html-minifier-terser`, verified to fit well within Telegram's strict 4096-byte deflate limit.
+
+---
+
+## 📸 Adding Screenshots
+
+1. Launch the bot and open your Telegram chat (mobile or desktop).
+2. Run any command (e.g. `/accordion`, `/profile`, `/crypto`).
+3. Take a screenshot of the widget bubble.
+4. Save the image to the respective example directory as `screenshot.png` (e.g. `examples/profile/screenshot.png`).

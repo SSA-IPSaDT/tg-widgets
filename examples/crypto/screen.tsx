@@ -16,12 +16,18 @@ import {
     WidgetLayout,
 } from '../../src';
 
+/**
+ * State contract for the cryptocurrency wallet widget.
+ */
 export interface CryptoState {
     balanceTon: number;
     rateUsd: number;
     lastTx?: string;
 }
 
+/**
+ * Client-side script handling haptic responses and clipboard actions.
+ */
 const cryptoClientScript = () => {
     const widget = window.TelegramWidget;
 
@@ -38,7 +44,22 @@ const cryptoClientScript = () => {
 };
 
 /**
- * Экран крипто-кошелька (TON Wallet Card) с быстрыми переводами
+ * TON Wallet card widget screen showcasing balance presentation, quick transfer actions,
+ * clipboard copying, and haptic feedback.
+ *
+ * @example
+ * ```tsx
+ * import { cryptoScreen } from './crypto/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Wallet', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'Open Wallet',
+ *       callback_data: 'open_crypto'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const cryptoScreen = defineWidgetScreen({
     id: 'crypto',
@@ -66,10 +87,10 @@ export const cryptoScreen = defineWidgetScreen({
                                 })}
                             />
                         </div>
-                        <CardDescription>Основной счёт Telegram</CardDescription>
+                        <CardDescription>Primary Telegram Account</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {/* Баланс */}
+                        {/* Balance display */}
                         <div style={{ textAlign: 'center', padding: '6px 0 12px 0' }}>
                             <div
                                 style={{
@@ -93,7 +114,7 @@ export const cryptoScreen = defineWidgetScreen({
                             </div>
                         </div>
 
-                        {/* Кнопки быстрых действий */}
+                        {/* Quick action buttons */}
                         <div style={{ display: 'flex', gap: 8 }}>
                             <Button
                                 id="btn-send"
@@ -107,7 +128,7 @@ export const cryptoScreen = defineWidgetScreen({
                                     style: { transform: 'rotate(180deg)', marginRight: 4 },
                                 })}
                             >
-                                Отправить
+                                Send
                             </Button>
                             <Button
                                 id="btn-receive"
@@ -120,13 +141,13 @@ export const cryptoScreen = defineWidgetScreen({
                                     style: { marginRight: 4 },
                                 })}
                             >
-                                Получить
+                                Receive
                             </Button>
                         </div>
 
                         <Divider />
 
-                        {/* Последняя активность */}
+                        {/* Market rate */}
                         <div
                             style={{
                                 display: 'flex',
@@ -135,7 +156,7 @@ export const cryptoScreen = defineWidgetScreen({
                                 fontSize: 12,
                             }}
                         >
-                            <span style={{ opacity: 0.75 }}>Курс TON/USD:</span>
+                            <span style={{ opacity: 0.75 }}>TON / USD Rate:</span>
                             <span style={{ fontWeight: 600 }}>${props.rateUsd}</span>
                         </div>
                     </CardContent>
@@ -150,10 +171,10 @@ export const cryptoScreen = defineWidgetScreen({
     }),
     actions: {
         sendTon: (ctx: WidgetActionContext<CryptoState>) => {
-            return ctx.answer({ text: 'Переход в диалог отправки...' });
+            return ctx.answer({ text: 'Redirecting to transfer flow...' });
         },
         receiveTon: (ctx: WidgetActionContext<CryptoState>) => {
-            return ctx.answer({ text: 'Адрес кошелька скопирован' });
+            return ctx.answer({ text: 'Wallet address copied to clipboard' });
         },
     },
 });

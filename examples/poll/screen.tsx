@@ -15,6 +15,9 @@ import {
     WidgetLayout,
 } from '../../src';
 
+/**
+ * State contract for the interactive community poll widget.
+ */
 export interface PollState {
     votes: {
         grammy: number;
@@ -24,6 +27,9 @@ export interface PollState {
     userVote?: 'grammy' | 'telegraf' | 'aiogram';
 }
 
+/**
+ * Client-side script providing instant optimistic UI updates and progress bar calculation.
+ */
 const pollClientScript = (initial: PollState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
@@ -44,7 +50,7 @@ const pollClientScript = (initial: PollState) => {
                 const countElement = row.querySelector('.poll-count');
                 if (bar) bar.style.width = `${percentage}%`;
                 if (percentageElement) percentageElement.textContent = `${percentage}%`;
-                if (countElement) countElement.textContent = `${count} гол.`;
+                if (countElement) countElement.textContent = `${count} votes`;
 
                 if (state.userVote === optionKey) {
                     row.style.borderColor = 'var(--tg-theme-button-color, #2481cc)';
@@ -58,7 +64,7 @@ const pollClientScript = (initial: PollState) => {
 
         const totalVotesElement = document.getElementById('poll-total-votes');
         if (totalVotesElement) {
-            totalVotesElement.textContent = `Всего голосов: ${state.votes.grammy + state.votes.telegraf + state.votes.aiogram}`;
+            totalVotesElement.textContent = `Total votes: ${state.votes.grammy + state.votes.telegraf + state.votes.aiogram}`;
         }
     };
 
@@ -103,7 +109,22 @@ const pollClientScript = (initial: PollState) => {
 };
 
 /**
- * Экран интерактивного опроса / квиза с динамическими полосами результатов
+ * Community poll widget screen featuring interactive voting options, live progress bars,
+ * haptic feedback, and server synchronization via `window.TelegramWidget.request()`.
+ *
+ * @example
+ * ```tsx
+ * import { pollScreen } from './poll/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Poll', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'Vote Now',
+ *       callback_data: 'open_poll'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const pollScreen = defineWidgetScreen({
     id: 'poll',
@@ -120,7 +141,7 @@ export const pollScreen = defineWidgetScreen({
                 <Card fullWidth>
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <CardTitle>Опрос сообщества</CardTitle>
+                            <CardTitle>Framework Poll</CardTitle>
                             <Badge
                                 variant="accent"
                                 pulse
@@ -132,7 +153,7 @@ export const pollScreen = defineWidgetScreen({
                             />
                         </div>
                         <CardDescription>
-                            Какой стек вы используете для разработки Telegram-ботов?
+                            Which framework do you use for Telegram bot development?
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
@@ -161,7 +182,7 @@ export const pollScreen = defineWidgetScreen({
                                             transition: 'border-color 0.12s, background 0.12s',
                                         }}
                                     >
-                                        {/* Полоска прогресса */}
+                                        {/* Progress bar background fill */}
                                         <div
                                             class="poll-bar"
                                             style={{
@@ -190,7 +211,7 @@ export const pollScreen = defineWidgetScreen({
                                             </span>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                                                 <span class="poll-count tg-description" style={{ fontSize: 12, fontWeight: 500, color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))', opacity: 0.85 }}>
-                                                    {opt.count} гол.
+                                                    {opt.count} votes
                                                 </span>
                                                 <span class="poll-pct" style={{ fontSize: 13.5, fontWeight: 700, minWidth: 34, textAlign: 'right' }}>
                                                     {pct}%
@@ -204,10 +225,10 @@ export const pollScreen = defineWidgetScreen({
                     </CardContent>
                     <CardFooter>
                         <span id="poll-total-votes" class="tg-description" style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))', opacity: 0.85 }}>
-                            Всего голосов: {props.votes.grammy + props.votes.telegraf + props.votes.aiogram}
+                            Total votes: {props.votes.grammy + props.votes.telegraf + props.votes.aiogram}
                         </span>
                         <span class="tg-description" style={{ fontSize: 11.5, fontWeight: 500, color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))', opacity: 0.85 }}>
-                            Нажмите на вариант для выбора
+                            Tap an option to cast your vote
                         </span>
                     </CardFooter>
                 </Card>

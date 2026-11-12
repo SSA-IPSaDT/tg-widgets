@@ -17,38 +17,38 @@ export interface WidgetLayoutProps {
     theme?: 'auto' | 'light' | 'dark';
     gap?: number;
     /**
-     * Стандарт масштаба скруглений: 'none' | 'sm' | 'md' | 'lg' | 'xl' или базовый радиус в px (число)
+     * Border radius scale preset ('none' | 'sm' | 'md' | 'lg' | 'xl') or numeric base radius in pixels.
      */
     radius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | number;
     /**
-     * Тонкая настройка отдельных токенов скруглений
+     * Fine-grained override tokens for specific border radii.
      */
     radii?: Partial<WidgetRadii>;
     /**
-     * Внутренние отступы виджета. По умолчанию '6px 8px', чтобы карточки не прижимались к краям баббла.
+     * Internal padding for the widget. Defaults to '6px 8px' to ensure natural spacing inside the Telegram bubble.
      */
     padding?: number | string;
     /**
-     * Добавляет учет безопасной зоны для отображения времени в нижнем углу баббла Telegram
+     * Accounts for Telegram bottom-right timestamp safe area overlay.
      */
     safeArea?: boolean;
     /**
-     * Максимальная высота баббла (Telegram ограничивает высоту баббла диапазоном 50-600px)
+     * Maximum bubble height (Telegram enforces a 50-600px range).
      */
     maxHeight?: number | string;
     minHeight?: number | string;
     width?: number | string;
     height?: number | string;
     /**
-     * Растягивает виджет на 100% ширины доступной области баббла
+     * Expands widget to 100% of available bubble width.
      */
     fullWidth?: boolean;
     /**
-     * Задает фиксированную или минимальную высоту
+     * Sets fixed or minimum height.
      */
     fullHeight?: boolean;
     /**
-     * Растягивает виджет на всю ширину с сохранением системных отступов
+     * Expands widget to fill full width while retaining system padding.
      */
     expand?: boolean;
     [key: `data-${string}`]: string | undefined;

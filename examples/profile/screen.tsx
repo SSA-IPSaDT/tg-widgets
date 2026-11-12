@@ -19,6 +19,9 @@ import {
     WidgetLayout,
 } from "../../src";
 
+/**
+ * State contract for the user profile widget.
+ */
 export interface ProfileState {
     name: string;
     username: string;
@@ -27,6 +30,9 @@ export interface ProfileState {
     soundEffects: boolean;
 }
 
+/**
+ * Client-side script handling toggle synchronization and fallback triggers.
+ */
 const profileClientScript = (initial: ProfileState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
@@ -108,7 +114,22 @@ const profileClientScript = (initial: ProfileState) => {
 };
 
 /**
- * Экран профиля пользователя с интерактивными настройками и плашкой fallback
+ * User profile screen featuring avatar header, interactive preferences switches,
+ * experimental feature alert, and fallback to classic text messages.
+ *
+ * @example
+ * ```tsx
+ * import { profileScreen } from './profile/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Profile', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'Open Profile',
+ *       callback_data: 'open_profile'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const profileScreen = defineWidgetScreen({
     id: 'profile',
@@ -179,8 +200,8 @@ export const profileScreen = defineWidgetScreen({
                             id="profile-notify"
                             checked={props.notifications}
                             action="toggleProfileNotify"
-                            label="Уведомления бота"
-                            description="Мгновенные оповещения о событиях"
+                            label="Bot Notifications"
+                            description="Instant alerts for incoming events"
                         />
 
                         <Divider />
@@ -189,8 +210,8 @@ export const profileScreen = defineWidgetScreen({
                             id="profile-private"
                             checked={props.privateMode}
                             action="toggleProfilePrivate"
-                            label="Приватный профиль"
-                            description="Скрыть активность из общего рейтинга"
+                            label="Private Profile"
+                            description="Hide activity from public leaderboards"
                         />
 
                         <Divider />
@@ -199,16 +220,16 @@ export const profileScreen = defineWidgetScreen({
                             id="profile-sound"
                             checked={props.soundEffects}
                             action="toggleProfileSound"
-                            label="Звуковые сигналы"
-                            description="Звуковое сопровождение интерфейса"
+                            label="Sound Effects"
+                            description="In-app UI auditory feedback"
                         />
                     </div>
 
                     <div style={{ marginTop: 14 }}>
                         <Alert
                             variant="warning"
-                            title="Экспериментальная функция"
-                            description="Виджеты находятся на стадии тестирования. При неполадках переключите режим."
+                            title="Experimental Feature"
+                            description="Widgets are in active testing. Switch modes if visual anomalies occur."
                         />
                     </div>
                 </CardContent>
@@ -224,7 +245,7 @@ export const profileScreen = defineWidgetScreen({
                             style: { marginRight: 4 },
                         })}
                     >
-                        Обычное представление
+                        Plain Text View
                     </Button>
                 </CardFooter>
             </Card>
@@ -232,7 +253,7 @@ export const profileScreen = defineWidgetScreen({
         </WidgetLayout>
     ),
     initialState: () => ({
-        name: "Алексей Смирнов",
+        name: "Alex Smirnov",
         username: "@alex_dev",
         notifications: true,
         privateMode: false,
@@ -272,19 +293,19 @@ export const profileScreen = defineWidgetScreen({
                         chat_id: ctx.chatId,
                         message_id: ctx.messageId,
                         text:
-                            `👤 *Профиль пользователя (текстовый режим)*\n\n` +
-                            `*Имя:* ${ctx.state.name}\n` +
-                            `*Юзернейм:* ${ctx.state.username}\n\n` +
-                            `🔔 *Уведомления:* ${ctx.state.notifications ? "Включены" : "Выключены"}\n` +
-                            `🔒 *Приватный режим:* ${ctx.state.privateMode ? "Включен" : "Выключен"}\n` +
-                            `🔊 *Звуковые эффекты:* ${ctx.state.soundEffects ? "Включены" : "Выключены"}\n\n` +
-                            `_Сообщение переведено в классический текстовый режим._`,
+                            `👤 *User Profile (Text Mode)*\n\n` +
+                            `*Name:* ${ctx.state.name}\n` +
+                            `*Username:* ${ctx.state.username}\n\n` +
+                            `🔔 *Notifications:* ${ctx.state.notifications ? "Enabled" : "Disabled"}\n` +
+                            `🔒 *Private Mode:* ${ctx.state.privateMode ? "Enabled" : "Disabled"}\n` +
+                            `🔊 *Sound Effects:* ${ctx.state.soundEffects ? "Enabled" : "Disabled"}\n\n` +
+                            `_Message switched to classic text view._`,
                         parse_mode: "Markdown",
                         reply_markup: {
                             inline_keyboard: [
                                 [
                                     {
-                                        text: "📱 Вернуть интерактивный виджет",
+                                        text: "📱 Return to Widget View",
                                         callback_data: "show_profile",
                                     },
                                 ],
@@ -296,7 +317,7 @@ export const profileScreen = defineWidgetScreen({
                 }
             }
             return ctx.answer({
-                text: "Переключено в обычный текстовый режим",
+                text: "Switched to plain text view",
             });
         },
     },

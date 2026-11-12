@@ -1,20 +1,20 @@
 # 📊 Interactive Poll & Voting Widget
 
-Интерактивный опрос сообщества с анимированными полосами результатов в реальном времени, виброоткликом и синхронизацией состояния с сервером.
+Interactive community poll with animated real-time percentage bars, haptic feedback, and server state synchronization.
 
-Исходный код примера: [`screen.tsx`](./screen.tsx)
-
----
-
-## 💡 Особенности
-
-1. **Реактивный выбор**: При клике на вариант голос пересчитывается мгновенно (Optimistic UI), полоса прогресса плавно расширяется.
-2. **Haptic Feedback**: Виброотклик Telegram на мобильных устройствах при клике (`W.HapticFeedback.impactOccurred('medium')`).
-3. **Серверная синхронизация**: Запрос отправляется на сервер grammY (`W.request('vote:grammy')`), сохраняется в хранилище и возвращается клиенту.
+Source code: [`screen.tsx`](./screen.tsx)
 
 ---
 
-## 🚀 Команда для проверки в боте
+## 💡 Key Highlights
+
+1. **Optimistic UI Selection**: Tapping any option immediately recomputes the vote totals and percentage bars before server confirmation.
+2. **Haptic Feedback**: Triggers medium impact vibration on mobile devices via `window.TelegramWidget.HapticFeedback.impactOccurred('medium')`.
+3. **Server Synchronization**: Sends action request to grammY (`vote:grammy`), persists vote changes to storage, and answers the client query.
+
+---
+
+## 🚀 Bot Command
 
 ```text
 /poll
@@ -22,8 +22,6 @@
 
 ---
 
-## 📸 Скриншот из Telegram
-
-> *После тестирования добавьте сюда скриншот сообщения из Telegram с именем `screenshot.png`:*
+## 📸 Telegram Preview
 
 ![Poll Screenshot](./screenshot.png)

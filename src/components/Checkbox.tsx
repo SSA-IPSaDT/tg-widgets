@@ -13,8 +13,11 @@ export interface CheckboxProps {
 }
 
 /**
- * Чекбокс для Telegram Widgets (QuickJS Profile 1).
- * Генерирует чистый, компактный HTML на базе SVG без лишних атрибутов.
+ * Interactive Checkbox control for Telegram Widgets (QuickJS Profile 1 compliant).
+ * Renders lightweight vector SVG checkmarks without prohibited `<input>` tags.
+ *
+ * @example
+ * <Checkbox id="chk-terms" checked={true} label="Accept Terms" description="I agree to terms of service" />
  */
 export const Checkbox = ({
     id,

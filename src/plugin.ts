@@ -28,7 +28,7 @@ const defaultLogger: WidgetsLogger = {
 };
 
 /**
- * Структура входящего Update.widget_query в Telegram Bot API 10.4
+ * Payload structure of incoming `update.widget_query` in Telegram Bot API 10.4.
  */
 export interface TelegramWidgetQueryPayload {
     id: string;
@@ -89,7 +89,7 @@ export interface WidgetsController<
     TScreens extends Record<string, AnyWidgetScreen>,
 > {
     /**
-     * Отправляет виджет в указанный (или текущий) чат
+     * Sends a rendered widget message to the specified (or current) chat.
      */
     send: <K extends keyof TScreens & string>(
         screenId: K,
@@ -97,7 +97,7 @@ export interface WidgetsController<
     ) => Promise<{ message_id: number; [key: string]: unknown }>;
 
     /**
-     * Отвечает виджетом на текущее сообщение в чате
+     * Replies with a widget to the current message in the chat context.
      */
     reply: <K extends keyof TScreens & string>(
         screenId: K,
@@ -105,7 +105,7 @@ export interface WidgetsController<
     ) => Promise<{ message_id: number; [key: string]: unknown }>;
 
     /**
-     * Рендерит и инспектирует размер HTML разметки виджета без отправки
+     * Synchronously renders and inspects the compressed deflate size of a widget screen without sending.
      */
     render: <K extends keyof TScreens & string>(
         screenId: K,
@@ -113,7 +113,7 @@ export interface WidgetsController<
     ) => WidgetSizeReport;
 
     /**
-     * Асинхронно рендерит и инспектирует размер с глубокой минификацией через html-minifier-terser
+     * Asynchronously renders and inspects the compressed size with deep minification via html-minifier-terser.
      */
     renderAsync: <K extends keyof TScreens & string>(
         screenId: K,
@@ -121,7 +121,7 @@ export interface WidgetsController<
     ) => Promise<WidgetSizeReport>;
 
     /**
-     * Обновляет состояние данных (chat_data) существующего виджета
+     * Updates the chat_data state of an existing sent widget message.
      */
     update: <K extends keyof TScreens & string>(
         messageId: number,
@@ -130,12 +130,12 @@ export interface WidgetsController<
     ) => Promise<unknown>;
 
     /**
-     * Возвращает зарегистрированный экран по его ID
+     * Returns a registered screen definition by its identifier.
      */
     getScreen: (screenId: string) => AnyWidgetScreen | undefined;
 
     /**
-     * Подключенное хранилище состояний виджетов
+     * Pluggable widget state storage.
      */
     storage: WidgetsStorage;
 }
@@ -356,11 +356,11 @@ export const createTelegramWidgetsPlugin = <
             getScreen: (screenId: string) => screensById.get(screenId),
         };
 
-        // Поддерживаем оба имени: ctx.widgets и ctx.bubbles
+        // Support both namespaces: ctx.widgets and ctx.bubbles
         ctx.widgets = controller;
         ctx.bubbles = controller;
 
-        // Обработка входящего update.widget_query
+        // Process incoming update.widget_query
         const rawUpdate = ctx.update as unknown as
             Record<string, unknown> | undefined;
         if (
@@ -418,7 +418,7 @@ export const createTelegramWidgetsPlugin = <
             return;
         }
 
-        // Парсинг экшена и полезной нагрузки согласно компактному протоколу
+        // Parse action name and payload using compact protocol
         const { action: actionName, payload } = decodeWidgetAction(
             query.data ?? '',
         );

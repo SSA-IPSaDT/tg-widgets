@@ -1,21 +1,21 @@
 # 🛍️ E-Commerce Mini Cart & Checkout Widget
 
-Интерактивная карточка товара и оформления заказа прямо внутри сообщения Telegram.
+Interactive product card with variant selection, live subtotal computation, and checkout confirmation directly inside a Telegram message.
 
-Исходный код примера: [`screen.tsx`](./screen.tsx)
-
----
-
-## 💡 Особенности
-
-1. **Выбор размера**: Переключение размеров обуви (41-44) с мгновенной подсветкой активной кнопки.
-2. **Динамический пересчет стоимости**: Изменение количества пар мгновенно пересчитывает итоговую сумму `$120.00` на лету.
-3. **Оформление заказа**: При клике на «Оформить заказ» срабатывает виброотклик Telegram и появляется всплывающее подтверждение с деталями заказа.
-4. **SVG Lucide Иконки**: Иконка корзины `ShoppingBag` из пакета `lucide-static`.
+Source code: [`screen.tsx`](./screen.tsx)
 
 ---
 
-## 🚀 Команда для проверки в боте
+## 💡 Key Highlights
+
+1. **Size Variant Selector**: Toggle EU shoe sizes (41–44) with instant client-side active state styling.
+2. **Dynamic Price Recalculation**: Adjusting quantity immediately recomputes the order total (e.g. `$120.00`) on the fly.
+3. **Checkout Feedback**: Clicking "Place Order" triggers Telegram haptic feedback and displays a dismissible confirmation banner.
+4. **SVG Lucide Icons**: Cart (`ShoppingBag`), increment/decrement, and checkmark icons bundled via `lucide-static`.
+
+---
+
+## 🚀 Bot Command
 
 ```text
 /ecommerce
@@ -23,8 +23,6 @@
 
 ---
 
-## 📸 Скриншот из Telegram
-
-> *После тестирования добавьте сюда скриншот сообщения из Telegram с именем `screenshot.png`:*
+## 📸 Telegram Preview
 
 ![Ecommerce Screenshot](./screenshot.png)

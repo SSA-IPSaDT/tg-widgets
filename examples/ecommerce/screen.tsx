@@ -17,19 +17,25 @@ import {
     WidgetLayout,
 } from '../../src';
 
+/**
+ * State contract for the e-commerce product cart widget.
+ */
 export interface EcommerceState {
     size: number;
     quantity: number;
     pricePerUnit: number;
 }
 
+/**
+ * Client-side script handling size selection, quantity calculation, and checkout feedback.
+ */
 const ecommerceClientScript = (initial: EcommerceState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
     const toast = document.getElementById('ecom-toast');
 
     const updateEcomUI = () => {
-        // Обновление размеров
+        // Update size option buttons
         const availableSizes = [41, 42, 43, 44];
         for (const sizeNumber of availableSizes) {
             const sizeButton = document.getElementById(`size-${sizeNumber}`);
@@ -46,7 +52,7 @@ const ecommerceClientScript = (initial: EcommerceState) => {
             }
         }
 
-        // Обновление количества и суммы
+        // Update quantity and total price
         const quantityElement = document.getElementById('ecom-qty');
         const totalPriceElement = document.getElementById('ecom-total');
         if (quantityElement) quantityElement.textContent = String(state.quantity);
@@ -72,7 +78,7 @@ const ecommerceClientScript = (initial: EcommerceState) => {
     syncState();
     widget?.onEvent?.('chatDataChanged', syncState);
 
-    // Слушатели размеров
+    // Size button listeners
     [41, 42, 43, 44].forEach((sizeNumber) => {
         document.getElementById(`size-${sizeNumber}`)?.addEventListener('click', () => {
             widget?.HapticFeedback?.selectionChanged?.();
@@ -82,7 +88,7 @@ const ecommerceClientScript = (initial: EcommerceState) => {
         });
     });
 
-    // Слушатели количества
+    // Quantity button listeners
     document.getElementById('ecom-minus')?.addEventListener('click', () => {
         if (state.quantity > 1) {
             widget?.HapticFeedback?.impactOccurred?.('light');
@@ -101,11 +107,11 @@ const ecommerceClientScript = (initial: EcommerceState) => {
         }
     });
 
-    // Слушатель оформления заказа
+    // Checkout button listener
     document.getElementById('btn-checkout')?.addEventListener('click', () => {
         widget?.HapticFeedback?.notificationOccurred?.('success');
         if (toast) {
-            toast.textContent = `🎉 Заказ оформлен! Размер: ${state.size}, ${state.quantity} шт. на $${(state.quantity * state.pricePerUnit).toFixed(2)}`;
+            toast.textContent = `🎉 Order placed! Size: ${state.size}, ${state.quantity} pair(s) for $${(state.quantity * state.pricePerUnit).toFixed(2)}`;
             toast.style.display = 'block';
             setTimeout(() => {
                 toast.style.display = 'none';
@@ -116,7 +122,22 @@ const ecommerceClientScript = (initial: EcommerceState) => {
 };
 
 /**
- * Экран интерактивной корзины / заказа товара (E-Commerce)
+ * E-commerce mini product card screen with interactive size selector, quantity stepper,
+ * dynamic total recalculation, and checkout action.
+ *
+ * @example
+ * ```tsx
+ * import { ecommerceScreen } from './ecommerce/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Product', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'Buy Shoes',
+ *       callback_data: 'open_ecommerce'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const ecommerceScreen = defineWidgetScreen({
     id: 'ecommerce',
@@ -129,18 +150,18 @@ export const ecommerceScreen = defineWidgetScreen({
                 <Card fullWidth style={{ position: 'relative' }}>
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <CardTitle>Кроссовки HyperSpeed</CardTitle>
+                            <CardTitle>HyperSpeed Running Shoes</CardTitle>
                             <Badge variant="success" icon={LucideIcon({ icon: LucideIcons.Check, size: 15, strokeWidth: 2.2 })} />
                         </div>
                         <CardDescription>
-                            Оригинальная спортивная обувь с быстрой доставкой
+                            Authentic performance footwear with express delivery
                         </CardDescription>
                     </CardHeader>
                     <CardContent>
-                        {/* Выбор размера */}
+                        {/* Size selection */}
                         <div>
                             <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65, marginBottom: 6 }}>
-                                Выберите размер (EU):
+                                Select Size (EU):
                             </div>
                             <div style={{ display: 'flex', gap: 8 }}>
                                 {sizes.map((s) => {
@@ -170,14 +191,14 @@ export const ecommerceScreen = defineWidgetScreen({
 
                         <Divider />
 
-                        {/* Количество и расчет суммы */}
+                        {/* Quantity and unit pricing */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <div>
                                 <div style={{ fontSize: 13, fontWeight: 500 }}>
-                                    Количество
+                                    Quantity
                                 </div>
                                 <div style={{ fontSize: 12, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
-                                    ${props.pricePerUnit} / пара
+                                    ${props.pricePerUnit} / pair
                                 </div>
                             </div>
                             <div
@@ -267,9 +288,9 @@ export const ecommerceScreen = defineWidgetScreen({
 
                         <Divider />
 
-                        {/* Итоговая сумма */}
+                        {/* Order total */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: 14, fontWeight: 600 }}>Итого:</span>
+                            <span style={{ fontSize: 14, fontWeight: 600 }}>Total:</span>
                             <span id="ecom-total" style={{ fontSize: 20, fontWeight: 800, color: 'var(--tg-theme-link-color, var(--tg-theme-text-color, #2481cc))' }}>
                                 ${total}
                             </span>
@@ -288,11 +309,11 @@ export const ecommerceScreen = defineWidgetScreen({
                                 style: { marginRight: 6 },
                             })}
                         >
-                            Оформить заказ
+                            Place Order
                         </Button>
                     </CardFooter>
 
-                    {/* Всплывающее подтверждение заказа */}
+                    {/* Order confirmation toast */}
                     <div
                         id="ecom-toast"
                         style={{

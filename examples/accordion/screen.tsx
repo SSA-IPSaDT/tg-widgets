@@ -17,7 +17,16 @@ import {
 } from '../../src';
 
 /**
- * Экран демонстрации аккордеона (<details> / <summary>)
+ * State contract for the accordion widget.
+ */
+export type AccordionState = Record<string, never>;
+
+/**
+ * Accordion screen demonstrating native HTML5 `<details>` and `<summary>` folding.
+ * Requires 0 bytes of JavaScript runtime for expand/collapse transitions.
+ *
+ * @example
+ * await ctx.widgets.reply('accordion', { props: {} });
  */
 export const accordionScreen = defineWidgetScreen({
     id: 'accordion',
@@ -32,7 +41,7 @@ export const accordionScreen = defineWidgetScreen({
                             alignItems: 'center',
                         }}
                     >
-                        <CardTitle>Частые вопросы</CardTitle>
+                        <CardTitle>Frequently Asked Questions</CardTitle>
                         <Badge
                             variant="accent"
                             icon={LucideIcon({
@@ -43,25 +52,25 @@ export const accordionScreen = defineWidgetScreen({
                         />
                     </div>
                     <CardDescription>
-                        Тестирование нативного элемента &lt;details&gt; в виджетах Telegram
+                        Native &lt;details&gt; element in Telegram QuickJS Profile 1
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Accordion>
                         <AccordionItem
-                            title="Как работают HTML-виджеты?"
+                            title="How do HTML widgets work?"
                             open={true}
                         >
-                            Виджеты рендерятся прямо внутри баббла сообщения с
-                            помощью встроенной песочницы QuickJS на клиенте Telegram.
+                            Widgets render directly inside the chat message bubble
+                            using Telegram's embedded QuickJS sandbox.
                         </AccordionItem>
-                        <AccordionItem title="Нужен ли интернет для рендера?">
-                            Нет, код виджета фиксируется в сообщении при отправке и
-                            отрисовывается мгновенно в локальном офлайне.
+                        <AccordionItem title="Is internet required to render?">
+                            No, the widget code is bundled into the message and
+                            renders instantly in local offline mode.
                         </AccordionItem>
-                        <Collapsible title="Как виджет общается с ботом?">
-                            Через вызов TelegramWidget.request(), который доставляет
-                            компактный запрос до 64 байт в виде update.widget_query.
+                        <Collapsible title="How do widgets communicate with the bot?">
+                            Via TelegramWidget.request(), delivering compact action
+                            payloads (up to 64 bytes) to update.widget_query.
                         </Collapsible>
                     </Accordion>
                 </CardContent>
@@ -75,7 +84,7 @@ export const accordionScreen = defineWidgetScreen({
                             opacity: 0.85,
                         }}
                     >
-                        Нажмите на любой пункт, чтобы раскрыть
+                        Tap any item to expand details
                     </span>
                 </CardFooter>
             </Card>

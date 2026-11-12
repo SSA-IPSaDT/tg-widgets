@@ -1,16 +1,16 @@
 /**
- * Двунаправленный легковесный кодек сжатия ключей объектов для протокола Telegram Widgets (Bot API 10.4).
+ * Bidirectional lightweight object key compression codec for Telegram Widgets protocol (Bot API 10.4).
  *
- * Сворачивает ключи объектов до 1-2 букв для минимизации полезной нагрузки:
- * 1. Запросы от клиента к боту (W.request -> update.widget_query): строгий лимит 64 байта!
- * 2. Состояние от бота к клиенту (chat_data, public_data): лимит 1024 байта!
+ * Compresses object keys down to 1-2 letters to minimize payload sizes:
+ * 1. Client-to-bot action requests (W.request -> update.widget_query): strict 64-byte limit!
+ * 2. Bot-to-client states (chat_data, public_data): 1024-byte limit!
  */
 
 /**
- * Базовый словарь сокращений полей виджетов Telegram
+ * Default dictionary of common widget field abbreviations.
  */
 export const DEFAULT_KEY_MAP: Record<string, string> = {
-    // Ядро протокола и навигации
+    // Protocol core & navigation
     action: 'a',
     payload: 'p',
     type: 't',
@@ -28,7 +28,7 @@ export const DEFAULT_KEY_MAP: Record<string, string> = {
     name: 'n',
     username: 'u',
 
-    // Настройки интерфейса и формы
+    // UI settings and form controls
     notifications: 'o',
     soundEffects: 'e',
     privateMode: 'm',
@@ -47,7 +47,7 @@ export const DEFAULT_KEY_MAP: Record<string, string> = {
     votes: 'V',
     userVote: 'U',
 
-    // Электронная коммерция и транзакции
+    // E-commerce & financial
     quantity: 'q',
     price: 'P',
     size: 'Z',
@@ -57,19 +57,24 @@ export const DEFAULT_KEY_MAP: Record<string, string> = {
     currency: 'Y',
     address: 'D',
 
-    // Системный идентификатор экрана
+    // System screen identifier
     __screen: '_s',
 };
 
 /**
- * Обратный словарь для восстановления оригинальных ключей
+ * Reverse dictionary for recovering original property names.
  */
 export const REVERSE_KEY_MAP: Record<string, string> = Object.fromEntries(
     Object.entries(DEFAULT_KEY_MAP).map(([k, v]) => [v, k]),
 );
 
 /**
- * Регистрация пользовательских сокращений для предметной области приложения
+ * Registers domain-specific key mappings into the codec.
+ *
+ * @param mappings Custom long-to-short key mapping pairs.
+ *
+ * @example
+ * registerCodecKeys({ transactionHash: 'tx', recipientId: 'rc' });
  */
 export const registerCodecKeys = (mappings: Record<string, string>): void => {
     for (const [longKey, shortKey] of Object.entries(mappings)) {
@@ -79,7 +84,11 @@ export const registerCodecKeys = (mappings: Record<string, string>): void => {
 };
 
 /**
- * Рекурсивно сжимает ключи объекта до 1-2 букв
+ * Recursively compresses object keys down to shortened forms.
+ *
+ * @param data Object or array to compress.
+ * @param customMap Optional dictionary override.
+ * @returns Compressed clone of the data structure.
  */
 export const compressKeys = <T = unknown>(
     data: T,
@@ -106,7 +115,11 @@ export const compressKeys = <T = unknown>(
 };
 
 /**
- * Рекурсивно восстанавливает оригинальные ключи объекта
+ * Recursively restores original object keys from compressed forms.
+ *
+ * @param data Compressed object or array.
+ * @param customReverseMap Optional dictionary override.
+ * @returns Object with original keys restored.
  */
 export const decompressKeys = <T = unknown>(
     data: unknown,
@@ -135,7 +148,11 @@ export const decompressKeys = <T = unknown>(
 };
 
 /**
- * Сериализует полезную нагрузку в компактную строку JSON со сжатыми ключами
+ * Serializes payload into a compact JSON string with compressed keys.
+ *
+ * @param payload Data payload.
+ * @param customMap Optional key mapping dictionary.
+ * @returns Compact JSON string.
  */
 export const packPayload = (
     payload: unknown,
@@ -146,7 +163,11 @@ export const packPayload = (
 };
 
 /**
- * Разбирает компактную строку JSON и восстанавливает оригинальные ключи
+ * Parses compact JSON string and restores original object keys.
+ *
+ * @param raw Compact JSON string.
+ * @param customReverseMap Optional key mapping dictionary.
+ * @returns Parsed object with full property names.
  */
 export const unpackPayload = <T = unknown>(
     raw: string,
@@ -161,8 +182,13 @@ export const unpackPayload = <T = unknown>(
 };
 
 /**
- * Сериализует состояние виджета (chat_data / public_data) с упаковкой ключей
- * и системным идентификатором экрана
+ * Serializes widget state (chat_data / public_data) with key compression
+ * and the screen identifier token.
+ *
+ * @param screenId Target screen identifier.
+ * @param state State data object.
+ * @param customMap Optional key mapping dictionary.
+ * @returns Compact string representation for Telegram API.
  */
 export const packState = (
     screenId: string,
@@ -177,7 +203,11 @@ export const packState = (
 };
 
 /**
- * Восстанавливает состояние виджета из chat_data / public_data
+ * Unpacks widget state from chat_data / public_data string and resolves screenId.
+ *
+ * @param rawState Raw chat_data string from Telegram.
+ * @param customReverseMap Optional key mapping dictionary.
+ * @returns Clean state object and screenId.
  */
 export const unpackState = <T = Record<string, unknown>>(
     rawState: string | null | undefined,
@@ -205,8 +235,8 @@ export const unpackState = <T = Record<string, unknown>>(
 };
 
 /**
- * Легковесный JS-сниппет (< 300 Б) для встраивания в клиентский <script>,
- * позволяющий QuickJS клиенту прозрачно упаковывать и распаковывать объекты.
+ * Lightweight client script snippet (< 300 B) for embedding into inline `<script>`,
+ * providing client-side QuickJS code with transparent state compression helpers.
  */
 export const CLIENT_CODEC_SNIPPET =
     'var __KM=' +

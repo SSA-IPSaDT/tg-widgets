@@ -13,9 +13,11 @@ export interface SwitchProps {
 }
 
 /**
- * Переключатель (Switch / Toggle) для Telegram Widgets.
- * Компактная разметка на базе кнопки с визуальным треком и бегунком.
- * Оптимизированная верстка через классы .tg-switch, .tg-switch-track, .tg-switch-thumb.
+ * Switch / Toggle component for Telegram Widgets.
+ * Features GPU-accelerated 120ms transitions and instant tactile `:active` state.
+ *
+ * @example
+ * <Switch id="notify" checked={true} label="Notifications" description="Receive instant updates" />
  */
 export const Switch = ({
     id,

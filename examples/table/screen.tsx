@@ -23,6 +23,14 @@ import {
     WidgetLayout,
 } from '../../src';
 
+/**
+ * State contract for the table widget.
+ */
+export type TableState = Record<string, never>;
+
+/**
+ * Client-side script handling receipt download haptic feedback and action trigger.
+ */
 const tableClientScript = () => {
     const widget = window.TelegramWidget;
     const downloadButton = document.getElementById('btn-download');
@@ -34,7 +42,22 @@ const tableClientScript = () => {
 };
 
 /**
- * Экран нативной таблицы с чеком заказа и скачиванием квитанции
+ * Native data table screen demonstrating Table, TableHeader, TableBody, TableFooter,
+ * cell alignment, and download action triggers.
+ *
+ * @example
+ * ```tsx
+ * import { tableScreen } from './table/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Receipt', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'View Receipt',
+ *       callback_data: 'open_table'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const tableScreen = defineWidgetScreen({
     id: 'table',
@@ -49,7 +72,7 @@ export const tableScreen = defineWidgetScreen({
                             alignItems: 'center',
                         }}
                     >
-                        <CardTitle>Чек заказа #4096</CardTitle>
+                        <CardTitle>Receipt #4096</CardTitle>
                         <Badge
                             variant="success"
                             icon={LucideIcon({
@@ -60,39 +83,39 @@ export const tableScreen = defineWidgetScreen({
                         />
                     </div>
                     <CardDescription>
-                        Пример нативной таблицы с системными границами ячеек
+                        Native table layout with system theme border separators
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Позиция</TableHead>
-                                <TableHead align="center">Кол-во</TableHead>
-                                <TableHead align="right">Сумма</TableHead>
+                                <TableHead>Item</TableHead>
+                                <TableHead align="center">Qty</TableHead>
+                                <TableHead align="right">Amount</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             <TableRow>
-                                <TableCell>Пицца Маргарита</TableCell>
+                                <TableCell>Margherita Pizza</TableCell>
                                 <TableCell align="center">2</TableCell>
-                                <TableCell align="right">18.00 $</TableCell>
+                                <TableCell align="right">$18.00</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell>Лимонад цитрусовый</TableCell>
+                                <TableCell>Citrus Lemonade</TableCell>
                                 <TableCell align="center">1</TableCell>
-                                <TableCell align="right">4.50 $</TableCell>
+                                <TableCell align="right">$4.50</TableCell>
                             </TableRow>
                             <TableRow>
-                                <TableCell>Соус тар-тар</TableCell>
+                                <TableCell>Tartar Sauce</TableCell>
                                 <TableCell align="center">1</TableCell>
-                                <TableCell align="right">1.50 $</TableCell>
+                                <TableCell align="right">$1.50</TableCell>
                             </TableRow>
                         </TableBody>
                         <TableFooter>
                             <TableRow borderBottom={false}>
-                                <TableCell colspan={2}>Итого к оплате</TableCell>
-                                <TableCell align="right">24.00 $</TableCell>
+                                <TableCell colspan={2}>Total Due</TableCell>
+                                <TableCell align="right">$24.00</TableCell>
                             </TableRow>
                         </TableFooter>
                     </Table>
@@ -109,7 +132,7 @@ export const tableScreen = defineWidgetScreen({
                             style: { marginRight: 6 },
                         })}
                     >
-                        Скачать квитанцию
+                        Download Receipt
                     </Button>
                 </CardFooter>
             </Card>
@@ -120,7 +143,7 @@ export const tableScreen = defineWidgetScreen({
     actions: {
         downloadReceipt: async (ctx: WidgetActionContext<Record<string, unknown>>) => {
             return ctx.answer({
-                text: '🧾 Квитанция #4096 успешно сформирована',
+                text: '🧾 Receipt #4096 generated successfully',
                 show_alert: false,
             });
         },

@@ -1,6 +1,6 @@
 /**
- * Строгая типизация JavaScript API виджета Telegram (Bot API 10.4, Profile 1).
- * Доступно глобально через `window.TelegramWidget` внутри QuickJS песочницы виджета.
+ * Strict TypeScript definitions for the Telegram Widget JavaScript Bridge (Bot API 10.4, Profile 1).
+ * Available globally via `window.TelegramWidget` (or simply `TelegramWidget`) inside the QuickJS sandbox.
  */
 
 export interface TelegramWidgetThemeParams {
@@ -32,14 +32,14 @@ export interface TelegramWidgetViewer {
 
 export interface TelegramWidgetRequestAnswer {
     /**
-     * Строка ответа от бота (до 1024 байт), возвращенная через answerWidgetQuery
+     * Response string from the bot server (up to 1024 bytes), returned by `answerWidgetQuery`.
      */
     result: string | null;
 }
 
 export interface TelegramWidgetRequestOptions {
     /**
-     * Запросить у пользователя карту TON-кошелька вместе с запросом
+     * Requests user's TON wallet address card alongside the action query.
      */
     wallet?: boolean;
 }
@@ -78,74 +78,76 @@ export type TelegramWidgetEventType =
 
 export interface TelegramWidgetBridge {
     /**
-     * Версия профиля песочницы виджетов (1 в Bot API 10.4)
+     * Sandbox profile version (integer 1 in Bot API 10.4).
      */
     profile?: number;
 
     /**
-     * Возвращает true, если версия профиля клиента не ниже n
+     * Returns true if the client sandbox version is at least n.
      */
     isProfileAtLeast?(n: number): boolean;
 
     /**
-     * Текущая цветовая схема чата ('light' или 'dark')
+     * Current active chat color scheme ('light' or 'dark').
      */
     colorScheme?: 'light' | 'dark';
 
     /**
-     * Параметры темы чата
+     * Telegram chat theme palette parameters.
      */
     themeParams?: TelegramWidgetThemeParams;
 
     /**
-     * True, если виджет сейчас виден на экране
+     * True if the widget is currently visible on screen.
      */
     isActive?: boolean;
 
     /**
-     * True, если это предпросмотр в инлайн-результатах
+     * True if the widget is rendered inside an inline query preview.
      */
     isPreview?: boolean;
 
     /**
-     * True, если сообщение является пересланной копией
+     * True if the message containing the widget is a forwarded copy.
      */
     isForward?: boolean;
 
     /**
-     * Тип чата: 'private', 'group', 'supergroup', 'channel' или null
+     * Chat type context: 'private', 'group', 'supergroup', 'channel', or null.
      */
     chatType?: 'private' | 'group' | 'supergroup' | 'channel' | null;
 
     /**
-     * Информация о пользователе, просматривающем виджет (если разрешено)
+     * Information about the user currently viewing the widget (when permitted).
      */
     viewer?: TelegramWidgetViewer | null;
 
     /**
-     * Состояние чата (chat_data сообщения, до 1024 байт)
+     * Chat-specific state data string (up to 1024 bytes).
      */
     chatData?: string | null;
 
     /**
-     * Публичное разделяемое состояние (public_data, до 1024 байт)
+     * Public shared state data string (up to 1024 bytes).
      */
     publicData?: string | null;
 
     /**
-     * Включает отслеживание изменений publicData разделяемого виджета
+     * Starts listening for real-time changes to publicData in shared widgets.
      */
     watchPublicData?(): void;
 
     /**
-     * Выключает отслеживание изменений publicData
+     * Stops listening for changes to publicData.
      */
     unwatchPublicData?(): void;
 
     /**
-     * Отправляет запрос к боту через update.widget_query.
-     * @param data Строка действия длиной 1-64 байта
-     * @param options Дополнительные параметры (например, { wallet: true })
+     * Dispatches an action request to the bot via `update.widget_query`.
+     *
+     * @param data Action string (1-64 bytes UTF-8).
+     * @param options Additional request options (e.g. `{ wallet: true }`).
+     * @returns Promise resolving to the answer returned by `answerWidgetQuery`.
      */
     request?(
         data: string,
@@ -153,52 +155,52 @@ export interface TelegramWidgetBridge {
     ): Promise<TelegramWidgetRequestAnswer>;
 
     /**
-     * Копирует текст в буфер обмена (1-256 символов) с показом нативного тоста
+     * Copies text into clipboard (1-256 characters) with a native Telegram toast confirmation.
      */
     copyText?(text: string): void;
 
     /**
-     * Открывает внешнюю https:// ссылку с подтверждением пользователя
+     * Opens an external HTTPS link with native user confirmation popup.
      */
     openLink?(url: string): void;
 
     /**
-     * Открывает https://t.me/... ссылку внутри Telegram
+     * Opens a Telegram deep link (e.g. `https://t.me/...`) internally.
      */
     openTelegramLink?(url: string): void;
 
     /**
-     * Управление виброоткликом устройства
+     * Haptic vibration feedback controller.
      */
     HapticFeedback?: TelegramWidgetHapticFeedback;
 
     /**
-     * Безопасная зона времени и статуса сообщения в углу баббла
+     * Inset boundaries for message timestamp bubble overlay in bottom corner.
      */
     contentSafeAreaInset?: TelegramWidgetContentSafeAreaInset;
 
     /**
-     * Работа с TON кошельком пользователя
+     * TON Wallet integration methods.
      */
     wallet?: TelegramWidgetWallet | null;
 
     /**
-     * Управляет якорем изменения размера виджета ('top' или 'bottom')
+     * Sets resize animation anchor point ('top' or 'bottom').
      */
     setResizeAnchor?(edge: 'top' | 'bottom'): void;
 
     /**
-     * Сигнализирует приложению о завершении первичного рендера
+     * Signals the Telegram client that initial DOM rendering is complete.
      */
     ready?(): void;
 
     /**
-     * Подписка на события виджета
+     * Subscribes to widget bridge events.
      */
     onEvent?(eventName: TelegramWidgetEventType, handler: () => void): void;
 
     /**
-     * Отписка от событий виджета
+     * Unsubscribes from widget bridge events.
      */
     offEvent?(eventName: string, handler: () => void): void;
 }

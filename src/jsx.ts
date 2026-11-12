@@ -1,5 +1,6 @@
 import { Buffer } from 'node:buffer';
 import { deflateSync } from 'node:zlib';
+import { minifyHtml, minifyHtmlSync } from './minifier';
 
 declare global {
     namespace JSX {
@@ -41,6 +42,12 @@ const UNITLESS_PROPS = new Set([
 const toKebab = (prop: string): string =>
     prop.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 
+/**
+ * Formats a CSS style object into a minified inline CSS string.
+ *
+ * @param style Style property key-value map.
+ * @returns Minified inline CSS string.
+ */
 export const formatStyle = (
     style: Record<string, string | number | undefined | null>,
 ): string => {
@@ -57,6 +64,14 @@ export const formatStyle = (
         .join(';');
 };
 
+/**
+ * JSX factory function for building lightweight HTML strings.
+ *
+ * @param tag HTML tag name or functional component.
+ * @param props Component or element properties.
+ * @param children Child elements or text.
+ * @returns Rendered HTML string.
+ */
 export const h = (
     tag: string | ((props: Record<string, unknown>) => string),
     props: Record<string, unknown> | null,
@@ -130,16 +145,17 @@ export const h = (
     return `<${tag}${attrs}>${content}</${tag}>`;
 };
 
+/**
+ * JSX Fragment helper that concatenates children without an extra wrapper element.
+ */
 export const Fragment = (props: { children?: unknown[] }): string => {
     const children = props.children ?? [];
     return children.flat(Infinity).join('');
 };
 
-import { minifyHtml, minifyHtmlSync } from './minifier';
-
 export interface WidgetRenderOptions {
     /**
-     * Включает агрессивную минификацию HTML и CSS (по умолчанию true)
+     * Enables aggressive HTML and CSS minification (default: true).
      */
     minify?: boolean;
 }
@@ -153,7 +169,11 @@ export interface WidgetSizeReport {
 }
 
 /**
- * Синхронная проверка размера HTML-разметки виджета в сжатом виде (deflate level 9)
+ * Synchronous inspector for calculating deflate compression size (level 9) of widget HTML.
+ *
+ * @param html Raw HTML markup.
+ * @param options Render and minification options.
+ * @returns Size inspection report.
  */
 export const inspectWidgetSize = (
     html: string,
@@ -181,7 +201,11 @@ export const inspectWidgetSize = (
 };
 
 /**
- * Промышленная асинхронная проверка размера HTML-разметки виджета через `html-minifier-terser` (CleanCSS + Terser)
+ * Asynchronous production inspector utilizing `html-minifier-terser` (CleanCSS + Terser).
+ *
+ * @param html Raw HTML markup.
+ * @param options Render and minification options.
+ * @returns Size inspection report.
  */
 export const inspectWidgetSizeAsync = async (
     html: string,
@@ -207,7 +231,11 @@ export const inspectWidgetSizeAsync = async (
 };
 
 /**
- * Синхронный рендер TSX в чистый HTML-документ виджета Telegram
+ * Synchronously renders TSX markup into a minified, valid Telegram Widget HTML document.
+ *
+ * @param bodyContent JSX markup or HTML content.
+ * @param options Render and minification options.
+ * @returns Complete HTML document string.
  */
 export const renderWidget = (
     bodyContent: string,
@@ -225,7 +253,11 @@ export const renderWidget = (
 };
 
 /**
- * Промышленный асинхронный рендер виджета с глубокой минификацией через `html-minifier-terser`
+ * Asynchronously renders TSX markup with industrial minification via `html-minifier-terser`.
+ *
+ * @param bodyContent JSX markup or HTML content.
+ * @param options Render and minification options.
+ * @returns Complete HTML document string.
  */
 export const renderWidgetAsync = async (
     bodyContent: string,
@@ -242,10 +274,17 @@ export const renderWidgetAsync = async (
     return report.html;
 };
 
+/**
+ * @deprecated Use `renderWidget` instead. Kept for backwards compatibility.
+ */
 export const renderBubble = renderWidget;
+
+/**
+ * @deprecated Use `renderWidgetAsync` instead. Kept for backwards compatibility.
+ */
 export const renderBubbleAsync = renderWidgetAsync;
 
-// Функции для автоматического рантайма react-jsx
+// Handlers for automatic react-jsx runtime
 export const jsx = (
     tag: string | ((props: Record<string, unknown>) => string),
     props: Record<string, unknown> | null,

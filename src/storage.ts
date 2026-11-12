@@ -5,9 +5,9 @@ export interface WidgetScreenRecord<TState = Record<string, unknown>> {
 }
 
 /**
- * Интерфейс подключаемого хранилища активных состояний виджетов.
- * Позволяет использовать распределенные базы (Redis, SQLite, Postgres, grammY Sessions)
- * вместо локального Map в памяти.
+ * Pluggable storage adapter interface for managing widget state records across messages.
+ * Allows using external databases (Redis, SQLite, Postgres, grammY Sessions)
+ * instead of in-memory caching.
  */
 export interface WidgetsStorage {
     get(
@@ -28,16 +28,15 @@ export interface WidgetsStorage {
 
 export interface MemoryWidgetsStorageOptions {
     /**
-     * Максимальное количество активных записей в памяти.
-     * При превышении старые записи удаляются (LRU-стратегия).
+     * Maximum number of active entries allowed in memory.
+     * When reached, least-recently-used (LRU) records are evicted.
      * @default 10000
      */
     maxEntries?: number;
 
     /**
-     * Время жизни записи по умолчанию в секундах.
-     * По умолчанию: 86400 (24 часа)
-     * @default 86400
+     * Default record time-to-live (TTL) in seconds.
+     * @default 86400 (24 hours)
      */
     defaultTtlSeconds?: number;
 }
@@ -48,7 +47,10 @@ interface MemoryEntry {
 }
 
 /**
- * Дефолтное хранилище состояний в памяти процесса с поддержкой TTL и защитой от переполнения (LRU).
+ * In-memory storage implementation featuring LRU eviction and TTL expiration.
+ *
+ * @example
+ * const storage = new MemoryWidgetsStorage({ maxEntries: 5000, defaultTtlSeconds: 3600 });
  */
 export class MemoryWidgetsStorage implements WidgetsStorage {
     private readonly entries = new Map<string, MemoryEntry>();
@@ -67,13 +69,13 @@ export class MemoryWidgetsStorage implements WidgetsStorage {
             return undefined;
         }
 
-        // Проверка истечения TTL
+        // Verify TTL expiration
         if (item.expiresAt !== undefined && Date.now() > item.expiresAt) {
             this.entries.delete(key);
             return undefined;
         }
 
-        // Обновляем позицию для LRU (удаляем и вставляем заново в конец Map)
+        // Refresh LRU ordering by reinserting the key at the end
         this.entries.delete(key);
         this.entries.set(key, item);
 
@@ -85,12 +87,10 @@ export class MemoryWidgetsStorage implements WidgetsStorage {
         value: WidgetScreenRecord,
         ttlSeconds?: number,
     ): void {
-        // Удаляем старый ключ, если был
         this.entries.delete(key);
 
-        // Контроль максимального размера Map
+        // Enforce max entry limit by evicting oldest item
         if (this.entries.size >= this.maxEntries) {
-            // Удаляем самую старую запись (первый ключ в итераторе Map)
             const oldestKey = this.entries.keys().next().value;
             if (oldestKey !== undefined) {
                 this.entries.delete(oldestKey);

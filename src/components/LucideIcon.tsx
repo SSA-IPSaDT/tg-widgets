@@ -32,7 +32,7 @@ import { formatStyle } from '../jsx';
 
 export interface LucideIconProps {
     /**
-     * SVG строка иконки из `lucide-static` (например, `Info`, `CircleCheck`, `Download`)
+     * Raw SVG markup string from `lucide-static` (e.g. `Info`, `CircleCheck`, `Download`).
      */
     icon: string;
     size?: number;
@@ -43,7 +43,11 @@ export interface LucideIconProps {
 }
 
 /**
- * Рендерит подлинную SVG-иконку Lucide с кастомизацией размера, цвета и стилей
+ * Renders an official Lucide SVG icon with custom sizing, stroke color, and styling.
+ * Automatically purges redundant XML namespaces to minimize byte weight.
+ *
+ * @example
+ * LucideIcon({ icon: LucideIcons.Flame, size: 16, color: '#2481cc' })
  */
 export const LucideIcon = ({
     icon,
@@ -59,14 +63,14 @@ export const LucideIcon = ({
 
     let svg = icon.trim();
 
-    // Удаляем избыточный XML-namespace для HTML5/WebKit/QuickJS баббла
+    // Strip redundant xmlns attribute for HTML5/QuickJS bubble context
     svg = svg.replace(/\s*xmlns="[^"]*"/g, '');
 
-    // Заменяем размеры width и height
+    // Replace width and height dimensions
     svg = svg.replace(/\bwidth="[^"]*"/, `width="${size}"`);
     svg = svg.replace(/\bheight="[^"]*"/, `height="${size}"`);
 
-    // Заменяем толщину штриха (1.75 по умолчанию для аккуратного современного стиля)
+    // Override stroke width (1.75 default provides crisp modern aesthetic)
     if (strokeWidth !== undefined) {
         svg = svg.replace(
             /\bstroke-width="[^"]*"/g,
@@ -74,17 +78,17 @@ export const LucideIcon = ({
         );
     }
 
-    // Заменяем stroke цвет, если указан
+    // Replace stroke color if custom value provided
     if (color && color !== 'currentColor') {
         svg = svg.replace(/\bstroke="currentColor"/, `stroke="${color}"`);
     }
 
-    // Добавляем className
+    // Append class names
     if (className) {
         svg = svg.replace(/\bclass="([^"]*)"/, `class="$1 ${className}"`);
     }
 
-    // Добавляем инлайн-стили только если переданы пользовательские свойства (дефолты в CSS)
+    // Attach inline styles only if explicitly passed
     if (style && Object.keys(style).length > 0) {
         const css = formatStyle(style);
         if (css) {
@@ -95,7 +99,7 @@ export const LucideIcon = ({
     return svg;
 };
 
-// Экспортируем популярные Lucide иконки для удобного использования в компонентах
+// Export curated set of commonly used Lucide icons
 export const LucideIcons = {
     Info,
     CircleCheck,

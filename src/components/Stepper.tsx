@@ -16,7 +16,11 @@ export interface StepperProps {
 }
 
 /**
- * Числовой степпер (Stepper) с квадратными контролами и защитой от деформации flexbox.
+ * Numeric Stepper component with distortion-proof square buttons.
+ * Serves as the primary integer increment/decrement control in Telegram Widgets.
+ *
+ * @example
+ * <Stepper id="tickets" value={2} min={1} max={10} decrementAction="minus" incrementAction="plus" />
  */
 export const Stepper = ({
     id,

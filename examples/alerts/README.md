@@ -1,22 +1,20 @@
-# 🔔 Alerts (Callouts & Status notifications)
+# 🔔 Alerts & Callouts Screen
 
-Компоненты уведомлений и статусов в стиле shadcn/ui (`Alert`, `AlertTitle`, `AlertDescription`).
+The **Alerts** screen demonstrates system status messages, warnings, confirmations, and errors rendered with official Lucide SVG iconography and theme-responsive color schemes.
 
-Исходный код примера: [`screen.tsx`](./screen.tsx)
-
----
-
-## 💡 Варианты и цвета темы
-
-* `default` — нейтральный блок на базе `--tg-theme-secondary-bg-color`.
-* `info` — информационный блок с синим акцентом (`--tg-theme-link-color`).
-* `success` — зеленый блок подтверждения успешного действия.
-* `warning` — желтый блок предупреждения.
-* `destructive` — красный блок ошибок (`--tg-theme-destructive-text-color`).
+Source code: [`screen.tsx`](./screen.tsx)
 
 ---
 
-## 💻 Код экрана (`screen.tsx`)
+## 💡 Key Architectural Features
+
+1. **Official Lucide Vector Icons**: Includes `Info`, `CircleCheck`, `TriangleAlert`, and `CircleAlert` with stroke colors matching Telegram's design tokens.
+2. **Clean Accent Borders**: Alerts feature fine-tuned borders tinted with their respective variant accent color, eliminating harsh default borders.
+3. **Typography Standards**: Titles are styled at 14px with `font-weight: 600`, and descriptions are rendered at 13px with `font-weight: 500`.
+
+---
+
+## 💻 Screen Code (`screen.tsx`)
 
 ```tsx
 import { Alert, defineWidgetScreen, h, WidgetLayout } from '@ipsadt/tg-widgets';
@@ -24,26 +22,26 @@ import { Alert, defineWidgetScreen, h, WidgetLayout } from '@ipsadt/tg-widgets';
 export const alertsScreen = defineWidgetScreen({
   id: 'alerts',
   component: () => (
-    <WidgetLayout gap={8} safeArea>
+    <WidgetLayout gap={8} fullWidth padding="8px 10px">
       <Alert
         variant="info"
-        title="Информация"
-        description="Виджеты поддерживают цветовую палитру темы пользователя."
+        title="Information"
+        description="Widgets adapt to user theme colors."
       />
       <Alert
         variant="success"
-        title="Успешно сохранено"
-        description="Ваши данные были синхронизированы с облаком."
+        title="Saved"
+        description="Changes synchronized successfully."
       />
       <Alert
         variant="warning"
-        title="Внимание"
-        description="Размер сжатого виджета ограничен 4096 байтами."
+        title="Warning"
+        description="Check parameters before proceeding."
       />
       <Alert
         variant="destructive"
-        title="Критическая ошибка"
-        description="Действие не может быть выполнено без авторизации."
+        title="Error"
+        description="Action rejected by server."
       />
     </WidgetLayout>
   ),
@@ -53,16 +51,8 @@ export const alertsScreen = defineWidgetScreen({
 
 ---
 
-## 🚀 Команда для проверки в боте
+## 🚀 Telegram Bot Command
 
 ```text
 /alerts
 ```
-
----
-
-## 📸 Скриншот из Telegram
-
-> *После тестирования добавьте сюда скриншот сообщения из Telegram с именем `screenshot.png`:*
-
-![Alerts Screenshot](./screenshot.png)

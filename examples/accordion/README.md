@@ -1,25 +1,26 @@
-# 📖 Accordion & Collapsible (<details> / <summary>)
+# 📖 Accordion Screen (`<details>` / `<summary>`)
 
-Компонент **`Accordion`** (и **`AccordionItem`** / **`Collapsible`**) предназначен для отображения раскрывающихся блоков, списков часто задаваемых вопросов (FAQ), детализации транзакций или спойлеров в виджетах Telegram.
+The **Accordion** screen demonstrates native collapsible sections, FAQs, and spoiler blocks rendered directly inside the Telegram message bubble.
 
-Исходный код примера: [`screen.tsx`](./screen.tsx)
+Source code: [`screen.tsx`](./screen.tsx)
 
 ---
 
-## 💡 Особенности реализации в Telegram Widgets
+## 💡 Key Architectural Features
 
-1. **100% нативный HTML**: Использует стандартные теги `<details>` и `<summary>`, которые официально поддерживаются спецификацией **Telegram QuickJS Profile 1**.
-2. **0 байт JavaScript**: Раскрытие и закрытие блока происходит нативно средствами Telegram без подключения скриптов и без сетевых запросов.
-3. **Плавная анимация шеврона**: Шеврон справа плавно поворачивается на 90° при открытии блока с помощью чистого CSS-правила:
+1. **100% Native HTML**: Built on standard `<details>` and `<summary>` elements, officially supported in **Telegram QuickJS Profile 1**.
+2. **Zero JavaScript Overhead**: Expanding and collapsing items occurs natively without executing client-side JavaScript or sending network requests.
+3. **Smooth Chevron Transitions**: Uses CSS transforms to rotate the chevron icon when opened:
    ```css
    details[open] .tg-accordion-chevron {
      transform: rotate(90deg) !important;
    }
    ```
+4. **Fast Touch Interaction**: Configured with `touch-action: manipulation` to eliminate the 300ms mobile tap delay.
 
 ---
 
-## 💻 Код экрана (`screen.tsx`)
+## 💻 Screen Code (`screen.tsx`)
 
 ```tsx
 import {
@@ -35,40 +36,30 @@ import {
   Collapsible,
   defineWidgetScreen,
   h,
-  WidgetLayout
+  WidgetLayout,
 } from '@ipsadt/tg-widgets';
 
 export const accordionScreen = defineWidgetScreen({
   id: 'accordion',
   component: () => (
-    <WidgetLayout safeArea>
-      <Card>
+    <WidgetLayout fullWidth padding="6px 8px">
+      <Card fullWidth>
         <CardHeader>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <CardTitle>Частые вопросы</CardTitle>
-            <Badge variant="accent">Profile 1</Badge>
-          </div>
-          <CardDescription>
-            Тестирование нативного элемента &lt;details&gt; в виджетах Telegram
-          </CardDescription>
+          <CardTitle>Frequently Asked Questions</CardTitle>
+          <CardDescription>Native details and summary elements</CardDescription>
         </CardHeader>
         <CardContent>
           <Accordion>
-            <AccordionItem title="Как работают HTML-виджеты?" open={true}>
-              Виджеты рендерятся прямо внутри баббла сообщения с помощью встроенной песочницы QuickJS.
+            <AccordionItem title="How do HTML widgets work?" open={true}>
+              Widgets render directly inside the chat message bubble.
             </AccordionItem>
-            <AccordionItem title="Нужен ли интернет для рендера?">
-              Нет, виджет отрисовывается мгновенно в локальном офлайне.
-            </AccordionItem>
-            <Collapsible title="Как виджет общается с ботом?">
-              Через вызов TelegramWidget.request(), доставляющий компактный запрос до 64 байт.
+            <Collapsible title="Is internet required?">
+              No, widgets render offline with zero network latency.
             </Collapsible>
           </Accordion>
         </CardContent>
         <CardFooter>
-          <span style={{ fontSize: 11, color: 'var(--tg-theme-hint-color, #888)' }}>
-            Нажмите на любой пункт, чтобы раскрыть
-          </span>
+          <span>Tap any item to expand details</span>
         </CardFooter>
       </Card>
     </WidgetLayout>
@@ -79,16 +70,8 @@ export const accordionScreen = defineWidgetScreen({
 
 ---
 
-## 🚀 Команда для проверки в боте
+## 🚀 Telegram Bot Command
 
 ```text
 /accordion
 ```
-
----
-
-## 📸 Скриншот из Telegram
-
-> *После тестирования добавьте сюда скриншот сообщения из Telegram с именем `screenshot.png`:*
-
-![Accordion Screenshot](./screenshot.png)

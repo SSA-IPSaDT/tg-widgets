@@ -22,8 +22,11 @@ const variantBorders: Record<NonNullable<AlertProps['variant']>, string> = {
 };
 
 /**
- * Компонент Alert для виджетов Telegram.
- * Отображает важные сообщения, уведомления об ошибках и статусы с подлинными Lucide SVG иконками.
+ * Callout alert component for Telegram Widgets.
+ * Displays informative, success, warning, or error messages with Lucide SVG iconography.
+ *
+ * @example
+ * <Alert variant="success" title="Payment Complete" description="Your TON transaction was confirmed." />
  */
 export const Alert = ({
     id,

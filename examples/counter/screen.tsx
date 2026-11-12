@@ -15,10 +15,16 @@ import {
     WidgetLayout,
 } from '../../src';
 
+/**
+ * State contract for the interactive counter widget.
+ */
 export interface CounterState {
     count: number;
 }
 
+/**
+ * Client-side script providing instant optimistic UI updates and server synchronization.
+ */
 const clientCounterScript = (args: { count: number }) => {
     const widget = window.TelegramWidget;
     const incrementButton = document.getElementById('btn-inc');
@@ -77,7 +83,22 @@ const clientCounterScript = (args: { count: number }) => {
 };
 
 /**
- * Экран интерактивного счетчика с клиентским IIFE скриптом
+ * Interactive counter widget screen demonstrating client-side IIFE scripting,
+ * haptic feedback, and server action synchronization via `window.TelegramWidget.request()`.
+ *
+ * @example
+ * ```tsx
+ * import { counterScreen } from './counter/screen';
+ *
+ * await bot.api.sendMessage(chatId, 'Counter', {
+ *   reply_markup: {
+ *     inline_keyboard: [[{
+ *       text: 'Open Counter',
+ *       callback_data: 'open_counter'
+ *     }]]
+ *   }
+ * });
+ * ```
  */
 export const counterScreen = defineWidgetScreen({
     id: 'counter',
@@ -92,7 +113,7 @@ export const counterScreen = defineWidgetScreen({
                             alignItems: 'center',
                         }}
                     >
-                        <CardTitle>Живой счётчик</CardTitle>
+                        <CardTitle>Live Counter</CardTitle>
                         <Badge
                             variant="accent"
                             icon={LucideIcon({
@@ -103,8 +124,7 @@ export const counterScreen = defineWidgetScreen({
                         />
                     </div>
                     <CardDescription>
-                        Клиентский скрипт отправляет запросы серверу через
-                        W.request()
+                        Client script sends requests to the bot via TelegramWidget.request()
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
