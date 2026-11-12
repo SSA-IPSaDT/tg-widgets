@@ -23,7 +23,7 @@ export interface CryptoState {
 }
 
 const cryptoClientScript = () => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
 
     document.getElementById('btn-send')?.addEventListener('click', () => {
         widget?.HapticFeedback?.impactOccurred?.('medium');

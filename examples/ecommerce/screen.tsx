@@ -24,7 +24,7 @@ export interface EcommerceState {
 }
 
 const ecommerceClientScript = (initial: EcommerceState) => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
     let state = { ...initial };
     const toast = document.getElementById('ecom-toast');
 

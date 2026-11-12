@@ -23,7 +23,7 @@ export interface TournamentState {
 }
 
 const tournamentClientScript = (initial: TournamentState) => {
-    const widget = (window as unknown as { TelegramWidget?: any; open?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
     let state = { ...initial };
     const toast = document.getElementById('tour-toast');
 

@@ -20,7 +20,7 @@ import {
 } from '../../src';
 
 const cardsClientScript = () => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
 
     document.getElementById('btn-statement')?.addEventListener('click', () => {
         widget?.HapticFeedback?.impactOccurred?.('light');

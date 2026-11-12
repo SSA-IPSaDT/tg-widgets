@@ -28,7 +28,7 @@ export interface ProfileState {
 }
 
 const profileClientScript = () => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
 
     const updateProfileUI = (data?: Record<string, unknown> | null) => {
         if (!data) return;
@@ -78,7 +78,7 @@ const profileClientScript = () => {
             const track = element.querySelector('.tg-switch-track');
             track?.classList.toggle('active');
 
-            widget?.request?.(actionName).then((response: { result?: string }) => {
+            widget?.request?.(actionName).then((response) => {
                 if (response?.result) {
                     try {
                         const parsed = JSON.parse(response.result);

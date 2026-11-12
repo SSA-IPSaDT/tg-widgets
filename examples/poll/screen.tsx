@@ -25,7 +25,7 @@ export interface PollState {
 }
 
 const pollClientScript = (initial: PollState) => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
     let state = { ...initial };
 
     const updatePollUI = (nextState: typeof state) => {
@@ -85,7 +85,7 @@ const pollClientScript = (initial: PollState) => {
         state.votes[choice]++;
         state.userVote = choice;
         updatePollUI(state);
-        widget?.request?.(`vote:${choice}`).then((response: { result?: string }) => {
+        widget?.request?.(`vote:${choice}`).then((response) => {
             if (response?.result) {
                 try {
                     const parsedData = JSON.parse(response.result);

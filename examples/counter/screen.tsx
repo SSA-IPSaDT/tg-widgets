@@ -20,7 +20,7 @@ export interface CounterState {
 }
 
 const clientCounterScript = (args: { count: number }) => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
     const incrementButton = document.getElementById('btn-inc');
     const decrementButton = document.getElementById('btn-dec');
     const counterValueElement = document.getElementById('counter-val');
@@ -48,7 +48,7 @@ const clientCounterScript = (args: { count: number }) => {
     incrementButton?.addEventListener('click', () => {
         widget?.HapticFeedback?.impactOccurred?.('light');
         setCount(count + 1);
-        widget?.request?.('inc').then((response: { result?: string }) => {
+        widget?.request?.('inc').then((response) => {
             if (response?.result) {
                 try {
                     const parsedData = JSON.parse(response.result);
@@ -63,7 +63,7 @@ const clientCounterScript = (args: { count: number }) => {
     decrementButton?.addEventListener('click', () => {
         widget?.HapticFeedback?.impactOccurred?.('light');
         setCount(count - 1);
-        widget?.request?.('dec').then((response: { result?: string }) => {
+        widget?.request?.('dec').then((response) => {
             if (response?.result) {
                 try {
                     const parsedData = JSON.parse(response.result);

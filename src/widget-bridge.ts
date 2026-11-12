@@ -147,7 +147,7 @@ export interface TelegramWidgetBridge {
      * @param data Строка действия длиной 1-64 байта
      * @param options Дополнительные параметры (например, { wallet: true })
      */
-    request(
+    request?(
         data: string,
         options?: TelegramWidgetRequestOptions | unknown,
     ): Promise<TelegramWidgetRequestAnswer>;
@@ -160,12 +160,12 @@ export interface TelegramWidgetBridge {
     /**
      * Открывает внешнюю https:// ссылку с подтверждением пользователя
      */
-    openLink(url: string): void;
+    openLink?(url: string): void;
 
     /**
      * Открывает https://t.me/... ссылку внутри Telegram
      */
-    openTelegramLink(url: string): void;
+    openTelegramLink?(url: string): void;
 
     /**
      * Управление виброоткликом устройства
@@ -195,7 +195,7 @@ export interface TelegramWidgetBridge {
     /**
      * Подписка на события виджета
      */
-    onEvent(eventName: TelegramWidgetEventType, handler: () => void): void;
+    onEvent?(eventName: TelegramWidgetEventType, handler: () => void): void;
 
     /**
      * Отписка от событий виджета
@@ -207,4 +207,5 @@ declare global {
     interface Window {
         TelegramWidget?: TelegramWidgetBridge;
     }
+    var TelegramWidget: TelegramWidgetBridge | undefined;
 }

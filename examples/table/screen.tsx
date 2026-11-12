@@ -24,7 +24,7 @@ import {
 } from '../../src';
 
 const tableClientScript = () => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
     const downloadButton = document.getElementById('btn-download');
 
     downloadButton?.addEventListener('click', () => {

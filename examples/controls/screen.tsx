@@ -28,7 +28,7 @@ export interface ControlsState {
 }
 
 const controlsClientScript = (initial: ControlsState) => {
-    const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
+    const widget = window.TelegramWidget;
     let state = { ...initial };
 
     const updateUI = (partialState: Partial<ControlsState>) => {
@@ -89,7 +89,7 @@ const controlsClientScript = (initial: ControlsState) => {
     widget?.onEvent?.('chatDataChanged', syncState);
 
     const sendAction = (action: string) => {
-        widget?.request?.(action).then((response: { result?: string }) => {
+        widget?.request?.(action).then((response) => {
             if (response?.result) {
                 try {
                     const parsedData = JSON.parse(response.result);
