@@ -4,7 +4,6 @@ import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
     defineWidgetScreen,
@@ -23,7 +22,7 @@ export interface CryptoState {
     lastTx?: string;
 }
 
-const cryptoClientScript = (initial: CryptoState) => {
+const cryptoClientScript = () => {
     const widget = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
 
     document.getElementById('btn-send')?.addEventListener('click', () => {
@@ -141,7 +140,7 @@ export const cryptoScreen = defineWidgetScreen({
                         </div>
                     </CardContent>
                 </Card>
-                <Script fn={cryptoClientScript} args={[props]} />
+                <Script fn={cryptoClientScript} />
             </WidgetLayout>
         );
     },

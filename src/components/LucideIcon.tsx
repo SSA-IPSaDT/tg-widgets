@@ -26,6 +26,7 @@ import {
     Trophy,
     User,
     X,
+    Zap,
 } from 'lucide-static';
 import { formatStyle } from '../jsx';
 
@@ -123,4 +124,5 @@ export const LucideIcons = {
     Minus,
     Download,
     BarChart3,
+    Zap,
 };

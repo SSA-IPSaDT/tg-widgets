@@ -94,7 +94,7 @@ export interface WidgetScreen<
 > {
     id: string;
     component: (props: TProps) => string;
-    initialState: (props: TProps) => TState;
+    initialState: (props?: TProps) => TState;
     actions: TActions;
 }
 
@@ -107,7 +107,7 @@ export type BubbleScreen<
 export type AnyWidgetScreen = {
     id: string;
     component: (props: never) => string;
-    initialState: (props: never) => unknown;
+    initialState: (props?: never) => unknown;
     actions: Record<string, unknown>;
 };
 
@@ -128,7 +128,7 @@ export const defineWidgetScreen = <
 }): WidgetScreen<TProps, TState, TActions> => ({
     id: options.id,
     component: options.component,
-    initialState: options.initialState,
+    initialState: options.initialState as (props?: TProps) => TState,
     actions: (options.actions ?? {}) as TActions,
 });
 

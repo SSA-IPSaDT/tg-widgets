@@ -4,10 +4,12 @@
         "target": "ES2022",
         "module": "ESNext",
         "moduleResolution": "bundler",
-        "lib": ["ESNext", "DOM", "DOM.Iterable"],
+        "lib": [
+            "ESNext",
+            "DOM",
+            "DOM.Iterable"
+        ],
         "jsx": "react",
-        "jsxFactory": "h",
-        "jsxFragmentFactory": "Fragment",
         "strict": true,
         "noFallthroughCasesInSwitch": true,
         "noImplicitOverride": true,
@@ -17,7 +19,16 @@
         "skipLibCheck": true,
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true,
-        "types": ["bun"]
+        "types": [
+            "bun"
+        ],
+        "jsxFactory": "h",
+        "jsxFragmentFactory": "Fragment"
     },
-    "include": ["src/**/*", "mod.ts", "tests/**/*"]
+    "include": [
+        "src/**/*",
+        "mod.ts",
+        "tests/**/*",
+        "examples/**/*"
+    ]
 }
