@@ -1,0 +1,57 @@
+name: 🧩 UI Component Proposal
+description: Propose a new Telegram native UI component (e.g. Stepper, Accordion, DatePicker)
+title: "feat(ui): add [ComponentName] primitive"
+labels: ["ui-kit", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Propose a new UI component for the zero-runtime Telegram UI Kit. All components must adhere to Telegram theme variables (`--tg-theme-*`) and remain ultra-compact for the 4096B deflate ceiling.
+
+  - type: input
+    id: component-name
+    attributes:
+      label: Component Name
+      placeholder: "e.g. Accordion, Stepper, RatingStars"
+    validations:
+      required: true
+
+  - type: textarea
+    id: design-reference
+    attributes:
+      label: Telegram Design Reference
+      description: Where is this component found in official Telegram apps? (Attach screenshots or link design guidelines)
+    validations:
+      required: true
+
+  - type: textarea
+    id: props-api
+    attributes:
+      label: Proposed Props & API
+      description: What props should this component accept?
+      render: typescript
+      placeholder: |
+        export interface AccordionProps {
+          title: string;
+          isOpen?: boolean;
+          children: JSX.Element;
+        }
+
+  - type: dropdown
+    id: client-script-needed
+    attributes:
+      label: Requires Client Hydration (Script)?
+      description: Does this component need client-side JS interactivity (like click toggling or haptics), or is it purely declarative HTML/CSS?
+      options:
+        - Pure CSS / HTML (Zero JavaScript)
+        - Interactive (Requires client script / TelegramWidget RPC)
+        - Both variants (CSS fallback with optional interactive script)
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: willingness
+    attributes:
+      label: Contribution
+      options:
+        - label: I would like to implement this component myself in a PR!

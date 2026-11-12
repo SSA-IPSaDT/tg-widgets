@@ -1,0 +1,42 @@
+name: 💡 Feature Request
+description: Suggest a new idea, developer experience enhancement, or plugin capability
+title: "feat: [Short feature summary]"
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea to make `@ipsadt/tg-widgets` better? We would love to hear it!
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem or limitation? (e.g. "I'm always frustrated when...")
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed-solution
+    attributes:
+      label: Proposed Solution / API Design
+      description: Describe your proposed solution or how the API / TSX component should look.
+      render: tsx
+      placeholder: |
+        // Example desired usage
+        ctx.widgets.send('myScreen', { ... });
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Any alternative solutions or workarounds you have considered?
+
+  - type: checkboxes
+    id: willingness
+    attributes:
+      label: Contribution
+      options:
+        - label: I would be willing to submit a Pull Request for this feature!

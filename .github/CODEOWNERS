@@ -1,0 +1,14 @@
+# Global code owner for @ipsadt/tg-widgets
+* @naylour
+
+# CI/CD Workflows and GitHub configurations
+/.github/ @naylour
+
+# Package configurations and build manifests
+/package.json @naylour
+/deno.json @naylour
+/tsconfig*.json @naylour
+
+# Core runtime, plugin and entrypoints
+/src/ @naylour
+/mod.ts @naylour

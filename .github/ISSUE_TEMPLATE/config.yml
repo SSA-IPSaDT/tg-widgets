@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 💬 GitHub Discussions & Questions
+    url: https://github.com/SSA-IPSaDT/tg-widgets/discussions
+    about: Ask questions, share your Telegram widget layouts, or get general help.
+  - name: 🔒 Report a Security Vulnerability
+    url: https://github.com/SSA-IPSaDT/tg-widgets/security/advisories/new
+    about: Privately report sensitive security vulnerabilities.
