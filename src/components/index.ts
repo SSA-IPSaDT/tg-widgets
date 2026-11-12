@@ -8,7 +8,6 @@ export * from './Card';
 export * from './Checkbox';
 export * from './Divider';
 export * from './Icon';
-export * from './Input';
 export * from './List';
 export * from './ProgressBar';
 export * from './Radio';

@@ -27,7 +27,6 @@ import {
     encodeWidgetAction,
     formatStyle,
     h,
-    Input,
     inspectWidgetSize,
     inspectWidgetSizeAsync,
     List,
@@ -133,17 +132,6 @@ describe('@ipsadt/tg-widgets', () => {
         expect(compoundCard).toContain('Compound Subtitle');
         expect(compoundCard).toContain('Main content');
         expect(compoundCard).toContain('Footer info');
-
-        const input = Input({
-            id: 'username',
-            placeholder: 'Enter name',
-            label: 'Your Name',
-            error: 'Invalid username',
-        });
-        expect(input).toContain('Enter name');
-        expect(input).toContain('Your Name');
-        expect(input).toContain('Invalid username');
-        expect(input).not.toContain('<input'); // No raw input tag!
 
         const stepper = Stepper({ id: 'count', value: 3, min: 0, max: 10 });
         expect(stepper).toContain('tg-stepper');
