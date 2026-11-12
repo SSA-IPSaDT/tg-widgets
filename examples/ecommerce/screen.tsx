@@ -113,7 +113,7 @@ export const ecommerceScreen = defineWidgetScreen({
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <CardTitle>Кроссовки HyperSpeed</CardTitle>
-                            <Badge variant="success">В наличии</Badge>
+                            <Badge variant="success" icon={LucideIcon({ icon: LucideIcons.Check, size: 12, strokeWidth: 2.2 })}>В наличии</Badge>
                         </div>
                         <CardDescription>
                             Оригинальная спортивная обувь с быстрой доставкой
@@ -167,7 +167,7 @@ export const ecommerceScreen = defineWidgetScreen({
                                 style={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
-                                    background: 'rgba(120, 120, 128, 0.12)',
+                                    background: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.12))',
                                     borderRadius: 10,
                                     padding: 3,
                                     gap: 4,
@@ -179,15 +179,21 @@ export const ecommerceScreen = defineWidgetScreen({
                                     style={{
                                         width: 28,
                                         height: 28,
-                                        border: 'none',
+                                        padding: 0,
+                                        margin: 0,
+                                        boxSizing: 'border-box',
+                                        flexShrink: 0,
+                                        border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.15))',
                                         borderRadius: 7,
-                                        background: 'var(--tg-theme-bg-color, #fff)',
+                                        background: 'var(--tg-theme-bg-color, #ffffff)',
                                         color: 'var(--tg-theme-text-color, inherit)',
-                                        fontWeight: 700,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         cursor: 'pointer',
                                     }}
                                 >
-                                    −
+                                    {LucideIcon({ icon: LucideIcons.Minus, size: 14, strokeWidth: 2 })}
                                 </button>
                                 <span id="ecom-qty" style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, fontSize: 14 }}>
                                     {props.quantity}
@@ -198,15 +204,21 @@ export const ecommerceScreen = defineWidgetScreen({
                                     style={{
                                         width: 28,
                                         height: 28,
-                                        border: 'none',
+                                        padding: 0,
+                                        margin: 0,
+                                        boxSizing: 'border-box',
+                                        flexShrink: 0,
+                                        border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.15))',
                                         borderRadius: 7,
-                                        background: 'var(--tg-theme-bg-color, #fff)',
+                                        background: 'var(--tg-theme-bg-color, #ffffff)',
                                         color: 'var(--tg-theme-text-color, inherit)',
-                                        fontWeight: 700,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
                                         cursor: 'pointer',
                                     }}
                                 >
-                                    +
+                                    {LucideIcon({ icon: LucideIcons.Plus, size: 14, strokeWidth: 2 })}
                                 </button>
                             </div>
                         </div>
@@ -216,7 +228,7 @@ export const ecommerceScreen = defineWidgetScreen({
                         {/* Итоговая сумма */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <span style={{ fontSize: 14, fontWeight: 600 }}>Итого:</span>
-                            <span id="ecom-total" style={{ fontSize: 20, fontWeight: 800, color: 'var(--tg-theme-button-color, #2481cc)' }}>
+                            <span id="ecom-total" style={{ fontSize: 20, fontWeight: 800, color: 'var(--tg-theme-link-color, var(--tg-theme-text-color, #2481cc))' }}>
                                 ${total}
                             </span>
                         </div>

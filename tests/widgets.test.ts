@@ -96,6 +96,10 @@ describe('@ipsadt/tg-widgets', () => {
         expect(badge).toContain('tg-badge-accent');
         expect(badge).toContain('border-radius:50%');
 
+        const pulseBadge = Badge({ variant: 'success', pulse: true, children: 'Live' });
+        expect(pulseBadge).toContain('tg-badge-pulse');
+        expect(pulseBadge).toContain('Live');
+
         const card = Card({
             header: 'Header',
             footer: 'Footer',
@@ -137,8 +141,9 @@ describe('@ipsadt/tg-widgets', () => {
         const stepper = Stepper({ id: 'count', value: 3, min: 0, max: 10 });
         expect(stepper).toContain('tg-stepper');
         expect(stepper).toContain('3');
-        expect(stepper).toContain('−');
-        expect(stepper).toContain('+');
+        expect(stepper).toContain('data-action="decrement"');
+        expect(stepper).toContain('data-action="increment"');
+        expect(stepper).toContain('svg');
 
         const chk = Checkbox({
             id: 'agree',

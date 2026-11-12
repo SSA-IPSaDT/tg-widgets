@@ -11,6 +11,8 @@ export interface BadgeProps {
         | 'warning';
     size?: 'sm' | 'md';
     dot?: boolean;
+    pulse?: boolean;
+    icon?: unknown;
     style?: Record<string, string | number | undefined | null>;
     className?: string;
     children?: unknown;
@@ -21,6 +23,8 @@ export const Badge = ({
     variant = 'default',
     size = 'sm',
     dot = false,
+    pulse = false,
+    icon,
     style,
     className = '',
     children,
@@ -33,16 +37,29 @@ export const Badge = ({
             class={`tg-badge tg-badge-${variant} ${sizeClass} ${className}`.trim()}
             style={style}
         >
-            {dot && (
+            {(dot || pulse) && (
                 <span
+                    class={pulse ? 'tg-badge-pulse' : ''}
                     style={{
                         width: 6,
                         height: 6,
                         borderRadius: '50%',
                         backgroundColor: 'currentColor',
                         display: 'inline-block',
+                        flexShrink: 0,
                     }}
                 />
+            )}
+            {icon && (
+                <span
+                    style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        flexShrink: 0,
+                    }}
+                >
+                    {icon}
+                </span>
             )}
             {children}
         </span>

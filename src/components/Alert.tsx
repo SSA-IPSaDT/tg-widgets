@@ -30,58 +30,48 @@ export const Alert = ({
 }: AlertProps): string => {
     const variantStyles = {
         default: {
-            bg: 'var(--tg-theme-secondary-bg-color, #f4f4f5)',
-            border: '1px solid rgba(120, 120, 128, 0.20)',
-            title: 'var(--tg-theme-text-color, #18181b)',
-            desc: 'var(--tg-theme-text-color, #1e293b)',
+            iconBg: 'rgba(120, 120, 128, 0.12)',
+            iconColor: 'var(--tg-theme-text-color, inherit)',
             defaultIcon: null,
         },
         info: {
-            bg: 'linear-gradient(rgba(36, 129, 204, 0.10), rgba(36, 129, 204, 0.10)), var(--tg-theme-bg-color, #ffffff)',
-            border: '1px solid rgba(36, 129, 204, 0.30)',
-            title: '#1d70b8',
-            desc: 'var(--tg-theme-text-color, #1e293b)',
+            iconBg: 'rgba(36, 129, 204, 0.14)',
+            iconColor: 'var(--tg-theme-link-color, #2481cc)',
             defaultIcon: LucideIcon({
                 icon: LucideIcons.Info,
-                size: 18,
+                size: 16,
                 strokeWidth: 1.75,
-                color: '#1d70b8',
+                color: 'var(--tg-theme-link-color, #2481cc)',
             }),
         },
         success: {
-            bg: 'linear-gradient(rgba(16, 185, 129, 0.10), rgba(16, 185, 129, 0.10)), var(--tg-theme-bg-color, #ffffff)',
-            border: '1px solid rgba(16, 185, 129, 0.30)',
-            title: '#059669',
-            desc: 'var(--tg-theme-text-color, #1e293b)',
+            iconBg: 'rgba(16, 185, 129, 0.14)',
+            iconColor: '#10b981',
             defaultIcon: LucideIcon({
                 icon: LucideIcons.CircleCheck,
-                size: 18,
+                size: 16,
                 strokeWidth: 1.75,
-                color: '#059669',
+                color: '#10b981',
             }),
         },
         warning: {
-            bg: 'linear-gradient(rgba(245, 158, 11, 0.10), rgba(245, 158, 11, 0.10)), var(--tg-theme-bg-color, #ffffff)',
-            border: '1px solid rgba(245, 158, 11, 0.32)',
-            title: '#b45309',
-            desc: 'var(--tg-theme-text-color, #1e293b)',
+            iconBg: 'rgba(245, 158, 11, 0.14)',
+            iconColor: '#f59e0b',
             defaultIcon: LucideIcon({
                 icon: LucideIcons.TriangleAlert,
-                size: 18,
+                size: 16,
                 strokeWidth: 1.75,
-                color: '#b45309',
+                color: '#f59e0b',
             }),
         },
         destructive: {
-            bg: 'linear-gradient(rgba(239, 68, 68, 0.10), rgba(239, 68, 68, 0.10)), var(--tg-theme-bg-color, #ffffff)',
-            border: '1px solid rgba(239, 68, 68, 0.30)',
-            title: '#dc2626',
-            desc: 'var(--tg-theme-text-color, #1e293b)',
+            iconBg: 'rgba(239, 68, 68, 0.14)',
+            iconColor: 'var(--tg-theme-destructive-text-color, #ef4444)',
             defaultIcon: LucideIcon({
                 icon: LucideIcons.CircleAlert,
-                size: 18,
+                size: 16,
                 strokeWidth: 1.75,
-                color: '#dc2626',
+                color: 'var(--tg-theme-destructive-text-color, #ef4444)',
             }),
         },
     }[variant];
@@ -94,29 +84,41 @@ export const Alert = ({
             class={`tg-alert tg-alert-${variant} ${className}`.trim()}
             style={{
                 display: 'flex',
-                alignItems: 'flex-start',
-                gap: 10,
-                padding: '11px 13px',
-                borderRadius: 12,
-                background: variantStyles.bg,
-                border: variantStyles.border,
+                alignItems: 'center',
+                gap: 12,
+                padding: '10px 14px',
+                borderRadius: 14,
+                background: 'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
+                border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
                 boxShadow: '0 1px 3px rgba(0, 0, 0, 0.04)',
                 color: 'var(--tg-theme-text-color, inherit)',
                 width: '100%',
                 boxSizing: 'border-box',
-                fontSize: 13,
                 ...style,
             }}
             {...dataAttrs}
         >
             {currentIcon && (
-                <div style={{ flexShrink: 0, marginTop: 1 }}>{currentIcon}</div>
+                <div
+                    style={{
+                        width: 32,
+                        height: 32,
+                        borderRadius: '50%',
+                        background: variantStyles.iconBg,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                    }}
+                >
+                    {currentIcon}
+                </div>
             )}
             <div
                 style={{
                     display: 'flex',
                     flexDirection: 'column',
-                    gap: 3,
+                    gap: 2,
                     flex: 1,
                 }}
             >
@@ -126,10 +128,7 @@ export const Alert = ({
                             fontWeight: 600,
                             fontSize: 13.5,
                             letterSpacing: '-0.1px',
-                            color:
-                                variant !== 'default'
-                                    ? variantStyles.title
-                                    : 'inherit',
+                            color: 'var(--tg-theme-text-color, inherit)',
                         }}
                     >
                         {title}
@@ -140,9 +139,9 @@ export const Alert = ({
                         style={{
                             fontSize: 12.5,
                             fontWeight: 400,
-                            color: variantStyles.desc,
-                            opacity: 0.85,
-                            lineHeight: 1.4,
+                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, inherit))',
+                            opacity: 0.75,
+                            lineHeight: 1.38,
                         }}
                     >
                         {description}
@@ -169,9 +168,9 @@ export const AlertDescription = ({
         style={{
             fontSize: 12.5,
             fontWeight: 400,
-            color: 'var(--tg-theme-text-color, #1e293b)',
-            opacity: 0.85,
-            lineHeight: 1.4,
+            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, inherit))',
+            opacity: 0.75,
+            lineHeight: 1.38,
         }}
     >
         {children}

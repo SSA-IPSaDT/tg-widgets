@@ -1,4 +1,5 @@
 import { h } from '../jsx';
+import { LucideIcon, LucideIcons } from './LucideIcon';
 
 export interface InputProps {
     id?: string;
@@ -192,28 +193,30 @@ export const Stepper = ({
                 disabled={disabled || isMin}
                 class="tg-stepper-btn"
                 style={{
-                    width: 32,
-                    height: 32,
-                    border: 'none',
-                    borderRadius: 8,
+                    width: 28,
+                    height: 28,
+                    padding: 0,
+                    margin: 0,
+                    boxSizing: 'border-box',
+                    flexShrink: 0,
+                    border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.12))',
+                    borderRadius: 7,
                     background:
-                        'var(--tg-theme-bg-color, rgba(255, 255, 255, 0.9))',
+                        'var(--tg-theme-bg-color, #ffffff)',
                     color: 'var(--tg-theme-text-color, inherit)',
-                    fontWeight: 700,
-                    fontSize: 18,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: disabled || isMin ? 'default' : 'pointer',
-                    opacity: disabled || isMin ? 0.4 : 1,
+                    opacity: disabled || isMin ? 0.35 : 1,
                     touchAction: 'manipulation',
                 }}
             >
-                −
+                {LucideIcon({ icon: LucideIcons.Minus, size: 14, strokeWidth: 2 })}
             </button>
             <span
                 style={{
-                    minWidth: 36,
+                    minWidth: 32,
                     textAlign: 'center',
                     fontWeight: 600,
                     fontSize: 14,
@@ -228,24 +231,26 @@ export const Stepper = ({
                 disabled={disabled || isMax}
                 class="tg-stepper-btn"
                 style={{
-                    width: 32,
-                    height: 32,
-                    border: 'none',
-                    borderRadius: 8,
+                    width: 28,
+                    height: 28,
+                    padding: 0,
+                    margin: 0,
+                    boxSizing: 'border-box',
+                    flexShrink: 0,
+                    border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.12))',
+                    borderRadius: 7,
                     background:
-                        'var(--tg-theme-bg-color, rgba(255, 255, 255, 0.9))',
+                        'var(--tg-theme-bg-color, #ffffff)',
                     color: 'var(--tg-theme-text-color, inherit)',
-                    fontWeight: 700,
-                    fontSize: 18,
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                     cursor: disabled || isMax ? 'default' : 'pointer',
-                    opacity: disabled || isMax ? 0.4 : 1,
+                    opacity: disabled || isMax ? 0.35 : 1,
                     touchAction: 'manipulation',
                 }}
             >
-                +
+                {LucideIcon({ icon: LucideIcons.Plus, size: 14, strokeWidth: 2 })}
             </button>
         </div>
     );

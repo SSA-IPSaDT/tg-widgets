@@ -2,7 +2,7 @@ import { h } from '../jsx';
 
 export interface CardProps {
     id?: string;
-    variant?: 'default' | 'outlined' | 'section' | 'inset';
+    variant?: 'default' | 'section' | 'secondary' | 'outlined' | 'inset';
     radius?: number;
     gap?: number;
     fullWidth?: boolean;
@@ -51,8 +51,8 @@ export const Card = ({
                         fontWeight: 600,
                         textTransform: 'uppercase',
                         letterSpacing: 0.5,
-                        color: 'var(--tg-theme-text-color, #111827)',
-                        opacity: 0.65,
+                        color: 'var(--tg-theme-section-header-text-color, var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827)))',
+                        opacity: 0.70,
                     }}
                 >
                     {header}
@@ -63,8 +63,8 @@ export const Card = ({
                 <div
                     style={{
                         fontSize: 11.5,
-                        color: 'var(--tg-theme-text-color, #111827)',
-                        opacity: 0.68,
+                        color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
+                        opacity: 0.70,
                         marginTop: 4,
                     }}
                 >
@@ -126,7 +126,7 @@ export const CardDescription = ({
     <div
         style={{
             fontSize: 12.5,
-            color: 'var(--tg-theme-text-color, #111827)',
+            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
             opacity: 0.72,
             lineHeight: 1.38,
             ...style,
@@ -168,8 +168,6 @@ export const CardFooter = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             fontSize: 12,
-            color: 'var(--tg-theme-text-color, #111827)',
-            opacity: 0.68,
             marginTop: 4,
             ...style,
         }}

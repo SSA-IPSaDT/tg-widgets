@@ -98,7 +98,7 @@ export const pollScreen = defineWidgetScreen({
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <CardTitle>Опрос сообщества</CardTitle>
-                            <Badge variant="accent">Live Poll</Badge>
+                            <Badge variant="accent" pulse>LIVE POLL</Badge>
                         </div>
                         <CardDescription>
                             Какой стек вы используете для разработки Telegram-ботов?
