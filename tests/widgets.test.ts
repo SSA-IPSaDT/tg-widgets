@@ -431,13 +431,15 @@ describe('@ipsadt/tg-widgets', () => {
         expect(ctx.widgets.getScreen('counter')).toBeDefined();
         expect(ctx.widgets.getScreen('unknown')).toBeUndefined();
 
-        // Send screen
+        // Send screen with caption
         await ctx.widgets.send('counter', {
             chatId: 100,
             props: { initial: 5 },
+            caption: '📊 *Size info*',
         });
 
         expect(sentParams?.chat_id).toBe(100);
+        expect(sentParams?.parse_mode).toBe('Markdown');
         const chatData = JSON.parse(sentParams?.chat_data as string);
         expect(chatData.count).toBe(5);
         expect(chatData.__screen).toBe('counter');
@@ -530,6 +532,7 @@ describe('@ipsadt/tg-widgets', () => {
         expect(svg).toContain('<svg');
         expect(svg).toContain('width="20"');
         expect(svg).toContain('height="20"');
+        expect(svg).toContain('stroke-width="1.75"');
         expect(svg).toContain('stroke="#2481cc"');
         expect(svg).toContain('class="lucide lucide-info custom-icon"');
 

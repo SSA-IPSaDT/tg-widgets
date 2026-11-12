@@ -130,7 +130,8 @@ export const TableHead = ({
         style={{
             padding: '8px 10px',
             fontWeight: 600,
-            color: 'var(--tg-theme-hint-color, #888888)',
+            color: 'var(--tg-theme-text-color, #111827)',
+            opacity: 0.70,
             textAlign: align,
             fontSize: 12,
             ...style,
@@ -177,8 +178,9 @@ export const TableCaption = ({
     <caption
         style={{
             padding: '6px 10px',
-            fontSize: 11,
-            color: 'var(--tg-theme-hint-color, #888888)',
+            fontSize: 11.5,
+            color: 'var(--tg-theme-text-color, #111827)',
+            opacity: 0.65,
             textAlign: 'center',
             ...style,
         }}

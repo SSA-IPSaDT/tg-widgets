@@ -152,7 +152,7 @@ export const pollScreen = defineWidgetScreen({
                                                 {opt.label}
                                             </span>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                                                <span class="poll-count" style={{ fontSize: 11, color: 'var(--tg-theme-hint-color, #888)' }}>
+                                                <span class="poll-count" style={{ fontSize: 11, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
                                                     {opt.count} гол.
                                                 </span>
                                                 <span class="poll-pct" style={{ fontSize: 13, fontWeight: 700, minWidth: 34, textAlign: 'right' }}>
@@ -166,10 +166,10 @@ export const pollScreen = defineWidgetScreen({
                         </div>
                     </CardContent>
                     <CardFooter>
-                        <span id="poll-total-votes" style={{ fontSize: 11, color: 'var(--tg-theme-hint-color, #888)' }}>
+                        <span id="poll-total-votes" style={{ fontSize: 11, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
                             Всего голосов: {props.votes.grammy + props.votes.telegraf + props.votes.aiogram}
                         </span>
-                        <span style={{ fontSize: 11, color: 'var(--tg-theme-hint-color, #888)' }}>
+                        <span style={{ fontSize: 11, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
                             Нажмите на вариант для выбора
                         </span>
                     </CardFooter>

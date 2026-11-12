@@ -194,7 +194,8 @@ export const controlsScreen = defineWidgetScreen({
                                 <div
                                     style={{
                                         fontSize: 12,
-                                        color: 'var(--tg-theme-hint-color, #888)',
+                                        color: 'var(--tg-theme-text-color, #111827)',
+                                        opacity: 0.65,
                                     }}
                                 >
                                     Билеты на мероприятие

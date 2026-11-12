@@ -38,7 +38,7 @@ export const LucideIcon = ({
     icon,
     size = 18,
     color = 'currentColor',
-    strokeWidth = 2,
+    strokeWidth = 1.75,
     className = '',
     style,
 }: LucideIconProps): string => {
@@ -52,9 +52,9 @@ export const LucideIcon = ({
     svg = svg.replace(/\bwidth="[^"]*"/, `width="${size}"`);
     svg = svg.replace(/\bheight="[^"]*"/, `height="${size}"`);
 
-    // Заменяем толщину штриха, если указана
-    if (strokeWidth !== 2) {
-        svg = svg.replace(/\bstroke-width="[^"]*"/, `stroke-width="${strokeWidth}"`);
+    // Заменяем толщину штриха (1.75 по умолчанию для аккуратного современного стиля)
+    if (strokeWidth !== undefined) {
+        svg = svg.replace(/\bstroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`);
     }
 
     // Заменяем stroke цвет, если указан

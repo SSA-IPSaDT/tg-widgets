@@ -11,6 +11,7 @@ export interface RawWidgetApiMethods {
         is_shared?: boolean;
         caption?: string;
         caption_entities?: unknown[];
+        parse_mode?: string;
         reply_markup?: unknown;
         reply_parameters?: { message_id: number; [key: string]: unknown };
     }): Promise<{ message_id: number; [key: string]: unknown }>;

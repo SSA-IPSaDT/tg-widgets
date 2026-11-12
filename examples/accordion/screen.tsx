@@ -60,7 +60,8 @@ export const accordionScreen = defineWidgetScreen({
                     <span
                         style={{
                             fontSize: 11,
-                            color: 'var(--tg-theme-hint-color, #888)',
+                            color: 'var(--tg-theme-text-color, #111827)',
+                            opacity: 0.65,
                         }}
                     >
                         Нажмите на любой пункт, чтобы раскрыть

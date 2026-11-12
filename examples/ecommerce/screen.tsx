@@ -122,7 +122,7 @@ export const ecommerceScreen = defineWidgetScreen({
                     <CardContent>
                         {/* Выбор размера */}
                         <div>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--tg-theme-hint-color, #888)', marginBottom: 6 }}>
+                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65, marginBottom: 6 }}>
                                 Выберите размер (EU):
                             </div>
                             <div style={{ display: 'flex', gap: 8 }}>
@@ -159,7 +159,7 @@ export const ecommerceScreen = defineWidgetScreen({
                                 <div style={{ fontSize: 13, fontWeight: 500 }}>
                                     Количество
                                 </div>
-                                <div style={{ fontSize: 12, color: 'var(--tg-theme-hint-color, #888)' }}>
+                                <div style={{ fontSize: 12, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
                                     ${props.pricePerUnit} / пара
                                 </div>
                             </div>

@@ -68,6 +68,8 @@ export interface SendWidgetOptions<TProps> {
     height?: number;
     caption?: string;
     captionEntities?: unknown[];
+    parseMode?: 'Markdown' | 'MarkdownV2' | 'HTML' | string;
+    parse_mode?: 'Markdown' | 'MarkdownV2' | 'HTML' | string;
     publicData?: string;
     replyMarkup?: unknown;
     allowQueries?: boolean;
@@ -228,6 +230,11 @@ export const createTelegramWidgetsPlugin = <
                     __screen: screen.id,
                 });
 
+                const parseMode =
+                    sendOpts.parseMode ??
+                    sendOpts.parse_mode ??
+                    (sendOpts.caption ? 'Markdown' : undefined);
+
                 const result = await rawApi.sendWidget({
                     chat_id: targetChatId,
                     message_thread_id: sendOpts.messageThreadId,
@@ -240,6 +247,7 @@ export const createTelegramWidgetsPlugin = <
                     is_shared: sendOpts.isShared,
                     caption: sendOpts.caption,
                     caption_entities: sendOpts.captionEntities,
+                    parse_mode: parseMode,
                     reply_markup: sendOpts.replyMarkup,
                     reply_parameters: sendOpts.replyParameters,
                 });

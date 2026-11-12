@@ -51,7 +51,8 @@ export const Card = ({
                         fontWeight: 600,
                         textTransform: 'uppercase',
                         letterSpacing: 0.5,
-                        color: 'var(--tg-theme-hint-color, #888888)',
+                        color: 'var(--tg-theme-text-color, #111827)',
+                        opacity: 0.65,
                     }}
                 >
                     {header}
@@ -61,8 +62,9 @@ export const Card = ({
             {footer && (
                 <div
                     style={{
-                        fontSize: 11,
-                        color: 'var(--tg-theme-hint-color, #888888)',
+                        fontSize: 11.5,
+                        color: 'var(--tg-theme-text-color, #111827)',
+                        opacity: 0.68,
                         marginTop: 4,
                     }}
                 >
@@ -123,9 +125,10 @@ export const CardDescription = ({
 }): string => (
     <div
         style={{
-            fontSize: 12,
-            color: 'var(--tg-theme-hint-color, #888888)',
-            lineHeight: 1.35,
+            fontSize: 12.5,
+            color: 'var(--tg-theme-text-color, #111827)',
+            opacity: 0.72,
+            lineHeight: 1.38,
             ...style,
         }}
     >
@@ -165,7 +168,8 @@ export const CardFooter = ({
             alignItems: 'center',
             justifyContent: 'space-between',
             fontSize: 12,
-            color: 'var(--tg-theme-hint-color, #888888)',
+            color: 'var(--tg-theme-text-color, #111827)',
+            opacity: 0.68,
             marginTop: 4,
             ...style,
         }}

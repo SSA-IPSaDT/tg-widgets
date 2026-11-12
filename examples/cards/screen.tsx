@@ -96,7 +96,8 @@ export const cardsScreen = defineWidgetScreen({
                             display: 'flex',
                             justifyContent: 'space-between',
                             fontSize: 12,
-                            color: 'var(--tg-theme-hint-color, #888)',
+                            color: 'var(--tg-theme-text-color, #111827)',
+                            opacity: 0.65,
                         }}
                     >
                         <span>Лимит запросов</span>
@@ -122,7 +123,8 @@ export const cardsScreen = defineWidgetScreen({
                             <div
                                 style={{
                                     fontSize: 11,
-                                    color: 'var(--tg-theme-hint-color, #888)',
+                                    color: 'var(--tg-theme-text-color, #111827)',
+                                    opacity: 0.65,
                                 }}
                             >
                                 Транзакций
@@ -141,7 +143,8 @@ export const cardsScreen = defineWidgetScreen({
                             <div
                                 style={{
                                     fontSize: 11,
-                                    color: 'var(--tg-theme-hint-color, #888)',
+                                    color: 'var(--tg-theme-text-color, #111827)',
+                                    opacity: 0.65,
                                 }}
                             >
                                 Конверсия
