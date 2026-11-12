@@ -52,7 +52,7 @@ export const Card = ({
                         textTransform: 'uppercase',
                         letterSpacing: 0.5,
                         color: 'var(--tg-theme-section-header-text-color, var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827)))',
-                        opacity: 0.70,
+                        opacity: 0.7,
                     }}
                 >
                     {header}
@@ -64,7 +64,7 @@ export const Card = ({
                     style={{
                         fontSize: 11.5,
                         color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
-                        opacity: 0.70,
+                        opacity: 0.7,
                         marginTop: 4,
                     }}
                 >
@@ -80,19 +80,13 @@ export const Section = Card;
 export const CardHeader = ({
     children,
     style,
+    className = '',
 }: {
     children?: unknown;
     style?: Record<string, string | number | undefined | null>;
+    className?: string;
 }): string => (
-    <div
-        style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            marginBottom: 2,
-            ...style,
-        }}
-    >
+    <div class={`tg-card-header ${className}`.trim()} style={style}>
         {children}
     </div>
 );
@@ -100,18 +94,13 @@ export const CardHeader = ({
 export const CardTitle = ({
     children,
     style,
+    className = '',
 }: {
     children?: unknown;
     style?: Record<string, string | number | undefined | null>;
+    className?: string;
 }): string => (
-    <div
-        style={{
-            fontSize: 16,
-            fontWeight: 600,
-            color: 'var(--tg-theme-text-color, inherit)',
-            ...style,
-        }}
-    >
+    <div class={`tg-card-title ${className}`.trim()} style={style}>
         {children}
     </div>
 );
@@ -125,17 +114,7 @@ export const CardDescription = ({
     style?: Record<string, string | number | undefined | null>;
     className?: string;
 }): string => (
-    <div
-        class={`tg-description ${className}`.trim()}
-        style={{
-            fontSize: 12.5,
-            fontWeight: 500,
-            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
-            opacity: 0.85,
-            lineHeight: 1.4,
-            ...style,
-        }}
-    >
+    <div class={`tg-description ${className}`.trim()} style={style}>
         {children}
     </div>
 );
@@ -143,18 +122,13 @@ export const CardDescription = ({
 export const CardContent = ({
     children,
     style,
+    className = '',
 }: {
     children?: unknown;
     style?: Record<string, string | number | undefined | null>;
+    className?: string;
 }): string => (
-    <div
-        style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 8,
-            ...style,
-        }}
-    >
+    <div class={`tg-card-content ${className}`.trim()} style={style}>
         {children}
     </div>
 );
@@ -162,20 +136,13 @@ export const CardContent = ({
 export const CardFooter = ({
     children,
     style,
+    className = '',
 }: {
     children?: unknown;
     style?: Record<string, string | number | undefined | null>;
+    className?: string;
 }): string => (
-    <div
-        style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            fontSize: 12,
-            marginTop: 4,
-            ...style,
-        }}
-    >
+    <div class={`tg-card-footer ${className}`.trim()} style={style}>
         {children}
     </div>
 );

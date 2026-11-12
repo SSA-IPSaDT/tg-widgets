@@ -9,24 +9,25 @@ export interface DividerProps {
 
 export const Divider = ({
     inset = false,
-    color = 'rgba(120, 120, 128, 0.14)',
+    color,
     style,
     className = '',
 }: DividerProps): string => {
     const marginLeft = typeof inset === 'number' ? inset : inset ? 16 : 0;
+    const customStyle: Record<string, string | number | undefined | null> = {
+        ...(marginLeft > 0 ? { marginLeft } : {}),
+        ...(color && color !== 'rgba(120, 120, 128, 0.14)'
+            ? { backgroundColor: color }
+            : {}),
+        ...style,
+    };
+
     return (
         <hr
-            class={`tg-divider ${className}`}
-            style={{
-                border: 'none',
-                height: 1,
-                backgroundColor: color,
-                marginLeft,
-                marginRight: 0,
-                marginTop: 0,
-                marginBottom: 0,
-                ...style,
-            }}
+            class={`tg-divider ${className}`.trim()}
+            style={
+                Object.keys(customStyle).length > 0 ? customStyle : undefined
+            }
         />
     );
 };

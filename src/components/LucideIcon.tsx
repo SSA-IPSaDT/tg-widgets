@@ -58,13 +58,19 @@ export const LucideIcon = ({
 
     let svg = icon.trim();
 
+    // Удаляем избыточный XML-namespace для HTML5/WebKit/QuickJS баббла
+    svg = svg.replace(/\s*xmlns="[^"]*"/g, '');
+
     // Заменяем размеры width и height
     svg = svg.replace(/\bwidth="[^"]*"/, `width="${size}"`);
     svg = svg.replace(/\bheight="[^"]*"/, `height="${size}"`);
 
     // Заменяем толщину штриха (1.75 по умолчанию для аккуратного современного стиля)
     if (strokeWidth !== undefined) {
-        svg = svg.replace(/\bstroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`);
+        svg = svg.replace(
+            /\bstroke-width="[^"]*"/g,
+            `stroke-width="${strokeWidth}"`,
+        );
     }
 
     // Заменяем stroke цвет, если указан
@@ -77,16 +83,12 @@ export const LucideIcon = ({
         svg = svg.replace(/\bclass="([^"]*)"/, `class="$1 ${className}"`);
     }
 
-    // Добавляем инлайн-стили
-    const baseStyle: Record<string, string | number | undefined | null> = {
-        display: 'inline-block',
-        verticalAlign: 'middle',
-        flexShrink: 0,
-        ...style,
-    };
-    const css = formatStyle(baseStyle);
-    if (css) {
-        svg = svg.replace('<svg', `<svg style="${css}"`);
+    // Добавляем инлайн-стили только если переданы пользовательские свойства (дефолты в CSS)
+    if (style && Object.keys(style).length > 0) {
+        const css = formatStyle(style);
+        if (css) {
+            svg = svg.replace('<svg', `<svg style="${css}"`);
+        }
     }
 
     return svg;
@@ -98,27 +100,27 @@ export const LucideIcons = {
     CircleCheck,
     CheckCircle2,
     TriangleAlert,
-    AlertTriangle,
     CircleAlert,
+    AlertTriangle,
     AlertCircle,
-    ChevronRight,
+    Flame,
+    Sparkles,
+    Trophy,
+    Crown,
+    ShoppingBag,
+    HelpCircle,
     ChevronDown,
+    ChevronRight,
+    ExternalLink,
+    Settings,
+    Sliders,
+    Shield,
+    Bell,
+    User,
     Check,
     X,
-    Download,
     Plus,
     Minus,
-    Sparkles,
-    ShoppingBag,
+    Download,
     BarChart3,
-    Crown,
-    Sliders,
-    Flame,
-    HelpCircle,
-    Trophy,
-    User,
-    Settings,
-    Bell,
-    ExternalLink,
-    Shield,
 };

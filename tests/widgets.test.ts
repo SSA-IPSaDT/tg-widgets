@@ -58,6 +58,14 @@ import {
     WidgetLayout,
     type WidgetsFlavor,
     type WidgetsStorage,
+    compressKeys,
+    decompressKeys,
+    packPayload,
+    unpackPayload,
+    packState,
+    unpackState,
+    encodeCompressedWidgetAction,
+    registerCodecKeys,
 } from '../src';
 
 describe('@ipsadt/tg-widgets', () => {
@@ -628,5 +636,70 @@ describe('@ipsadt/tg-widgets', () => {
         expect(desc).toContain('tg-description');
         expect(desc).toContain('font-weight:500');
         expect(desc).toContain('Unified subtitle text');
+    });
+
+    test('bidirectional codec compresses object keys down to single letters and decompresses transparently', () => {
+        const verboseState = {
+            notifications: true,
+            soundEffects: false,
+            privateMode: true,
+            count: 42,
+            plan: 'pro',
+            tickets: 3,
+        };
+
+        // 1. Key compression
+        const compressed = compressKeys(verboseState) as Record<string, unknown>;
+        expect(compressed.o).toBe(true);  // notifications -> o
+        expect(compressed.e).toBe(false); // soundEffects -> e
+        expect(compressed.m).toBe(true);  // privateMode -> m
+        expect(compressed.c).toBe(42);    // count -> c
+        expect(compressed.l).toBe('pro'); // plan -> l
+        expect(compressed.k).toBe(3);     // tickets -> k
+        expect(compressed.notifications).toBeUndefined();
+
+        // 2. Transparent decompression
+        const restored = decompressKeys(compressed);
+        expect(restored).toEqual(verboseState);
+
+        // 3. State packing & unpacking for chat_data
+        const packed = packState('profile', verboseState);
+        expect(packed).toContain('"_s":"profile"');
+        expect(packed).toContain('"o":true');
+        expect(packed).toContain('"m":true');
+        expect(packed.length).toBeLessThan(JSON.stringify({ ...verboseState, __screen: 'profile' }).length);
+
+        const unpacked = unpackState(packed);
+        expect(unpacked.screenId).toBe('profile');
+        expect(unpacked.state).toEqual(verboseState);
+
+        // 4. Action encoding with compression
+        const actionStr = encodeCompressedWidgetAction('toggle', { setting: 'notifications', enabled: true });
+        expect(actionStr).toBe('toggle:{"g":"notifications","b":true}');
+        expect(validateWidgetActionData(actionStr)).toBe(true);
+
+        const decoded = decodeWidgetAction(actionStr);
+        expect(decoded.action).toBe('toggle');
+        expect(decoded.payload).toEqual({ setting: 'notifications', enabled: true });
+
+        // 5. Short JSON action format: {"a":"vote","p":{"i":1}}
+        const shortDecoded = decodeWidgetAction('{"a":"vote","p":{"i":1}}');
+        expect(shortDecoded.action).toBe('vote');
+        expect(shortDecoded.payload).toEqual({ id: 1 });
+
+        // 6. Generic payload pack & unpack
+        const genericObj = { action: 'refresh', data: { timestamp: 12345 } };
+        const genericPacked = packPayload(genericObj);
+        expect(genericPacked).toContain('"a":"refresh"');
+        expect(genericPacked).toContain('"d":');
+        const genericUnpacked = unpackPayload<typeof genericObj>(genericPacked);
+        expect(genericUnpacked).toEqual(genericObj);
+
+        // 7. Custom domain key registration
+        registerCodecKeys({ customField: 'cf' });
+        const customPacked = packPayload({ customField: 'hello' });
+        expect(customPacked).toBe('{"cf":"hello"}');
+        const customUnpacked = unpackPayload(customPacked);
+        expect(customUnpacked).toEqual({ customField: 'hello' });
     });
 });

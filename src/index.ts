@@ -1,4 +1,5 @@
 export * from './action';
+export * from './codec';
 export * from './components';
 export * from './jsx';
 export * from './minifier';

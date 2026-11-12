@@ -35,47 +35,39 @@ const controlsClientScript = (initial: ControlsState) => {
         state = { ...s };
 
         // 1. Switch
-        const sw = document.getElementById('toggle-notify');
-        const track = sw?.querySelector('.tg-switch-track') as HTMLElement | null;
-        const thumb = sw?.querySelector('.tg-switch-thumb') as HTMLElement | null;
-        if (track && thumb) {
-            track.style.backgroundColor = state.notifications
-                ? 'var(--tg-theme-button-color, #2481cc)'
-                : 'rgba(120, 120, 128, 0.24)';
-            thumb.style.left = state.notifications ? '20px' : '2px';
-        }
+        document
+            .getElementById('toggle-notify')
+            ?.querySelector('.tg-switch-track')
+            ?.classList.toggle('active', state.notifications);
 
         // 2. Checkbox
-        const chk = document.getElementById('chk-newsletter');
-        const chkSvg = chk?.querySelector('svg');
+        const chkSvg = document
+            .getElementById('chk-newsletter')
+            ?.querySelector('svg');
         if (chkSvg) {
             chkSvg.outerHTML = state.newsletter
-                ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><rect width="20" height="20" rx="5" fill="var(--tg-theme-button-color, #2481cc)"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="var(--tg-theme-button-text-color, #ffffff)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-                : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><rect x="1" y="1" width="18" height="18" rx="5" stroke="var(--tg-theme-hint-color, rgba(120, 120, 128, 0.4))" stroke-width="1.5"/></svg>';
+                ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect width="20" height="20" rx="5" fill="var(--tg-theme-button-color,#2481cc)"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+                : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="1" width="18" height="18" rx="5" stroke="var(--tg-theme-hint-color,rgba(120,120,128,0.4))" stroke-width="1.5"/></svg>';
         }
 
         // 3. Stepper
-        const st = document.getElementById('stepper-tickets');
-        const valSpan = st?.querySelector('span');
+        const valSpan = document
+            .getElementById('stepper-tickets')
+            ?.querySelector('.tg-stepper-val');
         if (valSpan) {
             valSpan.textContent = String(state.tickets);
         }
 
         // 4. Radio buttons
-        const rBasic = document.getElementById('plan-basic');
-        const rPro = document.getElementById('plan-pro');
-        if (rBasic?.querySelector('svg')) {
-            rBasic.querySelector('svg')!.outerHTML =
-                state.plan === 'basic'
-                    ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-button-color, #2481cc)" stroke-width="2"/><circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color, #2481cc)"/></svg>'
-                    : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-hint-color, rgba(120, 120, 128, 0.4))" stroke-width="1.5"/></svg>';
-        }
-        if (rPro?.querySelector('svg')) {
-            rPro.querySelector('svg')!.outerHTML =
-                state.plan === 'pro'
-                    ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-button-color, #2481cc)" stroke-width="2"/><circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color, #2481cc)"/></svg>'
-                    : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" style="flex-shrink:0;margin-top:2px;"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-hint-color, rgba(120, 120, 128, 0.4))" stroke-width="1.5"/></svg>';
-        }
+        const rSvg = (sel: boolean) =>
+            sel
+                ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-button-color,#2481cc)" stroke-width="2"/><circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color,#2481cc)"/></svg>'
+                : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-hint-color,rgba(120,120,128,0.4))" stroke-width="1.5"/></svg>';
+
+        const bSvg = document.getElementById('plan-basic')?.querySelector('svg');
+        if (bSvg) bSvg.outerHTML = rSvg(state.plan === 'basic');
+        const pSvg = document.getElementById('plan-pro')?.querySelector('svg');
+        if (pSvg) pSvg.outerHTML = rSvg(state.plan === 'pro');
     };
 
     document.getElementById('toggle-notify')?.addEventListener('click', () => {

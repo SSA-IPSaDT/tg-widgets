@@ -1,5 +1,6 @@
 import {
     Alert,
+    Avatar,
     Badge,
     Button,
     Card,
@@ -27,42 +28,20 @@ export interface ProfileState {
     soundEffects: boolean;
 }
 
-const profileClientScript = (initial: ProfileState) => {
+const profileClientScript = () => {
     const W = (window as unknown as { TelegramWidget?: any }).TelegramWidget;
-    let state = { ...initial };
 
-    const updateSwitch = (id: string, active: boolean) => {
-        const sw = document.getElementById(id);
-        const track = sw?.querySelector('.tg-switch-track') as HTMLElement | null;
-        const thumb = sw?.querySelector('.tg-switch-thumb') as HTMLElement | null;
-        if (track && thumb) {
-            track.style.backgroundColor = active
-                ? 'var(--tg-theme-button-color, #2481cc)'
-                : 'rgba(120, 120, 128, 0.24)';
-            thumb.style.left = active ? '20px' : '2px';
-        }
+    const bindToggle = (id: string, action: string) => {
+        document.getElementById(id)?.addEventListener('click', function (this: HTMLElement) {
+            W?.HapticFeedback?.impactOccurred?.('light');
+            this.querySelector('.tg-switch-track')?.classList.toggle('active');
+            W?.request?.(action);
+        });
     };
 
-    document.getElementById('profile-notify')?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('light');
-        state.notifications = !state.notifications;
-        updateSwitch('profile-notify', state.notifications);
-        W?.request?.('toggleProfileNotify');
-    });
-
-    document.getElementById('profile-private')?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('light');
-        state.privateMode = !state.privateMode;
-        updateSwitch('profile-private', state.privateMode);
-        W?.request?.('toggleProfilePrivate');
-    });
-
-    document.getElementById('profile-sound')?.addEventListener('click', () => {
-        W?.HapticFeedback?.impactOccurred?.('light');
-        state.soundEffects = !state.soundEffects;
-        updateSwitch('profile-sound', state.soundEffects);
-        W?.request?.('toggleProfileSound');
-    });
+    bindToggle('profile-notify', 'toggleProfileNotify');
+    bindToggle('profile-private', 'toggleProfilePrivate');
+    bindToggle('profile-sound', 'toggleProfileSound');
 
     document.getElementById('btn-fallback')?.addEventListener('click', () => {
         W?.HapticFeedback?.notificationOccurred?.('warning');
@@ -77,7 +56,7 @@ export const profileScreen = defineWidgetScreen({
     id: 'profile',
     component: (props: ProfileState) => (
         <WidgetLayout fullWidth padding="6px 8px">
-            <Card fullWidth style={{ position: 'relative' }}>
+            <Card fullWidth>
                 <CardHeader>
                     <div
                         style={{
@@ -87,7 +66,6 @@ export const profileScreen = defineWidgetScreen({
                         }}
                     >
                         <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                            {/* Аватар пользователя */}
                             <div
                                 style={{
                                     width: 38,
@@ -154,12 +132,11 @@ export const profileScreen = defineWidgetScreen({
                         />
                     </div>
 
-                    {/* Информационное уведомление о тестировании виджетов */}
                     <div style={{ marginTop: 14 }}>
                         <Alert
                             variant="warning"
                             title="Экспериментальная функция"
-                            description="Виджеты Telegram находятся на стадии тестирования. При неполадках нажмите кнопку ниже."
+                            description="Виджеты находятся на стадии тестирования. При неполадках переключите режим."
                         />
                     </div>
                 </CardContent>
@@ -179,7 +156,7 @@ export const profileScreen = defineWidgetScreen({
                     </Button>
                 </CardFooter>
             </Card>
-            <Script fn={profileClientScript} args={[props]} />
+            <Script fn={profileClientScript} />
         </WidgetLayout>
     ),
     initialState: () => ({

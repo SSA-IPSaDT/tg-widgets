@@ -19,6 +19,7 @@
 
 export * from './src/index';
 export * from './src/action';
+export * from './src/codec';
 export * from './src/components/index';
 export * from './src/jsx';
 export * from './src/plugin';
