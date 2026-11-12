@@ -2,6 +2,8 @@
 
 Компоненты уведомлений и статусов в стиле shadcn/ui (`Alert`, `AlertTitle`, `AlertDescription`).
 
+Исходный код примера: [`screen.tsx`](./screen.tsx)
+
 ---
 
 ## 💡 Варианты и цвета темы
@@ -14,25 +16,47 @@
 
 ---
 
-## 💻 Пример использования в коде
+## 💻 Код экрана (`screen.tsx`)
 
 ```tsx
-import { Alert, AlertDescription, AlertTitle, WidgetLayout } from '@ipsadt/tg-widgets';
+import { Alert, defineWidgetScreen, h, WidgetLayout } from '@ipsadt/tg-widgets';
 
-export const StatusWidget = () => (
-  <WidgetLayout gap={8} safeArea>
-    <Alert
-      variant="success"
-      title="Оплата прошла успешно"
-      description="Товар будет доставлен в течение 30 минут."
-    />
-    <Alert
-      variant="warning"
-      title="Превышен лимит запросов"
-      description="Пожалуйста, подождите несколько секунд перед повторной отправкой."
-    />
-  </WidgetLayout>
-);
+export const alertsScreen = defineWidgetScreen({
+  id: 'alerts',
+  component: () => (
+    <WidgetLayout gap={8} safeArea>
+      <Alert
+        variant="info"
+        title="Информация"
+        description="Виджеты поддерживают цветовую палитру темы пользователя."
+      />
+      <Alert
+        variant="success"
+        title="Успешно сохранено"
+        description="Ваши данные были синхронизированы с облаком."
+      />
+      <Alert
+        variant="warning"
+        title="Внимание"
+        description="Размер сжатого виджета ограничен 4096 байтами."
+      />
+      <Alert
+        variant="destructive"
+        title="Критическая ошибка"
+        description="Действие не может быть выполнено без авторизации."
+      />
+    </WidgetLayout>
+  ),
+  initialState: () => ({}),
+});
+```
+
+---
+
+## 🚀 Команда для проверки в боте
+
+```text
+/alerts
 ```
 
 ---
