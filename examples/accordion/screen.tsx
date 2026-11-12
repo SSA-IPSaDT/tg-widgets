@@ -20,8 +20,8 @@ import {
 export const accordionScreen = defineWidgetScreen({
     id: 'accordion',
     component: () => (
-        <WidgetLayout safeArea>
-            <Card>
+        <WidgetLayout expand>
+            <Card fullWidth>
                 <CardHeader>
                     <div
                         style={{

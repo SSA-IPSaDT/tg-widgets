@@ -1,5 +1,5 @@
 import { h } from '../jsx';
-import { InfoIcon, WarningIcon } from './Icon';
+import { LucideIcon, LucideIcons } from './LucideIcon';
 
 export interface AlertProps {
     id?: string;
@@ -15,7 +15,7 @@ export interface AlertProps {
 
 /**
  * Компонент Alert для виджетов Telegram.
- * Отображает важные сообщения, уведомления об ошибках и статусы.
+ * Отображает важные сообщения, уведомления об ошибках и статусы с подлинными Lucide SVG иконками.
  */
 export const Alert = ({
     id,
@@ -39,39 +39,41 @@ export const Alert = ({
             bg: 'rgba(36, 129, 204, 0.08)',
             border: '1px solid rgba(36, 129, 204, 0.25)',
             text: 'var(--tg-theme-link-color, #2481cc)',
-            defaultIcon: InfoIcon({ size: 18, color: '#2481cc' }),
+            defaultIcon: LucideIcon({
+                icon: LucideIcons.Info,
+                size: 18,
+                color: '#2481cc',
+            }),
         },
         success: {
             bg: 'rgba(16, 185, 129, 0.08)',
             border: '1px solid rgba(16, 185, 129, 0.25)',
             text: '#10b981',
-            defaultIcon: (
-                <svg
-                    width="18"
-                    height="18"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="#10b981"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                >
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                    <polyline points="22 4 12 14.01 9 11.01" />
-                </svg>
-            ),
+            defaultIcon: LucideIcon({
+                icon: LucideIcons.CircleCheck,
+                size: 18,
+                color: '#10b981',
+            }),
         },
         warning: {
             bg: 'rgba(245, 158, 11, 0.08)',
             border: '1px solid rgba(245, 158, 11, 0.25)',
             text: '#f59e0b',
-            defaultIcon: WarningIcon({ size: 18, color: '#f59e0b' }),
+            defaultIcon: LucideIcon({
+                icon: LucideIcons.TriangleAlert,
+                size: 18,
+                color: '#f59e0b',
+            }),
         },
         destructive: {
             bg: 'rgba(239, 68, 68, 0.08)',
             border: '1px solid rgba(239, 68, 68, 0.25)',
             text: 'var(--tg-theme-destructive-text-color, #ef4444)',
-            defaultIcon: WarningIcon({ size: 18, color: '#ef4444' }),
+            defaultIcon: LucideIcon({
+                icon: LucideIcons.CircleAlert,
+                size: 18,
+                color: '#ef4444',
+            }),
         },
     }[variant];
 

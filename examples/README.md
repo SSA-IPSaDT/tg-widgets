@@ -48,11 +48,13 @@ npx tsx examples/bot.tsx
 | Компонент / Экран | Команда | Описание | Код экрана | Документация и скриншот |
 | :--- | :--- | :--- | :--- | :--- |
 | **Accordion** | `/accordion` | Нативные раскрывающиеся блоки (`<details>` / `<summary>`) без JS | [`screen.tsx`](./accordion/screen.tsx) | [📖 accordion/README.md](./accordion/README.md) |
-| **Controls** | `/controls` | Чекбоксы, переключатели, радио-кнопки и степпер (`− [ 2 ] +`) | [`screen.tsx`](./controls/screen.tsx) | [📖 controls/README.md](./controls/README.md) |
-| **Table** | `/table` | Нативная таблица с границами ячеек (чек заказа / квитанция) | [`screen.tsx`](./table/screen.tsx) | [📖 table/README.md](./table/README.md) |
-| **Alerts** | `/alerts` | Блоки статусов (`info`, `success`, `warning`, `destructive`) | [`screen.tsx`](./alerts/screen.tsx) | [📖 alerts/README.md](./alerts/README.md) |
-| **Cards & Metrics** | `/cards` | Составные карточки shadcn, прогресс-бар и поле ввода заметки | [`screen.tsx`](./cards/screen.tsx) | [📖 cards/README.md](./cards/README.md) |
-| **Live Counter** | `/counter` | Интерактивный счетчик с клиентским скриптом `TelegramWidget.request` | [`screen.tsx`](./counter/screen.tsx) | [📖 counter/README.md](./counter/README.md) |
+| **Controls** | `/controls` | Чекбоксы, переключатели, радио-кнопки и степпер с живой реактивностью | [`screen.tsx`](./controls/screen.tsx) | [📖 controls/README.md](./controls/README.md) |
+| **Table** | `/table` | Нативная таблица с чеком и кнопкой скачивания квитанции | [`screen.tsx`](./table/screen.tsx) | [📖 table/README.md](./table/README.md) |
+| **Alerts** | `/alerts` | Блоки статусов с официальными Lucide SVG иконками | [`screen.tsx`](./alerts/screen.tsx) | [📖 alerts/README.md](./alerts/README.md) |
+| **Cards & Metrics** | `/cards` | Составные карточки shadcn, прогресс-бар, сетка метрик и действия | [`screen.tsx`](./cards/screen.tsx) | [📖 cards/README.md](./cards/README.md) |
+| **Live Counter** | `/counter` | Интерактивный счетчик с кнопками `−1` / `+1` и виброоткликом | [`screen.tsx`](./counter/screen.tsx) | [📖 counter/README.md](./counter/README.md) |
+| **Live Poll** | `/poll` | Интерактивный опрос сообщества с анимированными полосами голосов | [`screen.tsx`](./poll/screen.tsx) | [📖 poll/README.md](./poll/README.md) |
+| **E-Commerce** | `/ecommerce` | Карточка товара, выбор размера, пересчет суммы и оформление заказа | [`screen.tsx`](./ecommerce/screen.tsx) | [📖 ecommerce/README.md](./ecommerce/README.md) |
 
 ---
 

@@ -53,7 +53,7 @@
     "scripts": {
         "build": "bun run build:clean && bun run build:bundle && bun run build:types",
         "build:clean": "rm -rf dist",
-        "build:bundle": "bun build src/index.ts --outfile dist/index.js --format esm --target node --external grammy && bun build src/index.ts --outfile dist/index.cjs --format cjs --target node --external grammy && bun build src/components/index.ts --outfile dist/components/index.js --format esm --target node --external grammy && bun build src/components/index.ts --outfile dist/components/index.cjs --format cjs --target node --external grammy && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.js --format esm --target node --external grammy && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.cjs --format cjs --target node --external grammy && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.js --format esm --target node --external grammy && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.cjs --format cjs --target node --external grammy",
+        "build:bundle": "bun build src/index.ts --outfile dist/index.js --format esm --target node --external grammy --external lucide-static && bun build src/index.ts --outfile dist/index.cjs --format cjs --target node --external grammy --external lucide-static && bun build src/components/index.ts --outfile dist/components/index.js --format esm --target node --external grammy --external lucide-static && bun build src/components/index.ts --outfile dist/components/index.cjs --format cjs --target node --external grammy --external lucide-static && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.js --format esm --target node --external grammy && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.cjs --format cjs --target node --external grammy && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.js --format esm --target node --external grammy && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.cjs --format cjs --target node --external grammy",
         "build:types": "tsc --project tsconfig.build.json && rm -rf dist/src",
         "check": "tsc --noEmit",
         "test": "bun test",
@@ -97,5 +97,8 @@
         "@types/bun": "^1.2.0",
         "grammy": "^1.46.0",
         "typescript": "^5.7.0"
+    },
+    "dependencies": {
+        "lucide-static": "^1.72.0"
     }
 }

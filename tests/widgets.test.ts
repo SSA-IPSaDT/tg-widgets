@@ -31,7 +31,10 @@ import {
     inspectWidgetSize,
     List,
     ListItem,
+    LucideIcon,
+    LucideIcons,
     MemoryWidgetsStorage,
+    minifyHtml,
     ProgressBar,
     Radio,
     RadioGroup,
@@ -503,5 +506,52 @@ describe('@ipsadt/tg-widgets', () => {
         const jsxDevRuntime = await import('../src/jsx-dev-runtime');
         expect(jsxDevRuntime.jsxDEV).toBeDefined();
         expect(jsxDevRuntime.Fragment).toBeDefined();
+    });
+
+    test('LucideIcon renders SVG icons with custom size and colors', () => {
+        const svg = LucideIcon({
+            icon: LucideIcons.Info,
+            size: 20,
+            color: '#2481cc',
+            className: 'custom-icon',
+        });
+        expect(svg).toContain('<svg');
+        expect(svg).toContain('width="20"');
+        expect(svg).toContain('height="20"');
+        expect(svg).toContain('stroke="#2481cc"');
+        expect(svg).toContain('class="lucide lucide-info custom-icon"');
+
+        // Alert integration
+        const infoAlert = Alert({ variant: 'info', title: 'With Lucide' });
+        expect(infoAlert).toContain('lucide-info');
+    });
+
+    test('minifyHtml and renderWidget compress HTML and CSS aggressively', () => {
+        const raw = `
+            <div   class="card"   style="margin: 0px; padding: 10px 14px ; color: #ffffff;" >
+                <!-- Some comment -->
+                <p>Hello   World</p>
+            </div>
+        `;
+        const minified = minifyHtml(raw);
+        expect(minified).not.toContain('<!--');
+        expect(minified).not.toContain('margin: 0px');
+        expect(minified).toContain('margin:0');
+        expect(minified).toContain('#fff');
+
+        const rendered = renderWidget('<div>Hello</div>');
+        expect(rendered).toContain('<!DOCTYPE html>');
+        expect(rendered).not.toContain('> <');
+    });
+
+    test('WidgetLayout supports expand, fullWidth and fullHeight props', () => {
+        const expandedLayout = WidgetLayout({
+            expand: true,
+            children: Card({ fullWidth: true, fullHeight: true, children: 'Expanded Card' }),
+        });
+        expect(expandedLayout).toContain('padding:0');
+        expect(expandedLayout).toContain('width:100%');
+        expect(expandedLayout).toContain('height:100%');
+        expect(expandedLayout).toContain('flex:1');
     });
 });

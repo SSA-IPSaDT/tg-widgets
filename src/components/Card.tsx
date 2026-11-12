@@ -5,6 +5,8 @@ export interface CardProps {
     variant?: 'default' | 'outlined' | 'section' | 'inset';
     radius?: number;
     gap?: number;
+    fullWidth?: boolean;
+    fullHeight?: boolean;
     header?: unknown;
     footer?: unknown;
     style?: Record<string, string | number | undefined | null>;
@@ -18,6 +20,8 @@ export const Card = ({
     variant = 'default',
     radius,
     gap = 8,
+    fullWidth = true,
+    fullHeight = false,
     header,
     footer,
     style,
@@ -28,6 +32,8 @@ export const Card = ({
     const overrides: Record<string, string | number | undefined | null> = {
         ...(radius !== undefined ? { borderRadius: radius } : {}),
         ...(gap !== 8 ? { gap } : {}),
+        ...(fullWidth ? { width: '100%' } : {}),
+        ...(fullHeight ? { height: '100%', flex: 1 } : {}),
         ...style,
     };
 

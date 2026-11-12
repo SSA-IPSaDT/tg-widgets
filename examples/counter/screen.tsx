@@ -50,8 +50,8 @@ const clientCounterScript = (args: { count: number }) => {
 export const counterScreen = defineWidgetScreen({
     id: 'counter',
     component: (props: CounterState) => (
-        <WidgetLayout safeArea>
-            <Card>
+        <WidgetLayout expand>
+            <Card fullWidth>
                 <CardHeader>
                     <div
                         style={{
@@ -75,20 +75,28 @@ export const counterScreen = defineWidgetScreen({
                             flexDirection: 'column',
                             alignItems: 'center',
                             padding: '16px 0',
-                            gap: 12,
+                            gap: 16,
                         }}
                     >
                         <div
                             id="counter-val"
                             style={{
-                                fontSize: 48,
+                                fontSize: 52,
                                 fontWeight: 800,
                                 color: 'var(--tg-theme-button-color, #2481cc)',
+                                letterSpacing: -1,
                             }}
                         >
                             {props.count}
                         </div>
-                        <div style={{ display: 'flex', gap: 10, width: '100%' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                gap: 10,
+                                width: '100%',
+                                boxSizing: 'border-box',
+                            }}
+                        >
                             <Button
                                 id="btn-dec"
                                 variant="secondary"

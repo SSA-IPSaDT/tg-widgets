@@ -124,6 +124,15 @@ export const Fragment = (props: { children?: unknown[] }): string => {
     return children.flat(Infinity).join('');
 };
 
+import { minifyHtml } from './minifier';
+
+export interface WidgetRenderOptions {
+    /**
+     * Включает агрессивную минификацию HTML и CSS (по умолчанию true)
+     */
+    minify?: boolean;
+}
+
 export interface WidgetSizeReport {
     html: string;
     byteLength: number;
@@ -133,19 +142,26 @@ export interface WidgetSizeReport {
 }
 
 /**
- * Проверяет размер HTML-разметки виджета в сжатом виде (deflate level 9)
+ * Проверяет размер HTML-разметки виджета в сжатом виде (deflate level 9) с предварительной минификацией
  */
-export const inspectWidgetSize = (html: string): WidgetSizeReport => {
-    const fullHtml = html.startsWith('<!DOCTYPE html>')
-        ? html
-        : `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${html}</body></html>`;
+export const inspectWidgetSize = (
+    html: string,
+    options: WidgetRenderOptions = {},
+): WidgetSizeReport => {
+    const shouldMinify = options.minify !== false;
+    const processedBody = shouldMinify ? minifyHtml(html) : html;
 
-    const buf = Buffer.from(fullHtml, 'utf-8');
+    const fullHtml = processedBody.startsWith('<!DOCTYPE html>')
+        ? processedBody
+        : `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${processedBody}</body></html>`;
+
+    const finalHtml = shouldMinify ? minifyHtml(fullHtml) : fullHtml;
+    const buf = Buffer.from(finalHtml, 'utf-8');
     const compressed = deflateSync(buf, { level: 9 });
     const maxAllowed = 4096;
 
     return {
-        html: fullHtml,
+        html: finalHtml,
         byteLength: buf.byteLength,
         compressedByteLength: compressed.byteLength,
         isValid: compressed.byteLength <= maxAllowed,
@@ -154,10 +170,13 @@ export const inspectWidgetSize = (html: string): WidgetSizeReport => {
 };
 
 /**
- * Рендерит TSX в чистый HTML-документ виджета Telegram и валидирует лимит 4096 байт в gzip/deflate
+ * Рендерит TSX в чистый минифицированный HTML-документ виджета Telegram и валидирует лимит 4096 байт
  */
-export const renderWidget = (bodyContent: string): string => {
-    const report = inspectWidgetSize(bodyContent);
+export const renderWidget = (
+    bodyContent: string,
+    options: WidgetRenderOptions = {},
+): string => {
+    const report = inspectWidgetSize(bodyContent, options);
 
     if (!report.isValid) {
         console.warn(
