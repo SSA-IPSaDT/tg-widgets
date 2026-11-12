@@ -1,5 +1,23 @@
 # @ipsadt/tg-widgets
 
+<p align="left">
+  <a href="https://www.npmjs.com/package/@ipsadt/tg-widgets"><img src="https://img.shields.io/npm/v/@ipsadt/tg-widgets.svg?style=flat&color=3178C6&logo=npm" alt="npm version" /></a>
+  <a href="https://www.npmjs.com/package/@ipsadt/tg-widgets"><img src="https://img.shields.io/npm/dw/@ipsadt/tg-widgets.svg?style=flat&color=2ea44f&logo=npm" alt="npm downloads" /></a>
+  <a href="https://www.npmjs.com/package/@ipsadt/tg-widgets"><img src="https://img.shields.io/npm/dt/@ipsadt/tg-widgets.svg?style=flat&color=informational&logo=npm" alt="npm total downloads" /></a>
+  <a href="https://jsr.io/@ipsadt/tg-widgets"><img src="https://jsr.io/badges/@ipsadt/tg-widgets" alt="JSR" /></a>
+  <a href="https://github.com/SSA-IPSaDT/tg-widgets/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/SSA-IPSaDT/tg-widgets/ci.yml?branch=main&label=CI&logo=github" alt="CI Status" /></a>
+  <a href="https://core.telegram.org/bots/api#bot-api-10-4"><img src="https://img.shields.io/badge/Telegram%20Bot%20API-10.4-2CA5E0?logo=telegram&logoColor=white" alt="Telegram Bot API 10.4" /></a>
+  <a href="https://github.com/SSA-IPSaDT/tg-widgets/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/@ipsadt/tg-widgets.svg?style=flat&color=yellow" alt="License" /></a>
+</p>
+
+<p align="left">
+  <img src="https://img.shields.io/badge/Bun-1.2+-fbf0df?logo=bun&logoColor=black" alt="Bun" />
+  <img src="https://img.shields.io/badge/Node.js-20+-339933?logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Deno-1.40+-000000?logo=deno&logoColor=white" alt="Deno" />
+  <img src="https://img.shields.io/badge/Zero--Runtime-TSX-61DAFB?logo=react&logoColor=black" alt="Zero Runtime" />
+  <img src="https://img.shields.io/badge/Payload%20Limit-%E2%89%A4%204096B%20Deflate-critical" alt="Telegram 4096B limit" />
+</p>
+
 Zero-runtime TSX UI Kit and type-safe [grammY](https://grammy.dev) plugin for **Telegram Bot API 10.4 HTML Widgets (Interactive Bubbles)**.
 
 ---
@@ -317,6 +335,19 @@ Run directly:
 ```bash
 deno run -A bot.ts
 ```
+
+---
+
+## 🤝 Contributing & Community
+
+We welcome contributions of all kinds! Whether you are fixing styling nuances across Telegram clients, optimizing deflate compression, or creating a brand-new UI primitive:
+
+1. 📖 Read our [Contributing Guidelines](CONTRIBUTING.md).
+2. 🐛 Report bugs using the [Bug Report Form](https://github.com/SSA-IPSaDT/tg-widgets/issues/new?template=bug_report.yml).
+3. 💡 Propose ideas via the [Feature Request Form](https://github.com/SSA-IPSaDT/tg-widgets/issues/new?template=feature_request.yml).
+4. 🧩 Suggest or build new UI components using the [Component Proposal Form](https://github.com/SSA-IPSaDT/tg-widgets/issues/new?template=component_proposal.yml).
+5. 💬 Discuss architectures and show off widget screens in [GitHub Discussions](https://github.com/SSA-IPSaDT/tg-widgets/discussions).
+6. 🛡️ Review our [Code of Conduct](CODE_OF_CONDUCT.md) and [Security Policy](SECURITY.md).
 
 ---
 

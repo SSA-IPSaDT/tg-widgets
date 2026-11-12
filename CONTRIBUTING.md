@@ -11,8 +11,8 @@ This project uses [Bun](https://bun.sh) and [TypeScript](https://www.typescriptl
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/SSA-IPSaDT/insignia.git
-cd insignia/packages/telegram-widgets
+git clone https://github.com/SSA-IPSaDT/tg-widgets.git
+cd tg-widgets
 bun install
 ```
 
