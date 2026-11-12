@@ -27,31 +27,33 @@ export interface ProfileState {
     soundEffects: boolean;
 }
 
-const profileClientScript = () => {
+const profileClientScript = (initial: ProfileState) => {
     const widget = window.TelegramWidget;
+    let state = { ...initial };
 
-    const updateProfileUI = (data?: Record<string, unknown> | null) => {
+    const updateProfileUI = (data?: Partial<ProfileState> | null) => {
         if (!data) return;
+        state = { ...state, ...data };
 
-        if (typeof data.notifications === 'boolean') {
+        if (typeof state.notifications === 'boolean') {
             document
                 .getElementById('profile-notify')
                 ?.querySelector('.tg-switch-track')
-                ?.classList.toggle('active', data.notifications);
+                ?.classList.toggle('active', state.notifications);
         }
 
-        if (typeof data.privateMode === 'boolean') {
+        if (typeof state.privateMode === 'boolean') {
             document
                 .getElementById('profile-private')
                 ?.querySelector('.tg-switch-track')
-                ?.classList.toggle('active', data.privateMode);
+                ?.classList.toggle('active', state.privateMode);
         }
 
-        if (typeof data.soundEffects === 'boolean') {
+        if (typeof state.soundEffects === 'boolean') {
             document
                 .getElementById('profile-sound')
                 ?.querySelector('.tg-switch-track')
-                ?.classList.toggle('active', data.soundEffects);
+                ?.classList.toggle('active', state.soundEffects);
         }
     };
 
@@ -69,14 +71,18 @@ const profileClientScript = () => {
     syncFromChatData();
     widget?.onEvent?.('chatDataChanged', syncFromChatData);
 
-    const bindToggle = (elementId: string, actionName: string) => {
+    const bindToggle = (
+        elementId: string,
+        key: 'notifications' | 'privateMode' | 'soundEffects',
+        actionName: string,
+    ) => {
         const element = document.getElementById(elementId);
         if (!element) return;
 
         element.addEventListener('click', () => {
             widget?.HapticFeedback?.impactOccurred?.('light');
-            const track = element.querySelector('.tg-switch-track');
-            track?.classList.toggle('active');
+            const nextVal = !state[key];
+            updateProfileUI({ [key]: nextVal });
 
             widget?.request?.(actionName).then((response) => {
                 if (response?.result) {
@@ -91,9 +97,9 @@ const profileClientScript = () => {
         });
     };
 
-    bindToggle('profile-notify', 'toggleProfileNotify');
-    bindToggle('profile-private', 'toggleProfilePrivate');
-    bindToggle('profile-sound', 'toggleProfileSound');
+    bindToggle('profile-notify', 'notifications', 'toggleProfileNotify');
+    bindToggle('profile-private', 'privateMode', 'toggleProfilePrivate');
+    bindToggle('profile-sound', 'soundEffects', 'toggleProfileSound');
 
     document.getElementById('btn-fallback')?.addEventListener('click', () => {
         widget?.HapticFeedback?.notificationOccurred?.('warning');
@@ -222,7 +228,7 @@ export const profileScreen = defineWidgetScreen({
                     </Button>
                 </CardFooter>
             </Card>
-            <Script fn={profileClientScript} />
+            <Script fn={profileClientScript} args={[props]} />
         </WidgetLayout>
     ),
     initialState: () => ({
@@ -234,21 +240,30 @@ export const profileScreen = defineWidgetScreen({
     }),
     actions: {
         toggleProfileNotify: async (ctx: WidgetActionContext<ProfileState>) => {
-            const nextVal = !ctx.state.notifications;
-            await ctx.setState({ notifications: nextVal });
-            return ctx.answer();
+            const next = {
+                ...ctx.state,
+                notifications: !ctx.state.notifications,
+            };
+            await ctx.setState(next);
+            return next;
         },
         toggleProfilePrivate: async (
             ctx: WidgetActionContext<ProfileState>,
         ) => {
-            const nextVal = !ctx.state.privateMode;
-            await ctx.setState({ privateMode: nextVal });
-            return ctx.answer();
+            const next = {
+                ...ctx.state,
+                privateMode: !ctx.state.privateMode,
+            };
+            await ctx.setState(next);
+            return next;
         },
         toggleProfileSound: async (ctx: WidgetActionContext<ProfileState>) => {
-            const nextVal = !ctx.state.soundEffects;
-            await ctx.setState({ soundEffects: nextVal });
-            return ctx.answer();
+            const next = {
+                ...ctx.state,
+                soundEffects: !ctx.state.soundEffects,
+            };
+            await ctx.setState(next);
+            return next;
         },
         fallbackToText: async (ctx: WidgetActionContext<ProfileState>) => {
             if (ctx.chatId && ctx.messageId) {

@@ -444,6 +444,7 @@ export const createTelegramWidgetsPlugin = <
 
         let isAnswered = false;
         let currentState = registeredRecord.state;
+        let pendingEditPromise: Promise<unknown> | null = null;
 
         const actionCtx: WidgetActionContext<Record<string, unknown>> = {
             queryId: query.id,
@@ -471,17 +472,16 @@ export const createTelegramWidgetsPlugin = <
                     state: merged,
                     updatedAt: Date.now(),
                 });
-                try {
-                    await rawApi.editMessageWidgetData({
-                        chat_id: chatId,
-                        message_id: messageId,
-                        inline_message_id: inlineMessageId,
-                        chat_data: JSON.stringify({
-                            ...merged,
-                            __screen: screen.id,
-                        }),
-                    });
-                } catch (err) {
+                // Launch editMessageWidgetData concurrently so answerWidgetQuery is delivered with zero latency
+                pendingEditPromise = rawApi.editMessageWidgetData({
+                    chat_id: chatId,
+                    message_id: messageId,
+                    inline_message_id: inlineMessageId,
+                    chat_data: JSON.stringify({
+                        ...merged,
+                        __screen: screen.id,
+                    }),
+                }).catch((err) => {
                     const msg = String(err);
                     if (!msg.includes('message is not modified')) {
                         logger.warn(
@@ -489,7 +489,7 @@ export const createTelegramWidgetsPlugin = <
                             err,
                         );
                     }
-                }
+                });
             },
             answer: async (data?: unknown) => {
                 isAnswered = true;
@@ -533,6 +533,10 @@ export const createTelegramWidgetsPlugin = <
             );
             if (!isAnswered) {
                 await actionCtx.answer({ error: 'INTERNAL_ERROR' });
+            }
+        } finally {
+            if (pendingEditPromise) {
+                await pendingEditPromise;
             }
         }
     };

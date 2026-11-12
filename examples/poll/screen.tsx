@@ -157,7 +157,8 @@ export const pollScreen = defineWidgetScreen({
                                             justifyContent: 'center',
                                             cursor: 'pointer',
                                             userSelect: 'none',
-                                            transition: 'border-color 0.2s, background 0.2s',
+                                            touchAction: 'manipulation',
+                                            transition: 'border-color 0.12s, background 0.12s',
                                         }}
                                     >
                                         {/* Полоска прогресса */}
@@ -171,7 +172,7 @@ export const pollScreen = defineWidgetScreen({
                                                 width: `${pct}%`,
                                                 background: 'rgba(36, 129, 204, 0.2)',
                                                 borderRadius: 'var(--tg-radius-md, 9px)',
-                                                transition: 'width 0.3s ease',
+                                                transition: 'width 0.15s cubic-bezier(0.2, 0, 0, 1)',
                                                 zIndex: 0,
                                             }}
                                         />
