@@ -3,12 +3,23 @@ import { describe, expect, test } from 'bun:test';
 import type { Context } from 'grammy';
 
 import {
+    Accordion,
+    AccordionItem,
+    Alert,
+    AlertDescription,
+    AlertTitle,
     Avatar,
     Badge,
     Button,
     Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
     Checkbox,
     ChevronRightIcon,
+    Collapsible,
     createTelegramWidgetsPlugin,
     decodeWidgetAction,
     defineWidgetScreen,
@@ -27,7 +38,14 @@ import {
     renderWidget,
     SegmentedControl,
     Skeleton,
+    Stepper,
     Switch,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
     Typography,
     validateWidgetActionData,
     type WidgetActionContext,
@@ -57,7 +75,7 @@ describe('@ipsadt/tg-widgets', () => {
         );
     });
 
-    test('renders Telegram native UI components correctly', () => {
+    test('renders Telegram native and Profile 1 UI components correctly without input tags', () => {
         const btn = Button({
             id: 'btn-1',
             variant: 'primary',
@@ -81,40 +99,130 @@ describe('@ipsadt/tg-widgets', () => {
         expect(card).toContain('Header');
         expect(card).toContain('Footer');
 
+        // Card compound syntax
+        const compoundCard = Card({
+            children: [
+                CardHeader({
+                    children: [
+                        CardTitle({ children: 'Compound Title' }),
+                        CardDescription({ children: 'Compound Subtitle' }),
+                    ],
+                }),
+                CardContent({ children: 'Main content' }),
+                CardFooter({ children: 'Footer info' }),
+            ],
+        });
+        expect(compoundCard).toContain('Compound Title');
+        expect(compoundCard).toContain('Compound Subtitle');
+        expect(compoundCard).toContain('Main content');
+        expect(compoundCard).toContain('Footer info');
+
         const input = Input({
             id: 'username',
             placeholder: 'Enter name',
             label: 'Your Name',
             error: 'Invalid username',
         });
-        expect(input).toContain('placeholder="Enter name"');
+        expect(input).toContain('Enter name');
         expect(input).toContain('Your Name');
         expect(input).toContain('Invalid username');
+        expect(input).not.toContain('<input'); // No raw input tag!
+
+        const stepper = Stepper({ id: 'count', value: 3, min: 0, max: 10 });
+        expect(stepper).toContain('tg-stepper');
+        expect(stepper).toContain('3');
+        expect(stepper).toContain('−');
+        expect(stepper).toContain('+');
 
         const chk = Checkbox({
             id: 'agree',
             label: 'I agree',
             description: 'Terms of service',
+            checked: true,
         });
-        expect(chk).toContain('type="checkbox"');
+        expect(chk).toContain('role="checkbox"');
+        expect(chk).toContain('aria-checked="true"');
         expect(chk).toContain('I agree');
         expect(chk).toContain('Terms of service');
+        expect(chk).toContain('svg');
+        expect(chk).not.toContain('<input'); // Profile 1 compliant!
 
         const radio = Radio({
             id: 'opt1',
             name: 'choice',
             value: 'v1',
             label: 'Option 1',
+            checked: true,
         });
-        expect(radio).toContain('type="radio"');
+        expect(radio).toContain('role="radio"');
+        expect(radio).toContain('aria-checked="true"');
         expect(radio).toContain('Option 1');
+        expect(radio).toContain('svg');
+        expect(radio).not.toContain('<input'); // Profile 1 compliant!
 
         const radioGroup = RadioGroup({ children: radio });
         expect(radioGroup).toContain('tg-radio-group');
+        expect(radioGroup).toContain('role="radiogroup"');
 
-        const sw = Switch({ id: 'notifications', label: 'Alerts' });
-        expect(sw).toContain('tg-switch-wrapper');
+        const sw = Switch({ id: 'notifications', label: 'Alerts', checked: true });
+        expect(sw).toContain('role="switch"');
+        expect(sw).toContain('aria-checked="true"');
+        expect(sw).toContain('tg-switch-track');
+        expect(sw).toContain('tg-switch-thumb');
         expect(sw).toContain('Alerts');
+        expect(sw).not.toContain('<input'); // Profile 1 compliant!
+
+        const alert = Alert({
+            variant: 'destructive',
+            title: 'Error Title',
+            description: 'Something failed',
+            children: [
+                AlertTitle({ children: 'Compound Alert Title' }),
+                AlertDescription({ children: 'Compound Alert Desc' }),
+            ],
+        });
+        expect(alert).toContain('tg-alert');
+        expect(alert).toContain('tg-alert-destructive');
+        expect(alert).toContain('Error Title');
+        expect(alert).toContain('Something failed');
+        expect(alert).toContain('Compound Alert Title');
+        expect(alert).toContain('Compound Alert Desc');
+
+        const table = Table({
+            children: [
+                TableHeader({
+                    children: TableRow({
+                        children: [
+                            TableHead({ children: 'Item' }),
+                            TableHead({ children: 'Price', align: 'right' }),
+                        ],
+                    }),
+                }),
+                TableBody({
+                    children: TableRow({
+                        children: [
+                            TableCell({ children: 'Burger' }),
+                            TableCell({ children: '$10', align: 'right' }),
+                        ],
+                    }),
+                }),
+            ],
+        });
+        expect(table).toContain('tg-table');
+        expect(table).toContain('Burger');
+        expect(table).toContain('$10');
+
+        const accordion = Accordion({
+            children: [
+                AccordionItem({ title: 'FAQ 1', children: 'Answer 1', open: true }),
+                Collapsible({ title: 'FAQ 2', children: 'Answer 2' }),
+            ],
+        });
+        expect(accordion).toContain('tg-accordion');
+        expect(accordion).toContain('<details');
+        expect(accordion).toContain('<summary');
+        expect(accordion).toContain('FAQ 1');
+        expect(accordion).toContain('Answer 1');
 
         const bar = ProgressBar({ percent: 50 });
         expect(bar).toContain('width:50%');
@@ -158,8 +266,9 @@ describe('@ipsadt/tg-widgets', () => {
         expect(seg).toContain('tg-segmented-control');
         expect(seg).toContain('Tab 1');
 
-        const layout = WidgetLayout({ children: 'Body' });
+        const layout = WidgetLayout({ children: 'Body', safeArea: true });
         expect(layout).toContain('tg-widget-root');
+        expect(layout).toContain('env(safe-area-inset-bottom');
     });
 
     test('inspectWidgetSize and renderWidget check deflate compression limits', () => {
@@ -380,6 +489,10 @@ describe('@ipsadt/tg-widgets', () => {
         expect(mod.WidgetLayout).toBeDefined();
         expect(mod.Button).toBeDefined();
         expect(mod.Card).toBeDefined();
+        expect(mod.Alert).toBeDefined();
+        expect(mod.Table).toBeDefined();
+        expect(mod.Accordion).toBeDefined();
+        expect(mod.Stepper).toBeDefined();
         expect(mod.MemoryWidgetsStorage).toBeDefined();
         expect(mod.encodeWidgetAction).toBeDefined();
         expect(mod.decodeWidgetAction).toBeDefined();

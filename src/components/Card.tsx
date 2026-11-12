@@ -10,6 +10,7 @@ export interface CardProps {
     style?: Record<string, string | number | undefined | null>;
     className?: string;
     children?: unknown;
+    [key: `data-${string}`]: string | undefined;
 }
 
 export const Card = ({
@@ -22,6 +23,7 @@ export const Card = ({
     style,
     className = '',
     children,
+    ...dataAttrs
 }: CardProps): string => {
     const overrides: Record<string, string | number | undefined | null> = {
         ...(radius !== undefined ? { borderRadius: radius } : {}),
@@ -34,6 +36,7 @@ export const Card = ({
             id={id}
             class={`tg-card tg-card-${variant} ${className}`.trim()}
             style={Object.keys(overrides).length > 0 ? overrides : undefined}
+            {...dataAttrs}
         >
             {header && (
                 <div
@@ -65,3 +68,102 @@ export const Card = ({
 };
 
 export const Section = Card;
+
+export const CardHeader = ({
+    children,
+    style,
+}: {
+    children?: unknown;
+    style?: Record<string, string | number | undefined | null>;
+}): string => (
+    <div
+        style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 2,
+            marginBottom: 2,
+            ...style,
+        }}
+    >
+        {children}
+    </div>
+);
+
+export const CardTitle = ({
+    children,
+    style,
+}: {
+    children?: unknown;
+    style?: Record<string, string | number | undefined | null>;
+}): string => (
+    <div
+        style={{
+            fontSize: 16,
+            fontWeight: 600,
+            color: 'var(--tg-theme-text-color, inherit)',
+            ...style,
+        }}
+    >
+        {children}
+    </div>
+);
+
+export const CardDescription = ({
+    children,
+    style,
+}: {
+    children?: unknown;
+    style?: Record<string, string | number | undefined | null>;
+}): string => (
+    <div
+        style={{
+            fontSize: 12,
+            color: 'var(--tg-theme-hint-color, #888888)',
+            lineHeight: 1.35,
+            ...style,
+        }}
+    >
+        {children}
+    </div>
+);
+
+export const CardContent = ({
+    children,
+    style,
+}: {
+    children?: unknown;
+    style?: Record<string, string | number | undefined | null>;
+}): string => (
+    <div
+        style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 8,
+            ...style,
+        }}
+    >
+        {children}
+    </div>
+);
+
+export const CardFooter = ({
+    children,
+    style,
+}: {
+    children?: unknown;
+    style?: Record<string, string | number | undefined | null>;
+}): string => (
+    <div
+        style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            fontSize: 12,
+            color: 'var(--tg-theme-hint-color, #888888)',
+            marginTop: 4,
+            ...style,
+        }}
+    >
+        {children}
+    </div>
+);

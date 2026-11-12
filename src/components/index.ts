@@ -1,3 +1,5 @@
+export * from './Accordion';
+export * from './Alert';
 export * from './Avatar';
 export * from './Badge';
 export * from './Banner';
@@ -14,5 +16,6 @@ export * from './Script';
 export * from './SegmentedControl';
 export * from './Skeleton';
 export * from './Switch';
+export * from './Table';
 export * from './Typography';
 export * from './WidgetLayout';

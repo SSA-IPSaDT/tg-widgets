@@ -1,17 +1,23 @@
 import { h } from '../jsx';
 
 export interface RadioProps {
-    id: string;
-    name: string;
-    value: string;
+    id?: string;
+    name?: string;
+    value?: string;
     checked?: boolean;
     disabled?: boolean;
-    label?: string;
-    description?: string;
+    label?: unknown;
+    description?: unknown;
+    action?: string;
     style?: Record<string, string | number | undefined | null>;
     className?: string;
+    [key: `data-${string}`]: string | undefined;
 }
 
+/**
+ * Радио-кнопка для Telegram Widgets (QuickJS Profile 1).
+ * Реализована на семантической кнопке с SVG-иконками без использования <input>.
+ */
 export const Radio = ({
     id,
     name,
@@ -20,55 +26,105 @@ export const Radio = ({
     disabled = false,
     label,
     description,
+    action,
     style,
     className = '',
+    ...dataAttrs
 }: RadioProps): string => {
+    const radioIcon = checked ? (
+        <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            style={{
+                flexShrink: 0,
+                marginTop: description ? 2 : 0,
+            }}
+        >
+            <circle
+                cx="10"
+                cy="10"
+                r="9"
+                stroke="var(--tg-theme-button-color, #2481cc)"
+                strokeWidth="2"
+                fill="transparent"
+            />
+            <circle
+                cx="10"
+                cy="10"
+                r="5"
+                fill="var(--tg-theme-button-color, #2481cc)"
+            />
+        </svg>
+    ) : (
+        <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            style={{
+                flexShrink: 0,
+                marginTop: description ? 2 : 0,
+            }}
+        >
+            <circle
+                cx="10"
+                cy="10"
+                r="9"
+                stroke="var(--tg-theme-hint-color, rgba(120, 120, 128, 0.4))"
+                strokeWidth="1.5"
+                fill="transparent"
+            />
+        </svg>
+    );
+
     return (
-        <label
-            for={id}
-            class={`tg-radio-wrapper ${className}`}
+        <button
+            type="button"
+            id={id}
+            name={name}
+            role="radio"
+            aria-checked={checked ? 'true' : 'false'}
+            data-checked={checked ? 'true' : 'false'}
+            data-value={value}
+            data-action={action}
+            disabled={disabled}
+            class={`tg-radio ${className}`.trim()}
             style={{
                 display: 'inline-flex',
                 alignItems: description ? 'flex-start' : 'center',
                 gap: 10,
+                background: 'transparent',
+                border: 'none',
+                padding: '4px 0',
+                margin: 0,
+                textAlign: 'left',
+                fontFamily: 'inherit',
                 cursor: disabled ? 'default' : 'pointer',
+                opacity: disabled ? 0.5 : 1,
                 userSelect: 'none',
-                opacity: disabled ? 0.6 : 1,
-                fontSize: 14,
+                touchAction: 'manipulation',
                 color: 'var(--tg-theme-text-color, inherit)',
+                width: '100%',
                 ...style,
             }}
+            {...dataAttrs}
         >
-            <input
-                type="radio"
-                id={id}
-                name={name}
-                value={value}
-                checked={checked}
-                disabled={disabled}
-                class="tg-radio-input"
-                style={{
-                    appearance: 'none',
-                    WebkitAppearance: 'none',
-                    width: 20,
-                    height: 20,
-                    borderRadius: '50%',
-                    border: '1.5px solid var(--tg-theme-hint-color, #999999)',
-                    background: 'transparent',
-                    cursor: disabled ? 'default' : 'pointer',
-                    display: 'grid',
-                    placeContent: 'center',
-                    margin: description ? '2px 0 0 0' : 0,
-                    flexShrink: 0,
-                    transition:
-                        'background 0.15s ease, border-color 0.15s ease',
-                }}
-            />
+            {radioIcon}
             {(label || description) && (
                 <div
-                    style={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: 2,
+                    }}
                 >
-                    {label && <span style={{ fontWeight: 500 }}>{label}</span>}
+                    {label && (
+                        <span style={{ fontSize: 14, fontWeight: 500 }}>
+                            {label}
+                        </span>
+                    )}
                     {description && (
                         <span
                             style={{
@@ -81,30 +137,39 @@ export const Radio = ({
                     )}
                 </div>
             )}
-        </label>
+        </button>
     );
 };
 
 export interface RadioGroupProps {
-    children?: unknown;
+    id?: string;
+    gap?: number;
     style?: Record<string, string | number | undefined | null>;
     className?: string;
+    children?: unknown;
 }
 
 export const RadioGroup = ({
-    children,
+    id,
+    gap = 8,
     style,
     className = '',
-}: RadioGroupProps): string => (
-    <div
-        class={`tg-radio-group ${className}`}
-        style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 10,
-            ...style,
-        }}
-    >
-        {children}
-    </div>
-);
+    children,
+}: RadioGroupProps): string => {
+    return (
+        <div
+            id={id}
+            role="radiogroup"
+            class={`tg-radio-group ${className}`.trim()}
+            style={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap,
+                width: '100%',
+                ...style,
+            }}
+        >
+            {children}
+        </div>
+    );
+};
