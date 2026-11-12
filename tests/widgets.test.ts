@@ -620,15 +620,28 @@ describe('@ipsadt/tg-widgets', () => {
         expect(jsxBadge).toContain('padding:0px');
     });
 
-    test('Alert renders clean uniform border without borderLeft accent line', () => {
-        const alert = Alert({
+    test('Alert renders clean uniform border with variant accent color without white default rim', () => {
+        const infoAlert = Alert({
             variant: 'info',
             title: 'Info Alert',
             description: 'Uniform border',
         });
-        expect(alert).not.toContain('border-left:4px');
-        expect(alert).toContain('border:1px solid');
-        expect(alert).toContain('font-weight:500');
+        expect(infoAlert).not.toContain('border-left:4px');
+        expect(infoAlert).toContain('border:1px solid rgba(36, 129, 204, 0.28)');
+        expect(infoAlert).not.toContain('border:1px solid;');
+        expect(infoAlert).toContain('font-weight:500');
+
+        const warningAlert = Alert({
+            variant: 'warning',
+            title: 'Warning Alert',
+        });
+        expect(warningAlert).toContain('border:1px solid rgba(245, 158, 11, 0.28)');
+
+        const destructiveAlert = Alert({
+            variant: 'destructive',
+            title: 'Destructive Alert',
+        });
+        expect(destructiveAlert).toContain('border:1px solid rgba(239, 68, 68, 0.28)');
     });
 
     test('DescriptionText renders unified typography with font-weight 500', () => {

@@ -13,6 +13,14 @@ export interface AlertProps {
     [key: `data-${string}`]: string | undefined;
 }
 
+const variantBorders: Record<NonNullable<AlertProps['variant']>, string> = {
+    default: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.20))',
+    info: '1px solid rgba(36, 129, 204, 0.28)',
+    success: '1px solid rgba(16, 185, 129, 0.28)',
+    warning: '1px solid rgba(245, 158, 11, 0.28)',
+    destructive: '1px solid rgba(239, 68, 68, 0.28)',
+};
+
 /**
  * Компонент Alert для виджетов Telegram.
  * Отображает важные сообщения, уведомления об ошибках и статусы с подлинными Lucide SVG иконками.
@@ -63,7 +71,7 @@ export const Alert = ({
             id={id}
             class={`tg-alert tg-alert-${variant} ${className}`.trim()}
             style={{
-                border: '1px solid',
+                border: variantBorders[variant] ?? variantBorders.default,
                 ...style,
             }}
             {...dataAttrs}
