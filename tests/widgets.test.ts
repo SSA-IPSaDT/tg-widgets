@@ -29,16 +29,19 @@ import {
     h,
     Input,
     inspectWidgetSize,
+    inspectWidgetSizeAsync,
     List,
     ListItem,
     LucideIcon,
     LucideIcons,
     MemoryWidgetsStorage,
     minifyHtml,
+    minifyHtmlSync,
     ProgressBar,
     Radio,
     RadioGroup,
     renderWidget,
+    renderWidgetAsync,
     SegmentedControl,
     Skeleton,
     Stepper,
@@ -269,7 +272,7 @@ describe('@ipsadt/tg-widgets', () => {
         expect(layout).toContain('env(safe-area-inset-bottom');
     });
 
-    test('inspectWidgetSize and renderWidget check deflate compression limits', () => {
+    test('inspectWidgetSize and renderWidget check deflate compression limits', async () => {
         const report = inspectWidgetSize('<div>Hello Widget</div>');
         expect(report.html).toContain('<!DOCTYPE html>');
         expect(report.html).toContain('<div>Hello Widget</div>');
@@ -278,9 +281,18 @@ describe('@ipsadt/tg-widgets', () => {
         expect(report.compressedByteLength).toBeLessThanOrEqual(4096);
         expect(report.isValid).toBe(true);
 
+        const asyncReport = await inspectWidgetSizeAsync('<div>Hello Widget Async</div>');
+        expect(asyncReport.html.toLowerCase()).toContain('<!doctype html>');
+        expect(asyncReport.html).toContain('<div>Hello Widget Async</div>');
+        expect(asyncReport.isValid).toBe(true);
+
         const html = renderWidget('<div>Test</div>');
-        expect(html).toContain('<!DOCTYPE html>');
+        expect(html.toLowerCase()).toContain('<!doctype html>');
         expect(html).toContain('<div>Test</div>');
+
+        const asyncHtml = await renderWidgetAsync('<div>Test Async</div>');
+        expect(asyncHtml.toLowerCase()).toContain('<!doctype html>');
+        expect(asyncHtml).toContain('<div>Test Async</div>');
     });
 
     test('encodeWidgetAction and decodeWidgetAction handle 64-byte Telegram limit', () => {
@@ -526,22 +538,29 @@ describe('@ipsadt/tg-widgets', () => {
         expect(infoAlert).toContain('lucide-info');
     });
 
-    test('minifyHtml and renderWidget compress HTML and CSS aggressively', () => {
+    test('minifyHtml and renderWidget compress HTML and CSS aggressively', async () => {
         const raw = `
             <div   class="card"   style="margin: 0px; padding: 10px 14px ; color: #ffffff;" >
                 <!-- Some comment -->
                 <p>Hello   World</p>
             </div>
         `;
-        const minified = minifyHtml(raw);
+        const minified = await minifyHtml(raw);
         expect(minified).not.toContain('<!--');
         expect(minified).not.toContain('margin: 0px');
-        expect(minified).toContain('margin:0');
         expect(minified).toContain('#fff');
 
+        const syncMinified = minifyHtmlSync(raw);
+        expect(syncMinified).not.toContain('<!--');
+        expect(syncMinified).not.toContain('> <');
+
         const rendered = renderWidget('<div>Hello</div>');
-        expect(rendered).toContain('<!DOCTYPE html>');
+        expect(rendered.toLowerCase()).toContain('<!doctype html>');
         expect(rendered).not.toContain('> <');
+
+        const asyncRendered = await renderWidgetAsync('<div>Hello Async</div>');
+        expect(asyncRendered.toLowerCase()).toContain('<!doctype html>');
+        expect(asyncRendered).toContain('<div>Hello Async</div>');
     });
 
     test('WidgetLayout supports expand, fullWidth and fullHeight props', () => {

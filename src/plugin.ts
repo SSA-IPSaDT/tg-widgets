@@ -1,7 +1,12 @@
 import type { Context, MiddlewareFn } from 'grammy';
 
 import { decodeWidgetAction } from './action';
-import { inspectWidgetSize, renderWidget, type WidgetSizeReport } from './jsx';
+import {
+    inspectWidgetSize,
+    inspectWidgetSizeAsync,
+    renderWidgetAsync,
+    type WidgetSizeReport,
+} from './jsx';
 import type {
     AnyWidgetScreen,
     RawWidgetApiMethods,
@@ -106,6 +111,14 @@ export interface WidgetsController<
     ) => WidgetSizeReport;
 
     /**
+     * Асинхронно рендерит и инспектирует размер с глубокой минификацией через html-minifier-terser
+     */
+    renderAsync: <K extends keyof TScreens & string>(
+        screenId: K,
+        props: Parameters<TScreens[K]['component']>[0],
+    ) => Promise<WidgetSizeReport>;
+
+    /**
      * Обновляет состояние данных (chat_data) существующего виджета
      */
     update: <K extends keyof TScreens & string>(
@@ -204,7 +217,7 @@ export const createTelegramWidgetsPlugin = <
                     );
                 }
 
-                const html = renderWidget(
+                const html = await renderWidgetAsync(
                     screen.component(sendOpts.props as never),
                 );
                 const initState = (screen.initialState(
@@ -270,6 +283,17 @@ export const createTelegramWidgetsPlugin = <
                 }
                 const body = screen.component(props as never);
                 return inspectWidgetSize(body);
+            },
+
+            renderAsync: async (screenId, props) => {
+                const screen = screensById.get(screenId);
+                if (!screen) {
+                    throw new Error(
+                        `[telegram-widgets] Screen "${screenId}" not found in registered screens.`,
+                    );
+                }
+                const body = screen.component(props as never);
+                return inspectWidgetSizeAsync(body);
             },
 
             update: async (messageId, screenId, updateOpts) => {

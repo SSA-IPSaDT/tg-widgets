@@ -1,7 +1,7 @@
 import { Bot, Context, InlineKeyboard } from 'grammy';
 import {
     createTelegramWidgetsPlugin,
-    inspectWidgetSize,
+    inspectWidgetSizeAsync,
     type WidgetsFlavor,
 } from '../src';
 
@@ -59,14 +59,15 @@ bot.use(widgets.middleware);
 
 /**
  * Формирует техническую сводку по размеру сжатого виджета относительно лимита 4096 байт
+ * с использованием промышленного минификатора html-minifier-terser
  */
-const getWidgetCaption = (
+const getWidgetCaption = async (
     screenId: keyof typeof screens,
     props: unknown,
-): string => {
+): Promise<string> => {
     const screen = screens[screenId];
     const html = screen.component(props as never);
-    const report = inspectWidgetSize(html);
+    const report = await inspectWidgetSizeAsync(html);
     const pct = ((report.compressedByteLength / report.maxAllowed) * 100).toFixed(1);
     const free = report.maxAllowed - report.compressedByteLength;
 
@@ -109,7 +110,7 @@ bot.command('accordion', async (ctx) => {
     const props = {};
     await ctx.widgets.reply('accordion', {
         props,
-        caption: getWidgetCaption('accordion', props),
+        caption: await getWidgetCaption('accordion', props),
     });
 });
 
@@ -122,7 +123,7 @@ bot.command('controls', async (ctx) => {
     };
     await ctx.widgets.reply('controls', {
         props,
-        caption: getWidgetCaption('controls', props),
+        caption: await getWidgetCaption('controls', props),
     });
 });
 
@@ -130,7 +131,7 @@ bot.command('table', async (ctx) => {
     const props = {};
     await ctx.widgets.reply('table', {
         props,
-        caption: getWidgetCaption('table', props),
+        caption: await getWidgetCaption('table', props),
     });
 });
 
@@ -138,7 +139,7 @@ bot.command('alerts', async (ctx) => {
     const props = {};
     await ctx.widgets.reply('alerts', {
         props,
-        caption: getWidgetCaption('alerts', props),
+        caption: await getWidgetCaption('alerts', props),
     });
 });
 
@@ -146,7 +147,7 @@ bot.command('cards', async (ctx) => {
     const props = {};
     await ctx.widgets.reply('cards', {
         props,
-        caption: getWidgetCaption('cards', props),
+        caption: await getWidgetCaption('cards', props),
     });
 });
 
@@ -154,7 +155,7 @@ bot.command('counter', async (ctx) => {
     const props = { count: 0 };
     await ctx.widgets.reply('counter', {
         props,
-        caption: getWidgetCaption('counter', props),
+        caption: await getWidgetCaption('counter', props),
     });
 });
 
@@ -165,7 +166,7 @@ bot.command('poll', async (ctx) => {
     };
     await ctx.widgets.reply('poll', {
         props,
-        caption: getWidgetCaption('poll', props),
+        caption: await getWidgetCaption('poll', props),
     });
 });
 
@@ -173,7 +174,7 @@ bot.command('ecommerce', async (ctx) => {
     const props = { size: 42, quantity: 1, pricePerUnit: 120 };
     await ctx.widgets.reply('ecommerce', {
         props,
-        caption: getWidgetCaption('ecommerce', props),
+        caption: await getWidgetCaption('ecommerce', props),
     });
 });
 
@@ -183,7 +184,7 @@ bot.callbackQuery('show_accordion', async (ctx) => {
     const props = {};
     await ctx.widgets.send('accordion', {
         props,
-        caption: getWidgetCaption('accordion', props),
+        caption: await getWidgetCaption('accordion', props),
     });
 });
 
@@ -197,7 +198,7 @@ bot.callbackQuery('show_controls', async (ctx) => {
     };
     await ctx.widgets.send('controls', {
         props,
-        caption: getWidgetCaption('controls', props),
+        caption: await getWidgetCaption('controls', props),
     });
 });
 
@@ -206,7 +207,7 @@ bot.callbackQuery('show_table', async (ctx) => {
     const props = {};
     await ctx.widgets.send('table', {
         props,
-        caption: getWidgetCaption('table', props),
+        caption: await getWidgetCaption('table', props),
     });
 });
 
@@ -215,7 +216,7 @@ bot.callbackQuery('show_alerts', async (ctx) => {
     const props = {};
     await ctx.widgets.send('alerts', {
         props,
-        caption: getWidgetCaption('alerts', props),
+        caption: await getWidgetCaption('alerts', props),
     });
 });
 
@@ -224,7 +225,7 @@ bot.callbackQuery('show_cards', async (ctx) => {
     const props = {};
     await ctx.widgets.send('cards', {
         props,
-        caption: getWidgetCaption('cards', props),
+        caption: await getWidgetCaption('cards', props),
     });
 });
 
@@ -233,7 +234,7 @@ bot.callbackQuery('show_counter', async (ctx) => {
     const props = { count: 0 };
     await ctx.widgets.send('counter', {
         props,
-        caption: getWidgetCaption('counter', props),
+        caption: await getWidgetCaption('counter', props),
     });
 });
 
@@ -245,7 +246,7 @@ bot.callbackQuery('show_poll', async (ctx) => {
     };
     await ctx.widgets.send('poll', {
         props,
-        caption: getWidgetCaption('poll', props),
+        caption: await getWidgetCaption('poll', props),
     });
 });
 
@@ -254,7 +255,7 @@ bot.callbackQuery('show_ecommerce', async (ctx) => {
     const props = { size: 42, quantity: 1, pricePerUnit: 120 };
     await ctx.widgets.send('ecommerce', {
         props,
-        caption: getWidgetCaption('ecommerce', props),
+        caption: await getWidgetCaption('ecommerce', props),
     });
 });
 
