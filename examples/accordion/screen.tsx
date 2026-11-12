@@ -11,6 +11,8 @@ import {
     Collapsible,
     defineWidgetScreen,
     h,
+    LucideIcon,
+    LucideIcons,
     WidgetLayout,
 } from '../../src';
 
@@ -31,7 +33,14 @@ export const accordionScreen = defineWidgetScreen({
                         }}
                     >
                         <CardTitle>Частые вопросы</CardTitle>
-                        <Badge variant="accent">Profile 1</Badge>
+                        <Badge
+                            variant="accent"
+                            icon={LucideIcon({
+                                icon: LucideIcons.HelpCircle,
+                                size: 13,
+                                color: 'var(--tg-theme-link-color, #2481cc)',
+                            })}
+                        />
                     </div>
                     <CardDescription>
                         Тестирование нативного элемента &lt;details&gt; в виджетах Telegram

@@ -9,6 +9,8 @@ import {
     defineWidgetScreen,
     Divider,
     h,
+    LucideIcon,
+    LucideIcons,
     Radio,
     RadioGroup,
     Script,
@@ -143,7 +145,14 @@ export const controlsScreen = defineWidgetScreen({
                         }}
                     >
                         <CardTitle>Настройки подписки</CardTitle>
-                        <Badge variant="accent">Live State</Badge>
+                        <Badge
+                            variant="accent"
+                            icon={LucideIcon({
+                                icon: LucideIcons.Sliders,
+                                size: 13,
+                                color: 'var(--tg-theme-link-color, #2481cc)',
+                            })}
+                        />
                     </div>
                     <CardDescription>
                         Чекбоксы, переключатели и степпер без тега &lt;input&gt;

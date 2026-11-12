@@ -5,15 +5,17 @@ import {
     type WidgetsFlavor,
 } from '../src';
 
-// Импорт модульных экранов из соответствующих директорий
 import { accordionScreen } from './accordion/screen';
 import { alertsScreen } from './alerts/screen';
 import { cardsScreen } from './cards/screen';
 import { controlsScreen } from './controls/screen';
 import { counterScreen } from './counter/screen';
+import { cryptoScreen } from './crypto/screen';
 import { ecommerceScreen } from './ecommerce/screen';
 import { pollScreen } from './poll/screen';
+import { profileScreen } from './profile/screen';
 import { tableScreen } from './table/screen';
+import { tournamentScreen } from './tournament/screen';
 
 // Реестр поддерживаемых экранов
 const screens = {
@@ -25,6 +27,9 @@ const screens = {
     counter: counterScreen,
     poll: pollScreen,
     ecommerce: ecommerceScreen,
+    profile: profileScreen,
+    tournament: tournamentScreen,
+    crypto: cryptoScreen,
 };
 
 type BotContext = Context & WidgetsFlavor<typeof screens>;
@@ -83,14 +88,19 @@ bot.command('start', async (ctx) => {
         .text('📖 Аккордеон (details)', 'show_accordion')
         .text('🎛️ Контролы (switch/chk)', 'show_controls')
         .row()
-        .text('📊 Таблица чека', 'show_table')
-        .text('🔔 Алерты (Lucide)', 'show_alerts')
+        .text('👤 Профиль и fallback', 'show_profile')
+        .text('♟️ Шахматный турнир', 'show_tournament')
         .row()
+        .text('💎 TON Кошелёк', 'show_crypto')
+        .text('🛍️ Корзина товаров', 'show_ecommerce')
+        .row()
+        .text('🔔 Алерты (Lucide)', 'show_alerts')
         .text('💳 Карточки и метрики', 'show_cards')
-        .text('🔢 Живой счётчик', 'show_counter')
         .row()
         .text('🗳️ Живой опрос', 'show_poll')
-        .text('🛍️ Корзина товаров', 'show_ecommerce');
+        .text('📊 Таблица чека', 'show_table')
+        .row()
+        .text('🔢 Живой счётчик', 'show_counter');
 
     const envInfo = isTestEnv ? ' 🧪 *(Telegram Test DC)*' : '';
 
@@ -178,6 +188,30 @@ bot.command('ecommerce', async (ctx) => {
     });
 });
 
+bot.command('profile', async (ctx) => {
+    const props = profileScreen.initialState();
+    await ctx.widgets.reply('profile', {
+        props,
+        caption: await getWidgetCaption('profile', props),
+    });
+});
+
+bot.command(['tournament', 'chess'], async (ctx) => {
+    const props = tournamentScreen.initialState();
+    await ctx.widgets.reply('tournament', {
+        props,
+        caption: await getWidgetCaption('tournament', props),
+    });
+});
+
+bot.command(['crypto', 'wallet'], async (ctx) => {
+    const props = cryptoScreen.initialState();
+    await ctx.widgets.reply('crypto', {
+        props,
+        caption: await getWidgetCaption('crypto', props),
+    });
+});
+
 // Обработка нажатий инлайн-кнопок меню
 bot.callbackQuery('show_accordion', async (ctx) => {
     await ctx.answerCallbackQuery();
@@ -199,6 +233,33 @@ bot.callbackQuery('show_controls', async (ctx) => {
     await ctx.widgets.send('controls', {
         props,
         caption: await getWidgetCaption('controls', props),
+    });
+});
+
+bot.callbackQuery('show_profile', async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const props = profileScreen.initialState();
+    await ctx.widgets.send('profile', {
+        props,
+        caption: await getWidgetCaption('profile', props),
+    });
+});
+
+bot.callbackQuery('show_tournament', async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const props = tournamentScreen.initialState();
+    await ctx.widgets.send('tournament', {
+        props,
+        caption: await getWidgetCaption('tournament', props),
+    });
+});
+
+bot.callbackQuery('show_crypto', async (ctx) => {
+    await ctx.answerCallbackQuery();
+    const props = cryptoScreen.initialState();
+    await ctx.widgets.send('crypto', {
+        props,
+        caption: await getWidgetCaption('crypto', props),
     });
 });
 

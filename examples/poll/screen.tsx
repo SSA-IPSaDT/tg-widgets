@@ -98,7 +98,15 @@ export const pollScreen = defineWidgetScreen({
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <CardTitle>Опрос сообщества</CardTitle>
-                            <Badge variant="accent" pulse>LIVE POLL</Badge>
+                            <Badge
+                                variant="accent"
+                                pulse
+                                icon={LucideIcon({
+                                    icon: LucideIcons.Flame,
+                                    size: 13,
+                                    color: 'var(--tg-theme-link-color, #2481cc)',
+                                })}
+                            />
                         </div>
                         <CardDescription>
                             Какой стек вы используете для разработки Telegram-ботов?

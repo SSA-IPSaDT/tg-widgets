@@ -113,7 +113,7 @@ export const ecommerceScreen = defineWidgetScreen({
                     <CardHeader>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                             <CardTitle>Кроссовки HyperSpeed</CardTitle>
-                            <Badge variant="success" icon={LucideIcon({ icon: LucideIcons.Check, size: 12, strokeWidth: 2.2 })}>В наличии</Badge>
+                            <Badge variant="success" icon={LucideIcon({ icon: LucideIcons.Check, size: 12, strokeWidth: 2.2 })} />
                         </div>
                         <CardDescription>
                             Оригинальная спортивная обувь с быстрой доставкой
@@ -167,58 +167,72 @@ export const ecommerceScreen = defineWidgetScreen({
                                 style={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
-                                    background: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.12))',
-                                    borderRadius: 10,
+                                    background: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.14))',
+                                    borderRadius: 20,
                                     padding: 3,
-                                    gap: 4,
+                                    gap: 2,
                                 }}
                             >
                                 <button
                                     type="button"
                                     id="ecom-minus"
                                     style={{
-                                        width: 28,
-                                        height: 28,
+                                        width: 26,
+                                        height: 26,
                                         padding: 0,
                                         margin: 0,
                                         boxSizing: 'border-box',
                                         flexShrink: 0,
-                                        border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.15))',
-                                        borderRadius: 7,
-                                        background: 'var(--tg-theme-bg-color, #ffffff)',
+                                        border: 'none',
+                                        borderRadius: '50%',
+                                        background: 'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
                                         color: 'var(--tg-theme-text-color, inherit)',
-                                        display: 'flex',
+                                        display: 'inline-flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
+                                        lineHeight: 0,
+                                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
                                         cursor: 'pointer',
                                     }}
                                 >
-                                    {LucideIcon({ icon: LucideIcons.Minus, size: 14, strokeWidth: 2 })}
+                                    {LucideIcon({
+                                        icon: LucideIcons.Minus,
+                                        size: 13,
+                                        strokeWidth: 2.2,
+                                        style: { display: 'block', margin: 'auto' },
+                                    })}
                                 </button>
-                                <span id="ecom-qty" style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, fontSize: 14 }}>
+                                <span id="ecom-qty" style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, fontSize: 13.5 }}>
                                     {props.quantity}
                                 </span>
                                 <button
                                     type="button"
                                     id="ecom-plus"
                                     style={{
-                                        width: 28,
-                                        height: 28,
+                                        width: 26,
+                                        height: 26,
                                         padding: 0,
                                         margin: 0,
                                         boxSizing: 'border-box',
                                         flexShrink: 0,
-                                        border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.15))',
-                                        borderRadius: 7,
-                                        background: 'var(--tg-theme-bg-color, #ffffff)',
+                                        border: 'none',
+                                        borderRadius: '50%',
+                                        background: 'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
                                         color: 'var(--tg-theme-text-color, inherit)',
-                                        display: 'flex',
+                                        display: 'inline-flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
+                                        lineHeight: 0,
+                                        boxShadow: '0 1px 2px rgba(0, 0, 0, 0.1)',
                                         cursor: 'pointer',
                                     }}
                                 >
-                                    {LucideIcon({ icon: LucideIcons.Plus, size: 14, strokeWidth: 2 })}
+                                    {LucideIcon({
+                                        icon: LucideIcons.Plus,
+                                        size: 13,
+                                        strokeWidth: 2.2,
+                                        style: { display: 'block', margin: 'auto' },
+                                    })}
                                 </button>
                             </div>
                         </div>

@@ -30,14 +30,27 @@ export const Badge = ({
     children,
 }: BadgeProps): string => {
     const sizeClass = size === 'md' ? 'tg-badge-md' : '';
+    const isIconOnly = !children;
 
     return (
         <span
             id={id}
             class={`tg-badge tg-badge-${variant} ${sizeClass} ${className}`.trim()}
-            style={style}
+            style={{
+                ...(isIconOnly
+                    ? {
+                          padding: '3px 5px',
+                          gap: 3,
+                          borderRadius: 7,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                      }
+                    : {}),
+                ...style,
+            }}
         >
-            {(dot || pulse) && (
+            {(dot || (pulse && !icon)) && (
                 <span
                     class={pulse ? 'tg-badge-pulse' : ''}
                     style={{
@@ -52,9 +65,12 @@ export const Badge = ({
             )}
             {icon && (
                 <span
+                    class={pulse ? 'tg-badge-pulse' : ''}
                     style={{
                         display: 'inline-flex',
                         alignItems: 'center',
+                        justifyContent: 'center',
+                        lineHeight: 0,
                         flexShrink: 0,
                     }}
                 >

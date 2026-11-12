@@ -100,6 +100,13 @@ describe('@ipsadt/tg-widgets', () => {
         expect(pulseBadge).toContain('tg-badge-pulse');
         expect(pulseBadge).toContain('Live');
 
+        const iconBadge = Badge({
+            variant: 'accent',
+            icon: LucideIcon({ icon: LucideIcons.Flame, size: 13 }),
+        });
+        expect(iconBadge).toContain('tg-badge');
+        expect(iconBadge).toContain('svg');
+
         const card = Card({
             header: 'Header',
             footer: 'Footer',
@@ -544,6 +551,11 @@ describe('@ipsadt/tg-widgets', () => {
         // Alert integration
         const infoAlert = Alert({ variant: 'info', title: 'With Lucide' });
         expect(infoAlert).toContain('lucide-info');
+
+        expect(LucideIcons.Trophy).toBeDefined();
+        expect(LucideIcons.Crown).toBeDefined();
+        expect(LucideIcons.Shield).toBeDefined();
+        expect(LucideIcons.Sliders).toBeDefined();
     });
 
     test('minifyHtml and renderWidget compress HTML and CSS aggressively', async () => {

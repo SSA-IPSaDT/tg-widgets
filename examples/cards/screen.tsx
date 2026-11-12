@@ -63,7 +63,14 @@ export const cardsScreen = defineWidgetScreen({
                         }}
                     >
                         <CardTitle>Аналитика баланса</CardTitle>
-                        <Badge variant="accent">Pro VIP</Badge>
+                        <Badge
+                            variant="accent"
+                            icon={LucideIcon({
+                                icon: LucideIcons.Crown,
+                                size: 13,
+                                color: '#f59e0b',
+                            })}
+                        />
                     </div>
                     <CardDescription>
                         Сводка за последние 30 дней активности

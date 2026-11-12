@@ -72,8 +72,9 @@ export const AccordionItem = ({
                 style={{
                     padding: '0 4px 12px 4px',
                     fontSize: 13,
-                    color: 'var(--tg-theme-hint-color, #888888)',
-                    lineHeight: 1.4,
+                    color: 'var(--tg-theme-text-color, inherit)',
+                    opacity: 0.88,
+                    lineHeight: 1.45,
                 }}
             >
                 {children}
