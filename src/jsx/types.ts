@@ -1,4 +1,6 @@
-export interface WidgetRenderOptions {
+import type { WidgetMinifyOptions } from '../minifier';
+
+export interface WidgetRenderOptions extends WidgetMinifyOptions {
     /**
      * Enables aggressive HTML and CSS minification (default: true).
      */

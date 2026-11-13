@@ -51,7 +51,7 @@ export const inspectWidgetSizeAsync = async (
         ? html
         : `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${html}</body></html>`;
 
-    const finalHtml = shouldMinify ? await minifyHtml(rawHtml) : rawHtml;
+    const finalHtml = shouldMinify ? await minifyHtml(rawHtml, options) : rawHtml;
     const buf = Buffer.from(finalHtml, 'utf-8');
     const compressed = deflateSync(buf, { level: 9 });
     const maxAllowed = 4096;

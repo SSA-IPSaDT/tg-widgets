@@ -61,6 +61,7 @@
         "build:clean": "rm -rf dist",
         "check": "tsc --noEmit",
         "check:branch": "bun run scripts/check-branch.ts",
+        "check:compression": "bun run scripts/compare-compression.ts",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "lint": "bun run check && bun run format:check",

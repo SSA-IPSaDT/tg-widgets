@@ -26,19 +26,40 @@ const bot = new Bot<BotContext>(token, {
     },
 });
 
-// Register Telegram widgets plugin with flexible configuration:
-// - mode: 'dev' on Telegram Test DC for readable JSON, 'prod' in production
-// - codec: 'dev' preserves full key names for maximum compatibility and transparent debugging
-// - sizeLimit: enforces Telegram's 4096-byte deflate limit
-// - storage: in-memory LRU cache with 24h TTL
+// Register Telegram widgets plugin with maximum compression enabled:
+// - mode: 'prod' enables full minification pipeline (HTML, CSS, JS)
+// - codec: 'prod' enables dictionary key compression in chat_data
+// - minifier: terser with PurgeCSS, style hoisting, and multi-pass JS minification
+// - sizeLimit: enforces Telegram's 4096-byte deflate limit with automatic inspection logging
 const widgets = createTelegramWidgetsPlugin({
     screens,
-    mode: isTestEnv ? 'dev' : 'prod',
-    codec: 'dev',
-    minifier: 'terser',
+    mode: 'prod',
+    codec: 'prod',
+    minifier: {
+        enabled: true,
+        engine: 'terser',
+        hoistStyles: true,
+        purgeCss: true,
+        collapseWhitespace: true,
+        removeComments: true,
+        removeRedundantAttributes: true,
+        removeScriptTypeAttributes: true,
+        removeStyleLinkTypeAttributes: true,
+        useShortDoctype: true,
+        sortAttributes: true,
+        sortClassName: true,
+        collapseBooleanAttributes: true,
+        minifyCSS: { level: 2 },
+        minifyJS: {
+            mangle: { toplevel: true },
+            compress: { passes: 3, unsafe: true },
+        },
+    },
+    logger: 'debug',
     sizeLimit: {
         maxBytes: 4096,
         onExceeded: isTestEnv ? 'warn' : 'error',
+        autoInspect: true,
     },
     storage: {
         defaultTtlSeconds: 86400,
