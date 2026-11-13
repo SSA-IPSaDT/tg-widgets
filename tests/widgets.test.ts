@@ -1147,7 +1147,7 @@ describe('@ipsadt/tg-widgets', () => {
 
         // 3. Test incoming widget_query for non-interactive vs dynamic screens
         let answeredQueryData: string | undefined;
-        mockApi.raw.answerWidgetQuery = async (params: { widget_query_id: string; data?: string }) => {
+        mockApi.raw.answerWidgetQuery = async (params: any) => {
             answeredQueryData = params.data;
             return params;
         };

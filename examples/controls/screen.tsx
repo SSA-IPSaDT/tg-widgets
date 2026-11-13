@@ -192,7 +192,7 @@ export const controlsScreen = defineWidgetScreen({
                         />
                     </div>
                     <CardDescription>
-                        Checkboxes, switches, and steppers without &lt;input&gt; tags
+                        Checkboxes, switches, and steppers with zero native form controls
                     </CardDescription>
                 </CardHeader>
                 <CardContent>

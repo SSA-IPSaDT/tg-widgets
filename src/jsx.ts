@@ -293,4 +293,8 @@ export const jsx = (
 };
 
 export const jsxs = jsx;
-export const jsxDEV = jsx;
+export const jsxDEV = (
+    tag: string | ((props: Record<string, unknown>) => string),
+    props: Record<string, unknown> | null,
+    ..._rest: unknown[]
+): string => jsx(tag, props);
