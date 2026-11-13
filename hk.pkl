@@ -25,7 +25,9 @@ hooks {
             ["trailing_whitespace"] = Builtins.trailing_whitespace
             ["detect_private_key"] = Builtins.detect_private_key
             ["check_added_large_files"] {
-                check = "hk util check-added-large-files --maxkb 35000 {{files}}"
+                glob = "**/*"
+                exclude = ".*\\.(mp4|webm|gif|png|jpg|jpeg)$"
+                check = "sh -c 'if [ \"$#\" -gt 0 ]; then hk util check-added-large-files \"$@\"; fi' --"
             }
             ["format"] {
                 glob = "**/*.{ts,tsx,js,jsx,json,md,toml}"
