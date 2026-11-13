@@ -10,81 +10,11 @@
 
 import type { JsMinifyOptions } from './types';
 
-const RESERVED_WORDS = new Set([
-    'break',
-    'case',
-    'catch',
-    'class',
-    'const',
-    'continue',
-    'debugger',
-    'default',
-    'delete',
-    'do',
-    'else',
-    'export',
-    'extends',
-    'finally',
-    'for',
-    'function',
-    'if',
-    'import',
-    'in',
-    'instanceof',
-    'new',
-    'return',
-    'super',
-    'switch',
-    'this',
-    'throw',
-    'try',
-    'typeof',
-    'var',
-    'void',
-    'while',
-    'with',
-    'yield',
-    'let',
-    'static',
-    'enum',
-    'await',
-    'async',
-    'null',
-    'true',
-    'false',
-    'undefined',
-    'NaN',
-    'Infinity',
-    'window',
-    'document',
-    'console',
-    'TelegramWidget',
-    'Math',
-    'JSON',
-    'Promise',
-    'Array',
-    'Object',
-    'String',
-    'Number',
-    'Boolean',
-    'RegExp',
-    'Date',
-    'Error',
-    'setTimeout',
-    'setInterval',
-    'clearTimeout',
-    'clearInterval',
-    'addEventListener',
-    'removeEventListener',
-    'event',
-    'target',
-    'currentTarget',
-    'HTML',
-    'CSS',
-    'SVG',
-    'Element',
-    'Node',
-]);
+const RESERVED_WORDS: Set<string> = new Set(
+    'break,case,catch,class,const,continue,debugger,default,delete,do,else,export,extends,finally,for,function,if,import,in,instanceof,new,return,super,switch,this,throw,try,typeof,var,void,while,with,yield,let,static,enum,await,async,null,true,false,undefined,NaN,Infinity,window,document,console,TelegramWidget,Math,JSON,Promise,Array,Object,String,Number,Boolean,RegExp,Date,Error,setTimeout,setInterval,clearTimeout,clearInterval,addEventListener,removeEventListener,event,target,currentTarget,HTML,CSS,SVG,Element,Node'.split(
+        ',',
+    ),
+);
 
 /**
  * Safely compacts JavaScript code by removing comments, collapsing whitespace,
@@ -116,7 +46,7 @@ export const compactJs = (code: string, options: JsMinifyOptions = {}): string =
             cleaned = cleaned
                 .replace(/^\s+|\s+$/gm, '')
                 .replace(/\n+/g, ' ')
-                .replace(/\s*([;{},()=+\-*/%&|^!<>?:])\s*/g, '$1')
+                .replace(/\s*([;{},()=+\-*/%&|^!<>?:[\]])\s*/g, '$1')
                 .replace(/[ \t]+/g, ' ')
                 .replace(/;+/g, ';')
                 .replace(/;}/g, '}')

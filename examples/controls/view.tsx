@@ -47,8 +47,8 @@ export const ControlsView = (props: ControlsState): string => (
             <CardContent style={{ gap: 12 }}>
                 <Switch
                     id="toggle-notify"
-                    checked={props.notifications}
-                    action="toggleNotifications"
+                    checked={props.notify}
+                    action="toggleNotify"
                     label="Notifications"
                     description="Receive alerts for important updates"
                 />
@@ -56,9 +56,9 @@ export const ControlsView = (props: ControlsState): string => (
                 <Divider />
 
                 <Checkbox
-                    id="chk-newsletter"
-                    checked={props.newsletter}
-                    action="toggleNewsletter"
+                    id="chk-news"
+                    checked={props.news}
+                    action="toggleNews"
                     label="Weekly Newsletter"
                     description="Product updates and feature highlights"
                 />

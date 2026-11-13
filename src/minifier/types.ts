@@ -39,6 +39,11 @@ export interface WidgetMinifyOptions {
     hoistStyles?: boolean;
 
     /**
+     * Whether to safely mangle unused component class names in HTML and CSS (default: true).
+     */
+    mangleClasses?: boolean;
+
+    /**
      * Options or boolean flag controlling embedded CSS minification (default: true).
      */
     minifyCSS?: boolean | CssMinifyOptions;

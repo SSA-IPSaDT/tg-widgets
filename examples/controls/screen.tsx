@@ -2,8 +2,8 @@ import { defineWidgetScreen, type WidgetActionContext } from '../../src';
 import { ControlsView } from './view';
 
 export interface ControlsState {
-    notifications: boolean;
-    newsletter: boolean;
+    notify: boolean;
+    news: boolean;
     plan: string;
     tickets: number;
 }
@@ -19,24 +19,24 @@ export const controlsScreen = defineWidgetScreen({
     id: 'controls',
     component: ControlsView,
     initialState: (props?: Partial<ControlsState>): ControlsState => ({
-        notifications: props?.notifications ?? true,
-        newsletter: props?.newsletter ?? false,
+        notify: props?.notify ?? true,
+        news: props?.news ?? false,
         plan: props?.plan ?? 'pro',
         tickets: props?.tickets ?? 2,
     }),
     actions: {
-        toggleNotifications: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
-            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.notifications;
+        toggleNotify: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
+            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.notify;
             const next = {
                 ...ctx.state,
-                notifications: nextVal,
+                notify: nextVal,
             };
             await ctx.setState(next);
             return next;
         },
-        toggleNewsletter: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
-            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.newsletter;
-            const next = { ...ctx.state, newsletter: nextVal };
+        toggleNews: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
+            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.news;
+            const next = { ...ctx.state, news: nextVal };
             await ctx.setState(next);
             return next;
         },

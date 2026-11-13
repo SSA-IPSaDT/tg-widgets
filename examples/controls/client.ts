@@ -11,14 +11,9 @@ export const controlsClientScript = (initial: ControlsState) => {
     const dec = (raw: unknown): Partial<ControlsState> => {
         const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
         const res: Partial<ControlsState> = {};
-        const [o, n, k, l] = [
-            r.notifications ?? r.o,
-            r.newsletter ?? r.w,
-            r.tickets ?? r.k,
-            r.plan ?? r.l,
-        ];
-        if (typeof o === 'boolean') res.notifications = o;
-        if (typeof n === 'boolean') res.newsletter = n;
+        const [o, n, k, l] = [r.notify ?? r.o, r.news ?? r.w, r.tickets ?? r.k, r.plan ?? r.l];
+        if (typeof o === 'boolean') res.notify = o;
+        if (typeof n === 'boolean') res.news = n;
         if (typeof k === 'number') res.tickets = k;
         if (typeof l === 'string') res.plan = l;
         return res;
@@ -29,17 +24,17 @@ export const controlsClientScript = (initial: ControlsState) => {
         `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">${inner}</svg>`;
     const updateUI = (up: Partial<ControlsState>) => {
         s = { ...s, ...up };
-        if (typeof s.notifications === 'boolean') {
+        if (typeof s.notify === 'boolean') {
             document
                 .getElementById('toggle-notify')
                 ?.querySelector('.tg-switch-track')
-                ?.classList.toggle('active', s.notifications);
+                ?.classList.toggle('active', s.notify);
         }
-        if (typeof s.newsletter === 'boolean') {
-            const svg = document.getElementById('chk-newsletter')?.querySelector('svg');
+        if (typeof s.news === 'boolean') {
+            const svg = document.getElementById('chk-news')?.querySelector('svg');
             if (svg) {
                 svg.outerHTML = sWrap(
-                    s.newsletter
+                    s.news
                         ? `<rect width="20" height="20" rx="5" fill="${cBtn}"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
                         : '<rect x="1" y="1" width="18" height="18" rx="5" stroke="rgba(120,120,128,0.4)" stroke-width="1.5"/>',
                 );
@@ -71,7 +66,7 @@ export const controlsClientScript = (initial: ControlsState) => {
         try {
             if (w?.chatData) {
                 const inc = dec(JSON.parse(w.chatData));
-                for (const k of ['notifications', 'newsletter', 'tickets', 'plan']) {
+                for (const k of ['notify', 'news', 'tickets', 'plan']) {
                     if (p[k]) delete inc[k as keyof ControlsState];
                 }
                 updateUI(inc);
@@ -123,7 +118,7 @@ export const controlsClientScript = (initial: ControlsState) => {
 
     const bindToggle = (
         id: string,
-        key: 'notifications' | 'newsletter',
+        key: 'notify' | 'news',
         action: string,
         hap: 'medium' | 'light',
     ) => {
@@ -141,8 +136,8 @@ export const controlsClientScript = (initial: ControlsState) => {
         });
     };
 
-    bindToggle('toggle-notify', 'notifications', 'toggleNotifications', 'medium');
-    bindToggle('chk-newsletter', 'newsletter', 'toggleNewsletter', 'light');
+    bindToggle('toggle-notify', 'notify', 'toggleNotify', 'medium');
+    bindToggle('chk-news', 'news', 'toggleNews', 'light');
 
     const sBtns = document.getElementById('stepper-tickets')?.querySelectorAll('button');
     if (sBtns && sBtns[0] && sBtns[1]) {

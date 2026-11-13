@@ -22,6 +22,7 @@ export const DEFAULT_MINIFY_OPTIONS: WidgetMinifyOptions = {
     collapseBooleanAttributes: true,
     purgeCss: true,
     hoistStyles: false,
+    mangleClasses: true,
     minifyCSS: true,
     minifyJS: true,
 };
@@ -82,10 +83,10 @@ export const minifyHtmlSync = (html: string, options?: WidgetMinifyOptions): str
         processed = processed.replace(/<!--(?!\s*(?:\[if [^\]]+]|<!|>))(?:(?!-->)[\s\S])*-->/g, '');
     }
 
-    // 6. Remove redundant attributes (e.g. type="text/javascript", type="text/css", SVG xmlns)
+    // 6. Remove redundant attributes (e.g. type="text/javascript", type="text/css", type="button", SVG xmlns)
     if (opts.removeRedundantAttributes) {
         processed = processed
-            .replace(/\s*type=["']text\/(?:javascript|css)["']/gi, '')
+            .replace(/\s*type=["'](?:text\/(?:javascript|css)|button)["']/gi, '')
             .replace(/\s*xmlns=["']http:\/\/www\.w3\.org\/2000\/svg["']/gi, '');
     }
 
@@ -97,16 +98,53 @@ export const minifyHtmlSync = (html: string, options?: WidgetMinifyOptions): str
         );
     }
 
-    // 8. Collapse inter-tag whitespace and consecutive spaces
+    // 8. Collapse whitespace, self-closing slashes, and normalize CSS tokens
     if (opts.collapseWhitespace) {
         processed = processed
             .replace(/>\s+</g, '><')
+            .replace(/\s+\/>/g, '/>')
             .replace(/^\s+|\s+$/gm, '')
             .replace(/[ \t]{2,}/g, ' ')
             .replace(/var\(--([a-zA-Z0-9_-]+),\s+/g, 'var(--$1,')
-            .replace(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\s*\)/g, 'rgba($1,$2,$3,$4)')
+            .replace(
+                /rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*(?:0\.)?([0-9]+)\s*\)/g,
+                'rgba($1,$2,$3,.$4)',
+            )
+            .replace(/aspect-ratio:\s*1\s*\/\s*1/g, 'aspect-ratio:1/1')
+            .replace(/:\s*0px(?=[;}])/g, ':0')
+            .replace(/<script([^>]*)>([\s\S]*?)<\/script>/gi, (_, attrs, js) => {
+                const unquoted = js
+                    .replace(/\{"([a-zA-Z_$][a-zA-Z0-9_$]*)":/g, '{$1:')
+                    .replace(/,"([a-zA-Z_$][a-zA-Z0-9_$]*)":/g, ',$1:');
+                return `<script${attrs}>${unquoted}</script>`;
+            })
             .trim();
     }
+
+    // 9. Safe CSS component class mangling (skips classes manipulated in client scripts)
+    if (opts.mangleClasses !== false) {
+        const scriptMatch = processed.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
+        const jsCode = scriptMatch ? scriptMatch[1] : '';
+        const classes = new Set<string>();
+        for (const m of processed.matchAll(/\.tg-([a-zA-Z0-9_-]+)/g)) {
+            const cls = 'tg-' + m[1];
+            if (jsCode.includes(cls) || cls === 'tg-widget-root') continue;
+            classes.add(cls);
+        }
+        if (classes.size > 0) {
+            let classIdx = 0;
+            const classMap = new Map<string, string>();
+            for (const cls of classes) {
+                classMap.set(cls, `_c${classIdx++}`);
+            }
+            for (const [orig, short] of classMap.entries()) {
+                processed = processed.replace(new RegExp(`\\b${orig}\\b`, 'g'), short);
+            }
+        }
+    }
+
+    // 10. Prune specific icon name classes from SVG
+    processed = processed.replace(/class="lucide\s+lucide-[a-zA-Z0-9_-]+"/g, 'class="lucide"');
 
     return processed;
 };
