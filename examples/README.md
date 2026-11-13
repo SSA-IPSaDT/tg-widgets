@@ -75,9 +75,22 @@ All example screens follow the standard `@ipsadt/tg-widgets` contract:
 
 ---
 
-## 📸 Adding Screenshots
+## 📸 Screen Media & Visual Previews
 
-1. Launch the bot and open your Telegram chat (mobile or desktop).
-2. Run any command (e.g. `/accordion`, `/profile`, `/crypto`).
-3. Take a screenshot of the widget bubble.
-4. Save the image to the respective example directory as `screenshot.png` (e.g. `examples/profile/screenshot.png`).
+Save screenshots and animations directly inside each screen's directory:
+
+| Screen              | Directory & Filename                                  |           Recommended Format           | What to Capture                                                      |
+| :------------------ | :---------------------------------------------------- | :------------------------------------: | :------------------------------------------------------------------- |
+| **Live Counter**    | [`examples/counter/demo.gif`](./counter/)             | **Animated GIF** (or `screenshot.png`) | Tap `Increment` button, see lock + number increase (+1).             |
+| **Form Controls**   | [`examples/controls/demo.gif`](./controls/)           | **Animated GIF** (or `screenshot.png`) | Toggle switch, increment/decrement stepper, choose radio.            |
+| **Live Poll**       | [`examples/poll/demo.gif`](./poll/)                   | **Animated GIF** (or `screenshot.png`) | Tap poll choice, animated progress bar expansion, percentage update. |
+| **E-Commerce**      | [`examples/ecommerce/demo.gif`](./ecommerce/)         | **Animated GIF** (or `screenshot.png`) | Select size pill, stepper quantity, click Add to Cart with toast.    |
+| **Accordion**       | [`examples/accordion/demo.gif`](./accordion/)         | **Animated GIF** (or `screenshot.png`) | Fold and unfold native accordion items without latency.              |
+| **Data Table**      | [`examples/table/screenshot.png`](./table/)           |             **Static PNG**             | Receipt items table with clean borders and rounded corners.          |
+| **Alerts & Badges** | [`examples/alerts/screenshot.png`](./alerts/)         |             **Static PNG**             | Lucide status banners (Info, Success, Warning, Error) with badges.   |
+| **Cards & Metrics** | [`examples/cards/screenshot.png`](./cards/)           |             **Static PNG**             | Metric card, progress bar, action buttons.                           |
+| **User Profile**    | [`examples/profile/screenshot.png`](./profile/)       |             **Static PNG**             | Avatar, notification switches, plaintext toggle.                     |
+| **Chess Event**     | [`examples/tournament/screenshot.png`](./tournament/) |             **Static PNG**             | Tournament registration card with Mini App button.                   |
+| **Crypto Wallet**   | [`examples/crypto/screenshot.png`](./crypto/)         |             **Static PNG**             | TON balance card with copy-address action.                           |
+
+> 💡 **Tip for Mobile Compact Mode**: Take screenshots on both mobile (Android/iOS) and desktop. On mobile, `WidgetLayout` automatically scales to narrow screens (320px–360px) maintaining strict `1:1` square aspect ratios on buttons.

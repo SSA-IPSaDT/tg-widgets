@@ -22,6 +22,43 @@ Zero-runtime TSX UI Kit and type-safe [grammY](https://grammy.dev) plugin for **
 
 ---
 
+> [!IMPORTANT]
+>
+> ### ⚠️ Project Status: Early Access & Production Battle-Testing
+>
+> **Telegram Bot API 10.4 with Interactive HTML Widgets was announced on November 9, 2026.**
+> This library is an early-stage, cutting-edge exploration of Telegram's new native widget capabilities.
+>
+> 🛡️ **Tested in Battle with [Insignia](https://github.com/SSA-IPSaDT)**:
+> Rather than remaining a theoretical prototype, `@ipsadt/tg-widgets` is actively developed, iterated, and battle-tested within the real-world production bot of the **[Insignia](https://github.com/SSA-IPSaDT)** ecosystem.
+>
+> 💬 **A Note from the Author / Maintainers:**
+> We began experimenting with Bot API 10.4 on Day 1 (November 9). The HTML widget specification and cross-platform client rendering (iOS, Android, Desktop) have many subtle quirks that we are continually identifying and solving. **Please be gentle and don't judge harshly!** If you spot styling anomalies, edge cases, or have suggestions, please open an [Issue](https://github.com/SSA-IPSaDT/tg-widgets/issues) or [PR](https://github.com/SSA-IPSaDT/tg-widgets/pulls) — your feedback is tremendously appreciated.
+
+---
+
+## 📱 Mobile-First Design & Compact Mode
+
+Widgets in Telegram must render gracefully across vastly different screen constraints — from wide desktop chats to ultra-narrow mobile displays. `@ipsadt/tg-widgets` is engineered with mobile-first responsive mechanics:
+
+- **Automatic Fluid Sizing**: `WidgetLayout` adapts safely to narrow smartphone screens (320px–360px) without horizontal overflow or clipped borders.
+- **Fixed Geometry Controls**: Interactive Stepper buttons preserve a strict `1:1` square aspect ratio (`min-width: 28px; max-width: 28px`), preventing distorted buttons even with multiline labels.
+- **Safe Area Paddings & Touch Targets**: Generous spacing ensures tap targets are easily clickable on touchscreens without triggering accidental background clicks.
+- **Dynamic Theme Palette**: Automatically conforms to user theme changes (Dark / Light / Custom Accent colors) using native `--tg-theme-*` variables and `color-mix`.
+
+<p align="center">
+  <img src="examples/alerts/screenshot.png" width="260" alt="InsigniaBot Mobile Showcase" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="examples/table/screenshot.png" width="240" alt="Mobile Table & Alerts" />
+  &nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="examples/controls/screenshot.png" width="280" alt="Desktop Controls Widget" />
+</p>
+<p align="center">
+  <em>Left: InsigniaBot on mobile Android with native alerts. Center: Compact mobile table & alerts in light theme. Right: Desktop subscription controls in dark theme.</em>
+</p>
+
+---
+
 ## ⚡ Features
 
 - **Zero Runtime JSX**: Fast TSX-to-HTML compilation with inline CSS conversion. Zero Virtual DOM and zero React dependencies.
@@ -447,6 +484,53 @@ Run directly:
 ```bash
 deno run -A bot.ts
 ```
+
+---
+
+## 🗺️ Strategic Roadmap & Ecosystem Vision
+
+Our mission is to establish `@ipsadt/tg-widgets` as the universal UI toolkit and compression engine for Telegram Bot API 10.4 widgets across any backend stack or language.
+
+```mermaid
+flowchart LR
+    A["TSX / React UI Kit"] --> B["@ipsadt/tg-widgets Compiler"]
+    B --> C["grammY Middleware (Current)"]
+    B --> D["Telegraf & Hono Adapters"]
+    B --> E["Static AOT Bundles (.html)"]
+    E --> F["Python (aiogram / PTB)"]
+    E --> G["Go & Rust Bots"]
+```
+
+### Phase 1: Native Perfection & grammY (Current — v0.2.x)
+
+- [x] Full compliance with Telegram Profile 1 HTML/CSS restrictions.
+- [x] Zero-runtime TSX compiler with automated CSS style hoisting & purging.
+- [x] Real-time 4096-byte deflate level 9 payload inspector (`inspectWidgetSize`).
+- [x] 22+ Telegram-native UI primitives with Lucide SVG icon integration.
+- [x] Pluggable session storage (Memory, Redis/DB adapters) with TTL and LRU cache.
+- [x] Production battle-testing in the [Insignia](https://github.com/SSA-IPSaDT) platform.
+
+### Phase 2: Decoupled Framework Adapters (Q1 2027)
+
+- [ ] **Telegraf Integration**: First-class plugin for Telegraf bots (`@ipsadt/tg-widgets-telegraf`).
+- [ ] **Framework-Agnostic Core**: Modular `@ipsadt/tg-widgets-core` usable with pure Node.js `http`, Elysia, Hono, Deno HTTP, and Cloudflare Workers.
+- [ ] **In-Widget Navigation Router**: Push/pop view transitions within a single persistent widget bubble.
+
+### Phase 3: Ahead-of-Time (AOT) Static Widget Compiler
+
+- [ ] **Static Widget Build CLI (`tg-widgets build`)**: Compile TSX components into standalone, minified HTML bundles ahead of time.
+- [ ] **Zero-Runtime Server Delivery**: Bots written in Python, Go, or Rust can simply serve pre-built HTML widgets without needing a Node/Bun runtime at execution time.
+- [ ] **React / Web Component Export**: Re-use widget UI layouts in Web Mini Apps without rewriting markup.
+
+### Phase 4: Multi-Language Telegram Ecosystem
+
+- [ ] **Python Package (`aiogram-widgets` / `tg-widgets-py`)**: Official Python bindings and helpers to deserialize widget actions, update state, and respond to `widget_query` in `aiogram` and `python-telegram-bot`.
+- [ ] **Go SDK**: Lightweight handler for Telegram Bot API 10.4 interactive widgets in Go.
+
+### Phase 5: Developer Experience & Tooling
+
+- [ ] **Live Browser Playground**: Instant hot-reloading browser preview simulating Telegram Android, iOS, and Desktop viewports and theme palettes.
+- [ ] **Data Visualization Components**: Micro sparkline charts, progress rings, and compact bar charts within the 4KB limit.
 
 ---
 
