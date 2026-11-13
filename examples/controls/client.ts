@@ -1,23 +1,56 @@
 import type { ControlsState } from './screen';
 
 /**
- * Client-side script providing instant optimistic UI feedback for controls.
+ * Normalizes state from raw JSON payload, supporting both full and codec keys.
+ */
+const decodeControlsState = (raw: unknown): Partial<ControlsState> => {
+    if (!raw || typeof raw !== 'object') return {};
+    const record = raw as Record<string, unknown>;
+    const res: Partial<ControlsState> = {};
+
+    const notif = record.notifications ?? record.o;
+    if (typeof notif === 'boolean') res.notifications = notif;
+
+    const news = record.newsletter ?? record.w;
+    if (typeof news === 'boolean') res.newsletter = news;
+
+    const tickets = record.tickets ?? record.k;
+    if (typeof tickets === 'number') res.tickets = tickets;
+
+    const plan = record.plan ?? record.l;
+    if (typeof plan === 'string') res.plan = plan;
+
+    return res;
+};
+
+/**
+ * Client-side script providing instant optimistic UI feedback and in-flight locking for controls.
  */
 export const controlsClientScript = (initial: ControlsState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
+    let isPending = false;
+
+    const setBusy = (busy: boolean) => {
+        isPending = busy;
+        const container = document.querySelector('.tg-layout') as HTMLElement | null;
+        if (container) {
+            container.style.pointerEvents = busy ? 'none' : '';
+            container.style.opacity = busy ? '0.75' : '';
+        }
+    };
 
     const updateUI = (partialState: Partial<ControlsState>) => {
         state = { ...state, ...partialState };
 
-        if ('notifications' in partialState) {
+        if (typeof state.notifications === 'boolean') {
             document
                 .getElementById('toggle-notify')
                 ?.querySelector('.tg-switch-track')
-                ?.classList.toggle('active', Boolean(state.notifications));
+                ?.classList.toggle('active', state.notifications);
         }
 
-        if ('newsletter' in partialState) {
+        if (typeof state.newsletter === 'boolean') {
             const checkboxSvg = document.getElementById('chk-newsletter')?.querySelector('svg');
             if (checkboxSvg) {
                 checkboxSvg.outerHTML = state.newsletter
@@ -26,25 +59,23 @@ export const controlsClientScript = (initial: ControlsState) => {
             }
         }
 
-        if ('tickets' in partialState) {
-            const stepperValueElement = document
+        if (typeof state.tickets === 'number') {
+            const stepperVal = document
                 .getElementById('stepper-tickets')
                 ?.querySelector('.tg-stepper-val');
-            if (stepperValueElement) {
-                stepperValueElement.textContent = String(state.tickets);
-            }
+            if (stepperVal) stepperVal.textContent = String(state.tickets);
         }
 
-        if ('plan' in partialState) {
+        if (state.plan) {
             const renderRadioSvg = (isSelected: boolean) =>
                 isSelected
                     ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-button-color,#2481cc)" stroke-width="2"/><circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color,#2481cc)"/></svg>'
                     : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-hint-color,rgba(120,120,128,0.4))" stroke-width="1.5"/></svg>';
 
-            const basicRadioSvg = document.getElementById('plan-basic')?.querySelector('svg');
-            if (basicRadioSvg) basicRadioSvg.outerHTML = renderRadioSvg(state.plan === 'basic');
-            const proRadioSvg = document.getElementById('plan-pro')?.querySelector('svg');
-            if (proRadioSvg) proRadioSvg.outerHTML = renderRadioSvg(state.plan === 'pro');
+            const basicSvg = document.getElementById('plan-basic')?.querySelector('svg');
+            if (basicSvg) basicSvg.outerHTML = renderRadioSvg(state.plan === 'basic');
+            const proSvg = document.getElementById('plan-pro')?.querySelector('svg');
+            if (proSvg) proSvg.outerHTML = renderRadioSvg(state.plan === 'pro');
         }
     };
 
@@ -52,7 +83,7 @@ export const controlsClientScript = (initial: ControlsState) => {
         try {
             if (widget?.chatData) {
                 const parsedData = JSON.parse(widget.chatData);
-                if (parsedData && typeof parsedData === 'object') updateUI(parsedData);
+                updateUI(decodeControlsState(parsedData));
             }
         } catch {
             // ignore JSON parse errors
@@ -63,57 +94,67 @@ export const controlsClientScript = (initial: ControlsState) => {
     widget?.onEvent?.('chatDataChanged', syncState);
 
     const sendAction = (action: string) => {
-        widget?.request?.(action).then((response) => {
-            if (response?.result) {
-                try {
-                    const parsedData = JSON.parse(response.result);
-                    if (parsedData && typeof parsedData === 'object') updateUI(parsedData);
-                } catch {
-                    // ignore JSON parse errors
+        if (isPending) return;
+        setBusy(true);
+        Promise.resolve(widget?.request?.(action))
+            .then((response?: { result?: string | null }) => {
+                if (response?.result) {
+                    try {
+                        const parsedData = JSON.parse(response.result);
+                        updateUI(decodeControlsState(parsedData));
+                    } catch {
+                        // ignore JSON parse errors
+                    }
                 }
-            }
-        });
+            })
+            .finally(() => {
+                setBusy(false);
+            });
     };
 
     document.getElementById('toggle-notify')?.addEventListener('click', () => {
+        if (isPending) return;
         widget?.HapticFeedback?.impactOccurred?.('medium');
-        updateUI({ notifications: !state.notifications });
-        sendAction('toggleNotifications');
+        const targetVal = !state.notifications;
+        updateUI({ notifications: targetVal });
+        sendAction(`toggleNotifications:${targetVal}`);
     });
 
     document.getElementById('chk-newsletter')?.addEventListener('click', () => {
+        if (isPending) return;
         widget?.HapticFeedback?.impactOccurred?.('light');
-        updateUI({ newsletter: !state.newsletter });
-        sendAction('toggleNewsletter');
+        const targetVal = !state.newsletter;
+        updateUI({ newsletter: targetVal });
+        sendAction(`toggleNewsletter:${targetVal}`);
     });
 
     const stepperButtons = document.getElementById('stepper-tickets')?.querySelectorAll('button');
     if (stepperButtons && stepperButtons[0] && stepperButtons[1]) {
         stepperButtons[0].addEventListener('click', () => {
-            if (state.tickets > 1) {
-                widget?.HapticFeedback?.impactOccurred?.('light');
-                updateUI({ tickets: state.tickets - 1 });
-                sendAction('ticketMinus');
-            }
+            if (isPending || state.tickets <= 1) return;
+            widget?.HapticFeedback?.impactOccurred?.('light');
+            updateUI({ tickets: state.tickets - 1 });
+            sendAction('ticketMinus');
         });
         stepperButtons[1].addEventListener('click', () => {
-            if (state.tickets < 10) {
-                widget?.HapticFeedback?.impactOccurred?.('light');
-                updateUI({ tickets: state.tickets + 1 });
-                sendAction('ticketPlus');
-            }
+            if (isPending || state.tickets >= 10) return;
+            widget?.HapticFeedback?.impactOccurred?.('light');
+            updateUI({ tickets: state.tickets + 1 });
+            sendAction('ticketPlus');
         });
     }
 
     document.getElementById('plan-basic')?.addEventListener('click', () => {
+        if (isPending || state.plan === 'basic') return;
         widget?.HapticFeedback?.selectionChanged?.();
         updateUI({ plan: 'basic' });
-        sendAction('selectBasic');
+        sendAction('setPlan:basic');
     });
 
     document.getElementById('plan-pro')?.addEventListener('click', () => {
+        if (isPending || state.plan === 'pro') return;
         widget?.HapticFeedback?.selectionChanged?.();
         updateUI({ plan: 'pro' });
-        sendAction('selectPro');
+        sendAction('setPlan:pro');
     });
 };

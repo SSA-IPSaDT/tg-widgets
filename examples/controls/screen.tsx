@@ -25,16 +25,18 @@ export const controlsScreen = defineWidgetScreen({
         tickets: props?.tickets ?? 2,
     }),
     actions: {
-        toggleNotifications: async (ctx: WidgetActionContext<ControlsState>) => {
+        toggleNotifications: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
+            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.notifications;
             const next = {
                 ...ctx.state,
-                notifications: !ctx.state.notifications,
+                notifications: nextVal,
             };
             await ctx.setState(next);
             return next;
         },
-        toggleNewsletter: async (ctx: WidgetActionContext<ControlsState>) => {
-            const next = { ...ctx.state, newsletter: !ctx.state.newsletter };
+        toggleNewsletter: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
+            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.newsletter;
+            const next = { ...ctx.state, newsletter: nextVal };
             await ctx.setState(next);
             return next;
         },

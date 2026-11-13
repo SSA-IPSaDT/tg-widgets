@@ -44,27 +44,21 @@ export const profileScreen = defineWidgetScreen({
         soundEffects: true,
     }),
     actions: {
-        toggleProfileNotify: async (ctx: WidgetActionContext<ProfileState>) => {
-            const next = {
-                ...ctx.state,
-                notifications: !ctx.state.notifications,
-            };
+        toggleProfileNotify: async (ctx: WidgetActionContext<ProfileState>, payload?: unknown) => {
+            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.notifications;
+            const next = { ...ctx.state, notifications: nextVal };
             await ctx.setState(next);
             return next;
         },
-        toggleProfilePrivate: async (ctx: WidgetActionContext<ProfileState>) => {
-            const next = {
-                ...ctx.state,
-                privateMode: !ctx.state.privateMode,
-            };
+        toggleProfilePrivate: async (ctx: WidgetActionContext<ProfileState>, payload?: unknown) => {
+            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.privateMode;
+            const next = { ...ctx.state, privateMode: nextVal };
             await ctx.setState(next);
             return next;
         },
-        toggleProfileSound: async (ctx: WidgetActionContext<ProfileState>) => {
-            const next = {
-                ...ctx.state,
-                soundEffects: !ctx.state.soundEffects,
-            };
+        toggleProfileSound: async (ctx: WidgetActionContext<ProfileState>, payload?: unknown) => {
+            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.soundEffects;
+            const next = { ...ctx.state, soundEffects: nextVal };
             await ctx.setState(next);
             return next;
         },

@@ -31,7 +31,7 @@ export const SizePicker = ({ sizes, selectedSize }: SizePickerProps) => (
                             border: active
                                 ? '1px solid var(--tg-theme-button-color, #2481cc)'
                                 : '1px solid rgba(120, 120, 128, 0.24)',
-                            borderRadius: 8,
+                            borderRadius: 12,
                             background: active
                                 ? 'var(--tg-theme-button-color, #2481cc)'
                                 : 'transparent',
@@ -39,6 +39,7 @@ export const SizePicker = ({ sizes, selectedSize }: SizePickerProps) => (
                             fontWeight: 600,
                             fontSize: 13,
                             cursor: 'pointer',
+                            aspectRatio: '2 / 1',
                         }}
                     >
                         {s}

@@ -521,4 +521,59 @@ describe('Action Routing & widget_query Module', () => {
         const finalStored = setup.storage.get('100:200');
         expect(finalStored?.state).toEqual({ count: 5 });
     });
+
+    it('supports idempotent toggle actions with explicit boolean payloads', async () => {
+        const setup = setupRouterTest({
+            initialState: { notifications: true, newsletter: true },
+            screenActions: {
+                toggleNotifications: async (actCtx: any, payload?: unknown) => {
+                    const nextVal =
+                        typeof payload === 'boolean' ? payload : !actCtx.state.notifications;
+                    const next = { ...actCtx.state, notifications: nextVal };
+                    await actCtx.setState(next);
+                    return next;
+                },
+            },
+        });
+
+        setup.storage.set('100:200', {
+            screenId: 'cart-screen',
+            state: { notifications: true, newsletter: true },
+            updatedAt: Date.now(),
+        });
+
+        const makeCtx = (queryId: string, actionData: string) => ({
+            update: {
+                widget_query: {
+                    id: queryId,
+                    chat: { id: 100 },
+                    message_id: 200,
+                    chat_instance: 'inst',
+                    from: { id: 1, first_name: 'Alex' },
+                    data: actionData,
+                },
+            },
+            api: { raw: setup.mockRawApi },
+        });
+
+        // Send explicit target value: toggleNotifications:false
+        await setup.plugin.middleware(
+            makeCtx('q1', 'toggleNotifications:false') as never,
+            async () => {},
+        );
+        expect(setup.storage.get('100:200')?.state).toEqual({
+            notifications: false,
+            newsletter: true,
+        });
+
+        // Duplicate call with toggleNotifications:false remains false (idempotent)
+        await setup.plugin.middleware(
+            makeCtx('q2', 'toggleNotifications:false') as never,
+            async () => {},
+        );
+        expect(setup.storage.get('100:200')?.state).toEqual({
+            notifications: false,
+            newsletter: true,
+        });
+    });
 });

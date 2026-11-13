@@ -1,11 +1,47 @@
 import type { ProfileState } from './screen';
 
 /**
- * Client-side script handling toggle synchronization and fallback triggers.
+ * Normalizes state from raw JSON payload, supporting both full and codec keys.
+ */
+const decodeProfileState = (raw: unknown): Partial<ProfileState> => {
+    if (!raw || typeof raw !== 'object') return {};
+    const record = raw as Record<string, unknown>;
+    const res: Partial<ProfileState> = {};
+
+    const notif = record.notifications ?? record.o;
+    if (typeof notif === 'boolean') res.notifications = notif;
+
+    const priv = record.privateMode ?? record.m;
+    if (typeof priv === 'boolean') res.privateMode = priv;
+
+    const sound = record.soundEffects ?? record.e;
+    if (typeof sound === 'boolean') res.soundEffects = sound;
+
+    const name = record.name ?? record.n;
+    if (typeof name === 'string') res.name = name;
+
+    const username = record.username ?? record.u;
+    if (typeof username === 'string') res.username = username;
+
+    return res;
+};
+
+/**
+ * Client-side script handling toggle synchronization, in-flight locking, and text fallback.
  */
 export const profileClientScript = (initial: ProfileState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
+    let isPending = false;
+
+    const setBusy = (busy: boolean) => {
+        isPending = busy;
+        const container = document.querySelector('.tg-layout') as HTMLElement | null;
+        if (container) {
+            container.style.pointerEvents = busy ? 'none' : '';
+            container.style.opacity = busy ? '0.75' : '';
+        }
+    };
 
     const updateProfileUI = (data?: Partial<ProfileState> | null) => {
         if (!data) return;
@@ -37,7 +73,7 @@ export const profileClientScript = (initial: ProfileState) => {
         try {
             if (widget?.chatData) {
                 const parsed = JSON.parse(widget.chatData);
-                updateProfileUI(parsed);
+                updateProfileUI(decodeProfileState(parsed));
             }
         } catch {
             // ignore JSON parse errors
@@ -50,26 +86,32 @@ export const profileClientScript = (initial: ProfileState) => {
     const bindToggle = (
         elementId: string,
         key: 'notifications' | 'privateMode' | 'soundEffects',
-        actionName: string,
+        actionBase: string,
     ) => {
         const element = document.getElementById(elementId);
         if (!element) return;
 
         element.addEventListener('click', () => {
+            if (isPending) return;
             widget?.HapticFeedback?.impactOccurred?.('light');
-            const nextVal = !state[key];
-            updateProfileUI({ [key]: nextVal });
+            const targetVal = !state[key];
+            updateProfileUI({ [key]: targetVal });
+            setBusy(true);
 
-            widget?.request?.(actionName).then((response) => {
-                if (response?.result) {
-                    try {
-                        const parsed = JSON.parse(response.result);
-                        updateProfileUI(parsed);
-                    } catch {
-                        // ignore JSON parse errors
+            Promise.resolve(widget?.request?.(`${actionBase}:${targetVal}`))
+                .then((response?: { result?: string | null }) => {
+                    if (response?.result) {
+                        try {
+                            const parsed = JSON.parse(response.result);
+                            updateProfileUI(decodeProfileState(parsed));
+                        } catch {
+                            // ignore JSON parse errors
+                        }
                     }
-                }
-            });
+                })
+                .finally(() => {
+                    setBusy(false);
+                });
         });
     };
 
@@ -78,7 +120,11 @@ export const profileClientScript = (initial: ProfileState) => {
     bindToggle('profile-sound', 'soundEffects', 'toggleProfileSound');
 
     document.getElementById('btn-fallback')?.addEventListener('click', () => {
+        if (isPending) return;
         widget?.HapticFeedback?.notificationOccurred?.('warning');
-        widget?.request?.('fallbackToText');
+        setBusy(true);
+        Promise.resolve(widget?.request?.('fallbackToText')).finally(() => {
+            setBusy(false);
+        });
     });
 };
