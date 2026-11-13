@@ -48,7 +48,6 @@ export const PollView = (props: PollState) => {
                             icon={LucideIcon({
                                 icon: LucideIcons.Flame,
                                 size: 15,
-                                color: 'var(--tg-theme-link-color, #2481cc)',
                             })}
                         />
                     </div>

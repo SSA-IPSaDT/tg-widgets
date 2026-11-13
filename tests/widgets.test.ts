@@ -733,7 +733,7 @@ describe('@ipsadt/tg-widgets', () => {
             description: 'Uniform border',
         });
         expect(infoAlert).not.toContain('border-left:4px');
-        expect(infoAlert).toContain('border:1px solid rgba(36, 129, 204, 0.28)');
+        expect(infoAlert).toContain('color-mix(in srgb, var(--tg-theme-accent-text-color');
         expect(infoAlert).not.toContain('border:1px solid;');
         expect(infoAlert).toContain('font-weight:500');
 
@@ -747,7 +747,9 @@ describe('@ipsadt/tg-widgets', () => {
             variant: 'destructive',
             title: 'Destructive Alert',
         });
-        expect(destructiveAlert).toContain('border:1px solid rgba(239, 68, 68, 0.28)');
+        expect(destructiveAlert).toContain(
+            'color-mix(in srgb, var(--tg-theme-destructive-text-color',
+        );
     });
 
     test('DescriptionText renders unified typography with font-weight 500', () => {

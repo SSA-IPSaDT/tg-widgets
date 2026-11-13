@@ -42,7 +42,7 @@ export const Typography = ({
         default: 'var(--tg-theme-text-color, inherit)',
         hint: 'var(--tg-theme-hint-color, #888888)',
         link: 'var(--tg-theme-link-color, #2481cc)',
-        accent: 'var(--tg-theme-button-color, #2481cc)',
+        accent: 'var(--tg-theme-accent-text-color, var(--tg-theme-button-color, var(--tg-theme-link-color, #2481cc)))',
         destructive: 'var(--tg-theme-destructive-text-color, #ef4444)',
         success: '#10b981',
     }[color];

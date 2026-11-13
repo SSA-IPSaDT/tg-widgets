@@ -66,7 +66,6 @@ export const counterScreen = defineDynamicWidgetScreen({
                             icon={LucideIcon({
                                 icon: LucideIcons.Zap,
                                 size: 15,
-                                color: 'var(--tg-theme-link-color, #2481cc)',
                             })}
                         />
                     </div>

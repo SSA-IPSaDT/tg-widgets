@@ -38,6 +38,7 @@ import {
     TableRow,
     Typography,
     WidgetLayout,
+    BASE_RESET_CSS,
 } from '../src';
 
 describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
@@ -161,6 +162,19 @@ describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
             expect(iconBadge).toContain('aspect-ratio:1 / 1');
             expect(iconBadge).toContain('svg');
         });
+
+        test('supports dynamic Telegram theme accent variables and color-mix in stylesheet', () => {
+            expect(BASE_RESET_CSS).toContain('--tg-accent-color:var(--tg-theme-accent-text-color');
+            expect(BASE_RESET_CSS).toContain(
+                '.tg-badge-accent{--badge-accent:var(--tg-accent-color',
+            );
+            expect(BASE_RESET_CSS).toContain(
+                'color-mix(in srgb,var(--badge-accent) 15%,transparent)',
+            );
+            expect(BASE_RESET_CSS).toContain(
+                'color-mix(in srgb,var(--badge-accent) 30%,transparent)',
+            );
+        });
     });
 
     describe('Alert', () => {
@@ -176,6 +190,12 @@ describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
             expect(alert).toContain('File downloaded');
             // Clean border check
             expect(alert).not.toContain('border: 1px solid #ffffff');
+        });
+
+        test('adapts info alert border and icon to dynamic theme accent color', () => {
+            const infoAlert = Alert({ variant: 'info', title: 'Note' });
+            expect(infoAlert).toContain('color-mix(in srgb, var(--tg-theme-accent-text-color');
+            expect(infoAlert).toContain('tg-alert-info');
         });
 
         test('renders all 4 variants: info, success, warning, destructive', () => {

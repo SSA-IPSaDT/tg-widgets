@@ -37,7 +37,6 @@ export const ControlsView = (props: ControlsState): string => (
                         icon={LucideIcon({
                             icon: LucideIcons.Sliders,
                             size: 15,
-                            color: 'var(--tg-theme-link-color, #2481cc)',
                         })}
                     />
                 </div>

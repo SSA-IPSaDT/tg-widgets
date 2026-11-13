@@ -70,7 +70,6 @@ export const ProfileView = (props: ProfileState) => (
                         icon={LucideIcon({
                             icon: LucideIcons.Shield,
                             size: 15,
-                            color: 'var(--tg-theme-link-color, #2481cc)',
                         })}
                     />
                 </div>
