@@ -27,21 +27,11 @@ const decodeProfileState = (raw: unknown): Partial<ProfileState> => {
 };
 
 /**
- * Client-side script handling toggle synchronization, in-flight locking, and text fallback.
+ * Client-side script handling toggle synchronization, optimistic feedback, and text fallback.
  */
 export const profileClientScript = (initial: ProfileState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
-    let isPending = false;
-
-    const setBusy = (busy: boolean) => {
-        isPending = busy;
-        const container = document.querySelector('.tg-layout') as HTMLElement | null;
-        if (container) {
-            container.style.pointerEvents = busy ? 'none' : '';
-            container.style.opacity = busy ? '0.75' : '';
-        }
-    };
 
     const updateProfileUI = (data?: Partial<ProfileState> | null) => {
         if (!data) return;
@@ -92,11 +82,9 @@ export const profileClientScript = (initial: ProfileState) => {
         if (!element) return;
 
         element.addEventListener('click', () => {
-            if (isPending) return;
             widget?.HapticFeedback?.impactOccurred?.('light');
             const targetVal = !state[key];
             updateProfileUI({ [key]: targetVal });
-            setBusy(true);
 
             Promise.resolve(widget?.request?.(`${actionBase}:${targetVal}`))
                 .then((response?: { result?: string | null }) => {
@@ -109,9 +97,7 @@ export const profileClientScript = (initial: ProfileState) => {
                         }
                     }
                 })
-                .finally(() => {
-                    setBusy(false);
-                });
+                .catch(() => {});
         });
     };
 
@@ -120,11 +106,7 @@ export const profileClientScript = (initial: ProfileState) => {
     bindToggle('profile-sound', 'soundEffects', 'toggleProfileSound');
 
     document.getElementById('btn-fallback')?.addEventListener('click', () => {
-        if (isPending) return;
         widget?.HapticFeedback?.notificationOccurred?.('warning');
-        setBusy(true);
-        Promise.resolve(widget?.request?.('fallbackToText')).finally(() => {
-            setBusy(false);
-        });
+        Promise.resolve(widget?.request?.('fallbackToText')).catch(() => {});
     });
 };

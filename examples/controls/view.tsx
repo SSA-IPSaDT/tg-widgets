@@ -55,6 +55,7 @@ export const ControlsView = (props: ControlsState): string => (
                     <Switch
                         id="toggle-notify"
                         checked={props.notifications}
+                        action="toggleNotifications"
                         label="Notifications"
                         description="Receive alerts for important updates"
                     />
@@ -64,6 +65,7 @@ export const ControlsView = (props: ControlsState): string => (
                     <Checkbox
                         id="chk-newsletter"
                         checked={props.newsletter}
+                        action="toggleNewsletter"
                         label="Weekly Newsletter"
                         description="Product updates and feature highlights"
                     />
@@ -96,8 +98,8 @@ export const ControlsView = (props: ControlsState): string => (
                             value={props.tickets}
                             min={1}
                             max={10}
-                            decrementAction=""
-                            incrementAction=""
+                            decrementAction="ticketMinus"
+                            incrementAction="ticketPlus"
                         />
                     </div>
 
@@ -118,6 +120,7 @@ export const ControlsView = (props: ControlsState): string => (
                                 id="plan-basic"
                                 value="basic"
                                 checked={props.plan === 'basic'}
+                                action="setPlan:basic"
                                 label="Basic"
                                 description="Free access to essential features"
                             />
@@ -125,6 +128,7 @@ export const ControlsView = (props: ControlsState): string => (
                                 id="plan-pro"
                                 value="pro"
                                 checked={props.plan === 'pro'}
+                                action="setPlan:pro"
                                 label="Pro Plan"
                                 description="Priority support and expanded limits"
                             />

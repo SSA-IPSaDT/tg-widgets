@@ -614,4 +614,48 @@ describe('Action Routing & widget_query Module', () => {
         expect(setup.answeredQueries[1].id).toBe('q_refresh');
         expect(setup.answeredQueries[1].data).not.toContain('UNKNOWN_ACTION');
     });
+
+    it('resolves chat_id and message_id when query provides message object instead of top-level chat/message_id', async () => {
+        const setup = setupRouterTest({
+            screenActions: {
+                increment: async (ctx: any) => {
+                    await ctx.setState({ count: (ctx.state.count ?? 0) + 1 });
+                    return { ok: true };
+                },
+            },
+        });
+
+        await setup.storage.set('555:777', {
+            screenId: 'cart-screen',
+            state: { count: 10 },
+            updatedAt: Date.now(),
+        });
+
+        const ctx = {
+            update: {
+                widget_query: {
+                    id: 'q_nested_msg',
+                    message: {
+                        message_id: 777,
+                        chat: { id: 555, type: 'group' },
+                    },
+                    chat_instance: 'inst_nested',
+                    from: { id: 1, first_name: 'Pavel' },
+                    data: 'increment',
+                },
+            },
+            api: { raw: setup.mockRawApi },
+        };
+
+        await setup.plugin.middleware(ctx as never, async () => {});
+
+        expect(setup.answeredQueries.length).toBe(1);
+        expect(setup.answeredQueries[0].id).toBe('q_nested_msg');
+        expect(setup.editedWidgetData.length).toBe(1);
+        expect(setup.editedWidgetData[0].chat_id).toBe(555);
+        expect(setup.editedWidgetData[0].message_id).toBe(777);
+
+        const updated = await setup.storage.get('555:777');
+        expect(updated?.state).toEqual({ count: 11 });
+    });
 });

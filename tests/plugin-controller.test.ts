@@ -33,13 +33,26 @@ describe('Plugin Controller Module', () => {
             });
 
             expect(plugin.config.mode).toBe('prod');
-            expect(plugin.config.codec.mode).toBe('prod');
-            expect(plugin.config.codec.compressState).toBe(true);
-            expect(plugin.config.codec.compressAnswer).toBe(true);
+            expect(plugin.config.codec.mode).toBe('dev');
+            expect(plugin.config.codec.compressState).toBe(false);
+            expect(plugin.config.codec.compressAnswer).toBe(false);
             expect(plugin.config.minifier.enabled).toBe(true);
             expect(plugin.config.minifier.engine).toBe('terser');
             expect(plugin.config.sizeLimit.maxBytes).toBe(4096);
             expect(plugin.config.sizeLimit.onExceeded).toBe('error');
+        });
+
+        it('resolves explicit codec: prod preset correctly', () => {
+            const plugin = createTelegramWidgetsPlugin({
+                screens: { hero: dummyStaticScreen },
+                mode: 'prod',
+                codec: 'prod',
+            });
+
+            expect(plugin.config.mode).toBe('prod');
+            expect(plugin.config.codec.mode).toBe('prod');
+            expect(plugin.config.codec.compressState).toBe(true);
+            expect(plugin.config.codec.compressAnswer).toBe(true);
         });
 
         it('resolves development preset defaults correctly', () => {

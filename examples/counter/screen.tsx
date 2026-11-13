@@ -102,10 +102,16 @@ export const counterScreen = defineDynamicWidgetScreen({
                                 boxSizing: 'border-box',
                             }}
                         >
-                            <Button id="btn-dec" variant="secondary" fullWidth size="md">
+                            <Button
+                                id="btn-dec"
+                                action="dec"
+                                variant="secondary"
+                                fullWidth
+                                size="md"
+                            >
                                 −1
                             </Button>
-                            <Button id="btn-inc" variant="primary" fullWidth size="md">
+                            <Button id="btn-inc" action="inc" variant="primary" fullWidth size="md">
                                 +1
                             </Button>
                         </div>

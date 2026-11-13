@@ -8,6 +8,7 @@ export interface ButtonProps {
     fullWidth?: boolean;
     disabled?: boolean;
     loading?: boolean;
+    action?: string;
     icon?: unknown;
     style?: Record<string, string | number | undefined | null>;
     className?: string;
@@ -17,6 +18,7 @@ export interface ButtonProps {
 
 export const Button = ({
     id,
+    action,
     variant = 'primary',
     size = 'md',
     radius,
@@ -39,6 +41,7 @@ export const Button = ({
     return (
         <button
             id={id}
+            data-action={action}
             class={`tg-btn tg-btn-${variant} tg-btn-${size} ${fullClass} ${className}`.trim()}
             style={Object.keys(overrides).length > 0 ? overrides : undefined}
             disabled={disabled || loading}

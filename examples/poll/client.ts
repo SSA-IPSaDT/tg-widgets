@@ -26,23 +26,13 @@ const decodePollState = (raw: unknown): Partial<PollState> => {
 };
 
 /**
- * Client-side script providing instant optimistic UI updates and in-flight locking for poll.
+ * Client-side script providing instant optimistic UI updates and multi-device state synchronization for poll.
  */
 export const pollClientScript = (initial: PollState) => {
     const widget = window.TelegramWidget;
     let state: PollState = {
         votes: { ...initial.votes },
         userVote: initial.userVote,
-    };
-    let isPending = false;
-
-    const setBusy = (busy: boolean) => {
-        isPending = busy;
-        const container = document.querySelector('.tg-layout') as HTMLElement | null;
-        if (container) {
-            container.style.pointerEvents = busy ? 'none' : '';
-            container.style.opacity = busy ? '0.75' : '';
-        }
     };
 
     const updatePollUI = (partialState: Partial<PollState>) => {
@@ -103,7 +93,7 @@ export const pollClientScript = (initial: PollState) => {
     widget?.onEvent?.('chatDataChanged', syncState);
 
     const registerVote = (choice: 'grammy' | 'telegraf' | 'aiogram') => {
-        if (isPending || state.userVote === choice) return;
+        if (state.userVote === choice) return;
         widget?.HapticFeedback?.impactOccurred?.('medium');
 
         if (state.userVote) {
@@ -113,7 +103,6 @@ export const pollClientScript = (initial: PollState) => {
         state.userVote = choice;
         updatePollUI({ votes: state.votes, userVote: choice });
 
-        setBusy(true);
         Promise.resolve(widget?.request?.(`vote:${choice}`))
             .then((response?: { result?: string | null }) => {
                 if (response?.result) {
@@ -125,9 +114,7 @@ export const pollClientScript = (initial: PollState) => {
                     }
                 }
             })
-            .finally(() => {
-                setBusy(false);
-            });
+            .catch(() => {});
     };
 
     document

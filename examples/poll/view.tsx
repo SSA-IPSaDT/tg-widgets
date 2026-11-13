@@ -63,6 +63,7 @@ export const PollView = (props: PollState) => {
                             return (
                                 <div
                                     id={`poll-row-${opt.key}`}
+                                    data-action={`vote:${opt.key}`}
                                     style={{
                                         position: 'relative',
                                         overflow: 'hidden',

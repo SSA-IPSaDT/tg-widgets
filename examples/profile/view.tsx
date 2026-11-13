@@ -85,6 +85,7 @@ export const ProfileView = (props: ProfileState) => (
                     <Switch
                         id="profile-notify"
                         checked={props.notifications}
+                        action="toggleProfileNotify"
                         label="Bot Notifications"
                         description="Instant alerts for incoming events"
                     />
@@ -94,6 +95,7 @@ export const ProfileView = (props: ProfileState) => (
                     <Switch
                         id="profile-private"
                         checked={props.privateMode}
+                        action="toggleProfilePrivate"
                         label="Private Profile"
                         description="Hide activity from public leaderboards"
                     />
@@ -103,6 +105,7 @@ export const ProfileView = (props: ProfileState) => (
                     <Switch
                         id="profile-sound"
                         checked={props.soundEffects}
+                        action="toggleProfileSound"
                         label="Sound Effects"
                         description="In-app UI auditory feedback"
                     />
@@ -120,6 +123,7 @@ export const ProfileView = (props: ProfileState) => (
                 <Button
                     id="btn-fallback"
                     variant="outline"
+                    action="fallbackToText"
                     fullWidth
                     size="md"
                     icon={LucideIcon({

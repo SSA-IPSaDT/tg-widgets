@@ -15,24 +15,7 @@ import type {
     WidgetsFlavor,
     WidgetsLogger,
 } from './types';
-import { getStorageKey } from './utils';
-
-const storageQueues = new Map<string, Promise<unknown>>();
-
-const serializeByStorageKey = async <T>(key: string, task: () => Promise<T>): Promise<T> => {
-    const prev = storageQueues.get(key) ?? Promise.resolve();
-    let resolveTask: () => void;
-    const taskPromise = new Promise<void>((r) => (resolveTask = r));
-    const chained = prev.finally(() => taskPromise);
-    storageQueues.set(key, chained);
-    try {
-        await prev;
-        return await task();
-    } finally {
-        resolveTask!();
-        if (storageQueues.get(key) === chained) storageQueues.delete(key);
-    }
-};
+import { extractQueryContext, serializeByStorageKey } from './utils';
 
 export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidgetScreen>>(
     ctx: Context & WidgetsFlavor<TScreens>,
@@ -55,7 +38,8 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
         return;
     }
 
-    const storageKey = getStorageKey(query.chat?.id, query.message_id, query.inline_message_id);
+    const queryContext = extractQueryContext(query);
+    const { storageKey, chatId, messageId, inlineMessageId } = queryContext;
 
     if (config.debug) {
         logger.info(
@@ -166,6 +150,7 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
             storage,
             config,
             logger,
+            { chatId, messageId, inlineMessageId },
         );
 
         try {
@@ -184,7 +169,8 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
         } finally {
             const pending = runner.getPendingEditPromise();
             if (pending) {
-                await pending;
+                // Ensure slow network or rate limits do not block serialization queue for > 1500ms
+                await Promise.race([pending, new Promise((r) => setTimeout(r, 1500))]);
             }
         }
     });

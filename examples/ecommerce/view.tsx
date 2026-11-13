@@ -101,6 +101,7 @@ export const EcommerceProductView = (props: EcommerceState): string => {
                 <CardFooter>
                     <Button
                         id="btn-checkout"
+                        action="checkout"
                         variant="primary"
                         fullWidth
                         size="md"

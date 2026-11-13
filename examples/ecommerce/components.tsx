@@ -25,6 +25,7 @@ export const SizePicker = ({ sizes, selectedSize }: SizePickerProps) => (
                     <button
                         type="button"
                         id={`size-${s}`}
+                        data-action={`setSize:${s}`}
                         style={{
                             flex: 1,
                             padding: '6px 0',
@@ -69,6 +70,7 @@ export const QuantityCounter = ({ quantity }: QuantityCounterProps) => (
         <button
             type="button"
             id="ecom-minus"
+            data-action="qtyMinus"
             style={{
                 flex: '0 0 28px',
                 width: 28,
@@ -114,6 +116,7 @@ export const QuantityCounter = ({ quantity }: QuantityCounterProps) => (
         <button
             type="button"
             id="ecom-plus"
+            data-action="qtyPlus"
             style={{
                 flex: '0 0 28px',
                 width: 28,

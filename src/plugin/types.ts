@@ -99,6 +99,15 @@ export interface TelegramWidgetQueryPayload {
         title?: string;
         username?: string;
     };
+    message?: {
+        message_id: number;
+        chat?: {
+            id: number;
+            type: string;
+            title?: string;
+            username?: string;
+        };
+    };
     message_id?: number;
     inline_message_id?: string;
     chat_instance: string;

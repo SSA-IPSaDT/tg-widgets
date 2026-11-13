@@ -24,21 +24,11 @@ const decodeControlsState = (raw: unknown): Partial<ControlsState> => {
 };
 
 /**
- * Client-side script providing instant optimistic UI feedback and in-flight locking for controls.
+ * Client-side script providing instant optimistic UI feedback and multi-device state synchronization.
  */
 export const controlsClientScript = (initial: ControlsState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
-    let isPending = false;
-
-    const setBusy = (busy: boolean) => {
-        isPending = busy;
-        const container = document.querySelector('.tg-layout') as HTMLElement | null;
-        if (container) {
-            container.style.pointerEvents = busy ? 'none' : '';
-            container.style.opacity = busy ? '0.75' : '';
-        }
-    };
 
     const updateUI = (partialState: Partial<ControlsState>) => {
         state = { ...state, ...partialState };
@@ -94,8 +84,6 @@ export const controlsClientScript = (initial: ControlsState) => {
     widget?.onEvent?.('chatDataChanged', syncState);
 
     const sendAction = (action: string) => {
-        if (isPending) return;
-        setBusy(true);
         Promise.resolve(widget?.request?.(action))
             .then((response?: { result?: string | null }) => {
                 if (response?.result) {
@@ -107,13 +95,10 @@ export const controlsClientScript = (initial: ControlsState) => {
                     }
                 }
             })
-            .finally(() => {
-                setBusy(false);
-            });
+            .catch(() => {});
     };
 
     document.getElementById('toggle-notify')?.addEventListener('click', () => {
-        if (isPending) return;
         widget?.HapticFeedback?.impactOccurred?.('medium');
         const targetVal = !state.notifications;
         updateUI({ notifications: targetVal });
@@ -121,7 +106,6 @@ export const controlsClientScript = (initial: ControlsState) => {
     });
 
     document.getElementById('chk-newsletter')?.addEventListener('click', () => {
-        if (isPending) return;
         widget?.HapticFeedback?.impactOccurred?.('light');
         const targetVal = !state.newsletter;
         updateUI({ newsletter: targetVal });
@@ -131,13 +115,13 @@ export const controlsClientScript = (initial: ControlsState) => {
     const stepperButtons = document.getElementById('stepper-tickets')?.querySelectorAll('button');
     if (stepperButtons && stepperButtons[0] && stepperButtons[1]) {
         stepperButtons[0].addEventListener('click', () => {
-            if (isPending || state.tickets <= 1) return;
+            if (state.tickets <= 1) return;
             widget?.HapticFeedback?.impactOccurred?.('light');
             updateUI({ tickets: state.tickets - 1 });
             sendAction('ticketMinus');
         });
         stepperButtons[1].addEventListener('click', () => {
-            if (isPending || state.tickets >= 10) return;
+            if (state.tickets >= 10) return;
             widget?.HapticFeedback?.impactOccurred?.('light');
             updateUI({ tickets: state.tickets + 1 });
             sendAction('ticketPlus');
@@ -145,14 +129,14 @@ export const controlsClientScript = (initial: ControlsState) => {
     }
 
     document.getElementById('plan-basic')?.addEventListener('click', () => {
-        if (isPending || state.plan === 'basic') return;
+        if (state.plan === 'basic') return;
         widget?.HapticFeedback?.selectionChanged?.();
         updateUI({ plan: 'basic' });
         sendAction('setPlan:basic');
     });
 
     document.getElementById('plan-pro')?.addEventListener('click', () => {
-        if (isPending || state.plan === 'pro') return;
+        if (state.plan === 'pro') return;
         widget?.HapticFeedback?.selectionChanged?.();
         updateUI({ plan: 'pro' });
         sendAction('setPlan:pro');

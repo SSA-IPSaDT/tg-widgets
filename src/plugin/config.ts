@@ -26,7 +26,7 @@ export const resolvePluginConfig = (
         options.logger === true,
     );
 
-    // 1. Resolve Codec settings
+    // 1. Resolve Codec settings (disabled by default for clean transparent JSON)
     let codecMode: CodecMode;
     let customKeys: Record<string, string> | undefined;
     let customReverseKeys: Record<string, string> | undefined;
@@ -36,12 +36,7 @@ export const resolvePluginConfig = (
     } else if (typeof options.codec === 'boolean') {
         codecMode = options.codec ? 'prod' : 'dev';
     } else if (typeof options.codec === 'object' && options.codec !== null) {
-        codecMode =
-            options.codec.mode === 'auto' || !options.codec.mode
-                ? isExplicitProd
-                    ? 'prod'
-                    : 'dev'
-                : options.codec.mode;
+        codecMode = options.codec.mode === 'prod' ? 'prod' : 'dev';
 
         customKeys = options.codec.customKeys;
         if (customKeys) {
@@ -51,22 +46,24 @@ export const resolvePluginConfig = (
             );
         }
     } else {
-        codecMode = isExplicitProd ? 'prod' : 'dev';
+        codecMode = 'dev';
     }
 
     const isCodecActive = codecMode === 'prod';
     const compressState =
         typeof options.codec === 'object' && options.codec?.compressState !== undefined
-            ? options.codec.compressState
+            ? Boolean(options.codec.compressState)
             : isCodecActive;
 
     const compressAnswer =
         typeof options.codec === 'object' && options.codec?.compressAnswer !== undefined
-            ? options.codec.compressAnswer
+            ? Boolean(options.codec.compressAnswer)
             : isCodecActive;
 
     const decompressActionPayload =
-        typeof options.codec === 'object' ? options.codec.decompressActionPayload !== false : true;
+        typeof options.codec === 'object' && options.codec?.decompressActionPayload !== undefined
+            ? Boolean(options.codec.decompressActionPayload)
+            : isCodecActive;
 
     const injectClientSnippet =
         typeof options.codec === 'object' ? Boolean(options.codec.injectClientSnippet) : false;

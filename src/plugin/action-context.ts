@@ -10,6 +10,12 @@ export interface ActionContextRunner {
     getCurrentState: () => Record<string, unknown>;
 }
 
+export interface TargetMessageIds {
+    chatId?: number;
+    messageId?: number;
+    inlineMessageId?: string;
+}
+
 export const createActionContext = (
     query: TelegramWidgetQueryPayload,
     screenId: string,
@@ -19,16 +25,21 @@ export const createActionContext = (
     storage: WidgetsStorage,
     config: ResolvedPluginConfig,
     logger: WidgetsLogger,
+    targetIds?: TargetMessageIds,
 ): ActionContextRunner => {
     let isAnswered = false;
     let currentState = initialState;
     let pendingEditPromise: Promise<unknown> | null = null;
 
+    const resolvedChatId = targetIds?.chatId ?? query.chat?.id ?? query.message?.chat?.id;
+    const resolvedMessageId = targetIds?.messageId ?? query.message_id ?? query.message?.message_id;
+    const resolvedInlineId = targetIds?.inlineMessageId ?? query.inline_message_id;
+
     const actionCtx: WidgetActionContext<Record<string, unknown>> = {
         queryId: query.id,
-        chatId: query.chat?.id,
-        messageId: query.message_id,
-        inlineMessageId: query.inline_message_id,
+        chatId: resolvedChatId,
+        messageId: resolvedMessageId,
+        inlineMessageId: resolvedInlineId,
         chatInstance: query.chat_instance,
         chatType: query.chat_type,
         from: {
@@ -58,19 +69,22 @@ export const createActionContext = (
                       __screen: screenId,
                   });
 
-            pendingEditPromise = rawApi
-                .editMessageWidgetData({
-                    chat_id: query.chat?.id,
-                    message_id: query.message_id,
-                    inline_message_id: query.inline_message_id,
-                    chat_data: chatData,
-                })
-                .catch((err) => {
-                    const msg = String(err);
-                    if (!msg.includes('message is not modified')) {
-                        logger.warn(`Failed to editMessageWidgetData for ${storageKey}`, err);
-                    }
-                });
+            const editParams: Parameters<typeof rawApi.editMessageWidgetData>[0] = {
+                chat_data: chatData,
+            };
+            if (resolvedInlineId) {
+                editParams.inline_message_id = resolvedInlineId;
+            } else if (resolvedChatId !== undefined && resolvedMessageId !== undefined) {
+                editParams.chat_id = resolvedChatId;
+                editParams.message_id = resolvedMessageId;
+            }
+
+            pendingEditPromise = rawApi.editMessageWidgetData(editParams).catch((err) => {
+                const msg = String(err);
+                if (!msg.includes('message is not modified')) {
+                    logger.warn(`Failed to editMessageWidgetData for ${storageKey}`, err);
+                }
+            });
         },
         answer: async (data?: unknown) => {
             isAnswered = true;
