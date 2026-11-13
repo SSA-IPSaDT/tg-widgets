@@ -261,8 +261,10 @@ const widgets = createTelegramWidgetsPlugin({
 | `ctx.widgets.send(screenId, options)`              | Sends a widget to the target `chatId` (or current chat).                                                |
 | `ctx.widgets.reply(screenId, options)`             | Sends a widget as a direct reply to the current incoming message.                                       |
 | `ctx.widgets.render(screenId, props)`              | Pure render without sending. Returns `{ html, byteLength, compressedByteLength, isValid, maxAllowed }`. |
+| `ctx.widgets.inspect(screenId, props, options?)`   | Inspects compressed deflate size with active plugin minification options.                                |
 | `ctx.widgets.update(messageId, screenId, options)` | Updates the server `chat_data` state of an active widget message.                                       |
 | `ctx.widgets.getScreen(screenId)`                  | Returns the registered screen descriptor.                                                               |
+| `ctx.widgets.config`                               | Readonly access to the resolved plugin configuration (`mode`, `codec`, `minifier`, `sizeLimit`, etc.). |
 
 _Note: `ctx.bubbles` is provided as an exact alias to `ctx.widgets` for backwards compatibility._
 
@@ -303,6 +305,7 @@ All components strictly inherit native Telegram theme CSS variables:
 | `<Skeleton />`                  | `width`, `height`, `variant` (`text`, `rect`, `circle`), `radius`                                                                            | Shimmer pulse placeholder for loading states.                                   |
 | `<Banner />`                    | `badge`, `gradient`, `height`, `children`                                                                                                    | Hero banner card with badge and custom background.                              |
 | `<Icon.* />`                    | `ChevronRightIcon`, `CheckIcon`, `CloseIcon`, `InfoIcon`, `WarningIcon`, `CopyIcon`, `StarIcon`                                              | Ultra-compact inline SVG icons.                                                 |
+| `<LucideIcon />`                | `icon`, `size`, `color`, `strokeWidth`, `className`, `style`                                                                                 | Bundled Lucide static vector icon renderer with size & theme color adaptation.  |
 | `<Script />`                    | `fn`, `args`                                                                                                                                 | Type-safe client script serializer (renders `<script>(fn)(...args);</script>`). |
 
 ---

@@ -2,13 +2,13 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, 'feat/**', 'fix/**']
   pull_request:
     branches: [main]
 
 jobs:
   test:
-    name: Lint, Build & Test
+    name: Lint, Build, Test & Validate 4096B Ceilings
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Type check
+      - name: Type check (tsc --noEmit)
         run: bun run check
 
       - name: Build bundles & types
@@ -30,3 +30,23 @@ jobs:
 
       - name: Run unit & integration tests
         run: bun test
+
+      - name: Verify Telegram 4096B deflate limits for all example screens
+        run: |
+          bun -e "
+            import { inspectWidgetSizeAsync } from './src';
+            import { screens } from './examples';
+            let failed = false;
+            for (const [name, screen] of Object.entries(screens)) {
+              const props = screen.initialState ? screen.initialState() : {};
+              const report = await inspectWidgetSizeAsync(screen.component(props));
+              const pct = ((report.compressedByteLength / 4096) * 100).toFixed(1);
+              console.log(\`[4096B Check] \${name.padEnd(12)}: \${report.compressedByteLength} / 4096 B (\${pct}%)\`);
+              if (report.compressedByteLength > 4096) {
+                console.error(\`❌ Screen \${name} exceeded limit: \${report.compressedByteLength} B\`);
+                failed = true;
+              }
+            }
+            if (failed) process.exit(1);
+            console.log('✅ All screens fit within Telegram 4096B limit!');
+          "

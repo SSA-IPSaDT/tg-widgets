@@ -1,6 +1,6 @@
 {
     "name": "@ipsadt/tg-widgets",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Zero-runtime TSX UI Kit and type-safe grammY plugin for Telegram Bot API 10.4 HTML Widgets (Interactive Bubbles)",
     "type": "module",
     "main": "./dist/index.cjs",
@@ -88,7 +88,14 @@
         "tsx",
         "zero-runtime",
         "ui-kit",
-        "deno"
+        "deno",
+        "bot-api-10-4",
+        "compression",
+        "minification",
+        "quickjs",
+        "lucide",
+        "lucide-icons",
+        "shadcn"
     ],
     "peerDependencies": {
         "grammy": ">=1.20.0"
