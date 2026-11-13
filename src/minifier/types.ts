@@ -44,6 +44,11 @@ export interface WidgetMinifyOptions {
     mangleClasses?: boolean;
 
     /**
+     * Whether to safely mangle element IDs in HTML, CSS, and JS (default: true).
+     */
+    mangleIds?: boolean;
+
+    /**
      * Options or boolean flag controlling embedded CSS minification (default: true).
      */
     minifyCSS?: boolean | CssMinifyOptions;

@@ -10,6 +10,7 @@
 import { minifyCssString, purgeUnusedCss } from './css';
 import { hoistRepeatedStyles } from './hoist';
 import { compactJs } from './js';
+import { mangleClassesAndIds } from './mangle';
 import type { CssMinifyOptions, JsMinifyOptions, WidgetMinifyOptions } from './types';
 
 /**
@@ -23,6 +24,7 @@ export const DEFAULT_MINIFY_OPTIONS: WidgetMinifyOptions = {
     purgeCss: true,
     hoistStyles: false,
     mangleClasses: true,
+    mangleIds: true,
     minifyCSS: true,
     minifyJS: true,
 };
@@ -121,30 +123,13 @@ export const minifyHtmlSync = (html: string, options?: WidgetMinifyOptions): str
             .trim();
     }
 
-    // 9. Safe CSS component class mangling (skips classes manipulated in client scripts)
-    if (opts.mangleClasses !== false) {
-        const scriptMatch = processed.match(/<script[^>]*>([\s\S]*?)<\/script>/i);
-        const jsCode = scriptMatch ? scriptMatch[1] : '';
-        const classes = new Set<string>();
-        for (const m of processed.matchAll(/\.tg-([a-zA-Z0-9_-]+)/g)) {
-            const cls = 'tg-' + m[1];
-            if (jsCode.includes(cls) || cls === 'tg-widget-root') continue;
-            classes.add(cls);
-        }
-        if (classes.size > 0) {
-            let classIdx = 0;
-            const classMap = new Map<string, string>();
-            for (const cls of classes) {
-                classMap.set(cls, `_c${classIdx++}`);
-            }
-            for (const [orig, short] of classMap.entries()) {
-                processed = processed.replace(new RegExp(`\\b${orig}\\b`, 'g'), short);
-            }
-        }
-    }
-
-    // 10. Prune specific icon name classes from SVG
+    // 9. Prune specific icon name classes from SVG
     processed = processed.replace(/class="lucide\s+lucide-[a-zA-Z0-9_-]+"/g, 'class="lucide"');
+
+    // 10. Universal class and ID mangling across HTML, CSS, and client scripts
+    if (opts.mangleClasses !== false || opts.mangleIds !== false) {
+        processed = mangleClassesAndIds(processed, opts);
+    }
 
     return processed;
 };

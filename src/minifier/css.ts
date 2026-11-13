@@ -55,10 +55,11 @@ export const minifyCssString = (css: string, options: CssMinifyOptions = {}): st
         );
     }
 
-    // 4. Zero units normalization (0px -> 0) and decimal shortening (0.15 -> .15)
+    // 4. Zero units, decimal shortening, and user-select pruning
     result = result
         .replace(/(:\s*|\s+)0(?:px|em|rem|%|pt)(?=[;}\s])/g, '$10')
-        .replace(/(:\s*|\s|,|\()0\.([0-9]+)/g, '$1.$2');
+        .replace(/(:\s*|\s|,|\()0\.([0-9]+)/g, '$1.$2')
+        .replace(/(?:-webkit-)?user-select:\s*none;?/g, '');
 
     // 5. Consolidate directional rules inside { ... } blocks or inline declarations
     if (result.includes('{')) {
@@ -152,20 +153,15 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
                 keptRules.push(rule);
                 continue;
             }
-
-            if (selectorPart.startsWith('details')) {
-                if (bodyContent.includes('<details') || bodyContent.includes('tg-accordion'))
-                    keptRules.push(rule);
-                continue;
-            }
-            if (selectorPart.startsWith('table')) {
-                if (bodyContent.includes('<table') || bodyContent.includes('tg-table'))
-                    keptRules.push(rule);
-                continue;
-            }
-            if (selectorPart.startsWith('svg')) {
-                if (bodyContent.includes('<svg') || bodyContent.includes('lucide'))
-                    keptRules.push(rule);
+            const isElementMatch =
+                (selectorPart.startsWith('details') &&
+                    (bodyContent.includes('<details') || bodyContent.includes('tg-accordion'))) ||
+                (selectorPart.startsWith('table') &&
+                    (bodyContent.includes('<table') || bodyContent.includes('tg-table'))) ||
+                (selectorPart.startsWith('svg') &&
+                    (bodyContent.includes('<svg') || bodyContent.includes('lucide')));
+            if (isElementMatch) {
+                keptRules.push(rule);
                 continue;
             }
 
