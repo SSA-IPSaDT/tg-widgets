@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'bun:test';
+import { beforeAll, describe, expect, it } from 'bun:test';
 import * as mod from '../mod';
 import * as srcIndex from '../src/index';
 import * as jsxRuntime from '../src/jsx-runtime';
@@ -159,6 +159,14 @@ describe('Cross-Runtime & Packaging Module', () => {
     });
 
     describe('Distribution Artifacts Verification', () => {
+        beforeAll(async () => {
+            const { existsSync } = await import('node:fs');
+            if (!existsSync('dist/index.d.ts') || !existsSync('dist/bun/react-shim.d.ts')) {
+                const { execSync } = await import('node:child_process');
+                execSync('bun run build', { stdio: 'ignore' });
+            }
+        });
+
         it('has all built bundles in dist and dist/bun', async () => {
             const { existsSync } = await import('node:fs');
             expect(existsSync('dist/bun/index.js')).toBe(true);

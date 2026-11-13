@@ -43,11 +43,11 @@ hooks {
 
     ["pre-push"] {
         steps {
-            ["test_suite"] {
-                check = "bun test"
-            }
             ["build_artifacts"] {
                 check = "bun run build"
+            }
+            ["test_suite"] {
+                check = "bun test"
             }
         }
     }

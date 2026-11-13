@@ -1,0 +1,64 @@
+# Auto detect text files and perform LF normalization on checkout
+* text=auto eol=lf
+
+# Explicit text file formats
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.cjs text eol=lf
+*.mjs text eol=lf
+*.d.ts text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.toml text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.sh text eol=lf
+*.py text eol=lf
+*.pkl text eol=lf
+.env.example text eol=lf
+LICENSE text eol=lf
+
+# Binary media formats (preserve exactly byte-for-byte, no line ending conversion)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.svg text eol=lf
+*.ico binary
+*.mp4 binary
+*.webm binary
+*.mov binary
+*.avi binary
+*.mkv binary
+
+# Archive & font formats
+*.zip binary
+*.tar.gz binary
+*.tgz binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+
+# Lockfiles & generated files
+bun.lock binary linguist-generated
+bun.lockb binary linguist-generated
+pnpm-lock.yaml text eol=lf linguist-generated
+package-lock.json text eol=lf linguist-generated
+
+# Explicit media directory classification
+media/** binary
+media/video/*.mp4 binary
+media/photo/*.png binary
+media/gif/*.gif binary
+media/webm/*.webm binary
+examples/**/*.gif binary
+examples/**/*.webm binary
+examples/**/*.png binary
+examples/**/*.jpg binary
