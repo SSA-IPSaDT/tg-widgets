@@ -22,39 +22,21 @@ const decodeEcommerceState = (raw: unknown): Partial<EcommerceState> => {
 
 /**
  * Client-side script handling size selection, quantity calculation, and checkout feedback.
+ * Leverages centralized class-based styling (.active) instead of imperative inline style mutations.
  */
 export const ecommerceClientScript = (initial: EcommerceState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
-    let isPending = false;
     const toast = document.getElementById('ecom-toast');
-
-    const setBusy = (busy: boolean) => {
-        isPending = busy;
-        const container = document.querySelector('.tg-layout') as HTMLElement | null;
-        if (container) {
-            container.style.pointerEvents = busy ? 'none' : '';
-            container.style.opacity = busy ? '0.75' : '';
-        }
-    };
 
     const updateEcomUI = (partial?: Partial<EcommerceState>) => {
         if (partial) state = { ...state, ...partial };
 
         const availableSizes = [41, 42, 43, 44];
         for (const sizeNumber of availableSizes) {
-            const sizeButton = document.getElementById(`size-${sizeNumber}`);
-            if (sizeButton) {
-                if (state.size === sizeNumber) {
-                    sizeButton.style.background = 'var(--tg-theme-button-color, #2481cc)';
-                    sizeButton.style.color = '#ffffff';
-                    sizeButton.style.borderColor = 'var(--tg-theme-button-color, #2481cc)';
-                } else {
-                    sizeButton.style.background = 'transparent';
-                    sizeButton.style.color = 'var(--tg-theme-text-color, inherit)';
-                    sizeButton.style.borderColor = 'rgba(120, 120, 128, 0.24)';
-                }
-            }
+            document
+                .getElementById(`size-${sizeNumber}`)
+                ?.classList.toggle('active', state.size === sizeNumber);
         }
 
         const quantityElement = document.getElementById('ecom-qty');
@@ -63,6 +45,11 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
         if (totalPriceElement) {
             totalPriceElement.textContent = `$${(state.quantity * state.pricePerUnit).toFixed(2)}`;
         }
+
+        const minusBtn = document.getElementById('ecom-minus') as HTMLButtonElement | null;
+        const plusBtn = document.getElementById('ecom-plus') as HTMLButtonElement | null;
+        if (minusBtn) minusBtn.disabled = state.quantity <= 1;
+        if (plusBtn) plusBtn.disabled = state.quantity >= 5;
     };
 
     const syncState = () => {
@@ -80,8 +67,6 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
     widget?.onEvent?.('chatDataChanged', syncState);
 
     const sendAction = (action: string) => {
-        if (isPending) return;
-        setBusy(true);
         Promise.resolve(widget?.request?.(action))
             .then((response?: { result?: string | null }) => {
                 if (response?.result) {
@@ -93,14 +78,12 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
                     }
                 }
             })
-            .finally(() => {
-                setBusy(false);
-            });
+            .catch(() => {});
     };
 
     [41, 42, 43, 44].forEach((sizeNumber) => {
         document.getElementById(`size-${sizeNumber}`)?.addEventListener('click', () => {
-            if (isPending || state.size === sizeNumber) return;
+            if (state.size === sizeNumber) return;
             widget?.HapticFeedback?.selectionChanged?.();
             updateEcomUI({ size: sizeNumber });
             sendAction(`setSize:${sizeNumber}`);
@@ -108,21 +91,20 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
     });
 
     document.getElementById('ecom-minus')?.addEventListener('click', () => {
-        if (isPending || state.quantity <= 1) return;
+        if (state.quantity <= 1) return;
         widget?.HapticFeedback?.impactOccurred?.('light');
         updateEcomUI({ quantity: state.quantity - 1 });
         sendAction('qtyMinus');
     });
 
     document.getElementById('ecom-plus')?.addEventListener('click', () => {
-        if (isPending || state.quantity >= 5) return;
+        if (state.quantity >= 5) return;
         widget?.HapticFeedback?.impactOccurred?.('light');
         updateEcomUI({ quantity: state.quantity + 1 });
         sendAction('qtyPlus');
     });
 
     document.getElementById('btn-checkout')?.addEventListener('click', () => {
-        if (isPending) return;
         widget?.HapticFeedback?.notificationOccurred?.('success');
         if (toast) {
             toast.textContent = `🎉 Order placed! Size: ${state.size}, ${state.quantity} pair(s) for $${(state.quantity * state.pricePerUnit).toFixed(2)}`;

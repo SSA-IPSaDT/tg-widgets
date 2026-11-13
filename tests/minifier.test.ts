@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import { minifyHtml, minifyHtmlSync, purgeUnusedCss } from '../src';
+import { hoistRepeatedStyles, minifyHtml, minifyHtmlSync, purgeUnusedCss } from '../src';
 
 describe('Minifier & CSS Purging Pipeline', () => {
     describe('purgeUnusedCss()', () => {
@@ -257,6 +257,39 @@ describe('Minifier & CSS Purging Pipeline', () => {
 
             const reductionPct = ((originalBytes - minifiedBytes) / originalBytes) * 100;
             expect(reductionPct).toBeGreaterThan(40);
+        });
+    });
+
+    describe('hoistRepeatedStyles()', () => {
+        test('hoists identical inline styles on multiple buttons into a shared class', () => {
+            const html = `
+                <style>.tg-widget-root{display:flex;}</style>
+                <div class="sizes">
+                    <button id="s1" style="flex:1;padding:6px 0;border-radius:12px;font-weight:600">41</button>
+                    <button id="s2" style="flex:1;padding:6px 0;border-radius:12px;font-weight:600">42</button>
+                    <button id="s3" style="flex:1;padding:6px 0;border-radius:12px;font-weight:600">43</button>
+                </div>
+            `;
+
+            const result = hoistRepeatedStyles(html);
+            expect(result).toContain(
+                '._s0{flex:1;padding:6px 0;border-radius:12px;font-weight:600;}',
+            );
+            expect(result).toContain('class="_s0"');
+            expect(result).not.toContain('style="flex:1;padding:6px 0');
+        });
+
+        test('appends hoisted class to existing class attribute', () => {
+            const html = `
+                <div class="row">
+                    <button class="btn" style="flex:1;padding:10px 12px;border:none">A</button>
+                    <button class="btn" style="flex:1;padding:10px 12px;border:none">B</button>
+                </div>
+            `;
+
+            const result = hoistRepeatedStyles(html);
+            expect(result).toContain('class="btn _s0"');
+            expect(result).toContain('._s0{flex:1;padding:10px 12px;border:none;}');
         });
     });
 });
