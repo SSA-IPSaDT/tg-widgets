@@ -38,7 +38,7 @@ export const WidgetLayout = ({
     style,
     className = '',
     theme = 'auto',
-    gap = 8,
+    gap = 10,
     radius,
     radii,
     padding = '6px 8px',
@@ -47,7 +47,8 @@ export const WidgetLayout = ({
     minHeight,
     width,
     height,
-    fullWidth = false,
+    fullWidth = true,
+    fullHeight = false,
     expand = false,
     ...dataAttrs
 }: WidgetLayoutProps): string => {
@@ -61,6 +62,8 @@ export const WidgetLayout = ({
         : {};
 
     const isFullWidth = fullWidth || expand;
+    const isFullHeight = fullHeight || expand;
+    const effectivePadding = expand ? 0 : padding;
 
     const radiusTokens =
         radius !== undefined || radii !== undefined
@@ -93,9 +96,10 @@ export const WidgetLayout = ({
             : {};
 
     const layoutStyle = {
-        padding,
+        padding: effectivePadding,
         boxSizing: 'border-box',
         width: width ?? (isFullWidth ? '100%' : 'auto'),
+        ...(isFullHeight ? { height: '100%', flex: 1 } : {}),
         ...(height !== undefined ? { height } : {}),
         ...(minHeight !== undefined ? { minHeight } : {}),
         color: 'var(--tg-theme-text-color, #111827)',
