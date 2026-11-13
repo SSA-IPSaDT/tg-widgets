@@ -95,8 +95,8 @@ export const compactJs = (code: string, options: JsMinifyOptions = {}): string =
     const removeComments = options.removeComments !== false;
     const collapseWhitespace = options.collapseWhitespace !== false;
 
-    // Tokenizes JavaScript strings (both single, double, template literals) and regex literals
-    const tokenRegex = /(["'`])(?:\\.|(?!\1)[^\\])*\1|\/(?:\\.|[^\/\n\\])+\/[gimsu]*/g;
+    // Tokenizes JavaScript strings (both single, double, template literals) and regex literals (excluding /* and // comments)
+    const tokenRegex = /(["'`])(?:\\.|(?!\1)[^\\])*\1|\/(?![/*])(?:\\.|[^\/\n\\])+\/[gimsu]*/g;
     let result = '';
     let lastIndex = 0;
     let match: RegExpExecArray | null;

@@ -64,6 +64,7 @@
         "format:check": "prettier --check .",
         "lint": "bun run check && bun run format:check",
         "test": "bun test",
+        "check:compression": "bun run examples/check-compression.ts",
         "release": "bumpp package.json deno.json",
         "example": "bun run examples/bot.tsx",
         "prepublishOnly": "bun run build"
