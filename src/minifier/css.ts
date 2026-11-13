@@ -13,22 +13,17 @@ import type { CssMinifyOptions } from './types';
  * Consolidates directional properties (e.g. 4 identical margin/padding rules into single shorthand).
  */
 const consolidateDirectionalRules = (declarations: string): string => {
-    let result = declarations;
-
-    // Consolidate 4 identical margin rules into margin: X
-    result = result.replace(
-        /(?:^|;)\s*margin-top:([^;]+);\s*margin-right:\1;\s*margin-bottom:\1;\s*margin-left:\1(?=;|$)/g,
-        ';margin:$1',
-    );
-    // Consolidate 4 identical padding rules into padding: X
-    result = result.replace(
-        /(?:^|;)\s*padding-top:([^;]+);\s*padding-right:\1;\s*padding-bottom:\1;\s*padding-left:\1(?=;|$)/g,
-        ';padding:$1',
-    );
-    // background-color -> background
-    result = result.replace(/(?:^|;)\s*background-color:([^;]+)(?=;|$)/g, ';background:$1');
-
-    return result.replace(/^;+/, '');
+    return declarations
+        .replace(
+            /(?:^|;)\s*margin-top:([^;]+);\s*margin-right:\1;\s*margin-bottom:\1;\s*margin-left:\1(?=;|$)/g,
+            ';margin:$1',
+        )
+        .replace(
+            /(?:^|;)\s*padding-top:([^;]+);\s*padding-right:\1;\s*padding-bottom:\1;\s*padding-left:\1(?=;|$)/g,
+            ';padding:$1',
+        )
+        .replace(/(?:^|;)\s*background-color:([^;]+)(?=;|$)/g, ';background:$1')
+        .replace(/^;+/, '');
 };
 
 /**
@@ -60,8 +55,10 @@ export const minifyCssString = (css: string, options: CssMinifyOptions = {}): st
         );
     }
 
-    // 4. Zero units normalization (0px -> 0, 0rem -> 0, etc.)
-    result = result.replace(/(:\s*|\s+)0(?:px|em|rem|%|pt)(?=[;}\s])/g, '$10');
+    // 4. Zero units normalization (0px -> 0) and decimal shortening (0.15 -> .15)
+    result = result
+        .replace(/(:\s*|\s+)0(?:px|em|rem|%|pt)(?=[;}\s])/g, '$10')
+        .replace(/(:\s*|\s|,|\()0\.([0-9]+)/g, '$1.$2');
 
     // 5. Consolidate directional rules inside { ... } blocks or inline declarations
     if (result.includes('{')) {
@@ -127,9 +124,17 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
             const block = rule.slice(firstBrace);
             if (!selectorPart) continue;
 
-            // Preserve global resets, :root tokens, body, html, and root widget classes
+            if (selectorPart.startsWith(':root')) {
+                const decls = block.slice(1, -1).split(';');
+                const kept = decls.filter((d) => {
+                    const m = d.match(/^(--[a-zA-Z0-9_-]+):/);
+                    return !m || bodyContent.includes(m[1]) || css.includes(`var(${m[1]}`);
+                });
+                keptRules.push(`:root{${kept.join(';')}}`);
+                continue;
+            }
+
             if (
-                selectorPart.startsWith(':root') ||
                 selectorPart.startsWith('html') ||
                 selectorPart.startsWith('body') ||
                 selectorPart.startsWith('*') ||
@@ -139,7 +144,6 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
                 continue;
             }
 
-            // Animation keyframes
             if (selectorPart.startsWith('@keyframes tg-pulse')) {
                 if (bodyContent.includes('tg-badge-pulse')) keptRules.push(rule);
                 continue;
@@ -149,23 +153,19 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
                 continue;
             }
 
-            // Tag-based selectors
             if (selectorPart.startsWith('details')) {
-                if (bodyContent.includes('<details') || bodyContent.includes('tg-accordion')) {
+                if (bodyContent.includes('<details') || bodyContent.includes('tg-accordion'))
                     keptRules.push(rule);
-                }
                 continue;
             }
             if (selectorPart.startsWith('table')) {
-                if (bodyContent.includes('<table') || bodyContent.includes('tg-table')) {
+                if (bodyContent.includes('<table') || bodyContent.includes('tg-table'))
                     keptRules.push(rule);
-                }
                 continue;
             }
             if (selectorPart.startsWith('svg')) {
-                if (bodyContent.includes('<svg') || bodyContent.includes('lucide')) {
+                if (bodyContent.includes('<svg') || bodyContent.includes('lucide'))
                     keptRules.push(rule);
-                }
                 continue;
             }
 

@@ -103,6 +103,8 @@ export const minifyHtmlSync = (html: string, options?: WidgetMinifyOptions): str
             .replace(/>\s+</g, '><')
             .replace(/^\s+|\s+$/gm, '')
             .replace(/[ \t]{2,}/g, ' ')
+            .replace(/var\(--([a-zA-Z0-9_-]+),\s+/g, 'var(--$1,')
+            .replace(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([\d.]+)\s*\)/g, 'rgba($1,$2,$3,$4)')
             .trim();
     }
 

@@ -79,6 +79,11 @@ const RESERVED_WORDS = new Set([
     'event',
     'target',
     'currentTarget',
+    'HTML',
+    'CSS',
+    'SVG',
+    'Element',
+    'Node',
 ]);
 
 /**
@@ -95,7 +100,7 @@ export const compactJs = (code: string, options: JsMinifyOptions = {}): string =
     const removeComments = options.removeComments !== false;
     const collapseWhitespace = options.collapseWhitespace !== false;
 
-    // Tokenizes JavaScript strings (both single, double, template literals) and regex literals (excluding /* and // comments)
+    // Tokenizes JavaScript strings and regex literals (excluding /* and // comments)
     const tokenRegex = /(["'`])(?:\\.|(?!\1)[^\\])*\1|\/(?![/*])(?:\\.|[^\/\n\\])+\/[gimsu]*/g;
     let result = '';
     let lastIndex = 0;
@@ -104,10 +109,7 @@ export const compactJs = (code: string, options: JsMinifyOptions = {}): string =
     const cleanNonString = (str: string): string => {
         let cleaned = str;
         if (removeComments) {
-            // Strip single-line comments //...
-            cleaned = cleaned.replace(/\/\/[^\n]*/g, '');
-            // Strip multi-line comments /*...*/
-            cleaned = cleaned.replace(/\/\*[\s\S]*?\*\//g, '');
+            cleaned = cleaned.replace(/\/\/[^\n]*/g, '').replace(/\/\*[\s\S]*?\*\//g, '');
         }
 
         if (collapseWhitespace) {
@@ -115,7 +117,17 @@ export const compactJs = (code: string, options: JsMinifyOptions = {}): string =
                 .replace(/^\s+|\s+$/gm, '')
                 .replace(/\n+/g, ' ')
                 .replace(/\s*([;{},()=+\-*/%&|^!<>?:])\s*/g, '$1')
-                .replace(/[ \t]+/g, ' ');
+                .replace(/[ \t]+/g, ' ')
+                .replace(/;+/g, ';')
+                .replace(/;}/g, '}')
+                .replace(/:\s*true\b/g, ':!0')
+                .replace(/=\s*true\b/g, '=!0')
+                .replace(/\(\s*true\b/g, '(!0')
+                .replace(/,\s*true\b/g, ',!0')
+                .replace(/:\s*false\b/g, ':!1')
+                .replace(/=\s*false\b/g, '=!1')
+                .replace(/\(\s*false\b/g, '(!1')
+                .replace(/,\s*false\b/g, ',!1');
         }
         return cleaned;
     };
@@ -125,65 +137,104 @@ export const compactJs = (code: string, options: JsMinifyOptions = {}): string =
         result += match[0];
         lastIndex = match.index + match[0].length;
     }
-
     result += cleanNonString(code.slice(lastIndex));
 
-    // Optional safe local identifier mangling if enabled
-    const shouldMangle = options.collapseWhitespace !== false;
-    if (shouldMangle) {
-        const declaredVars = new Set<string>();
-        // Find var/let/const declarations
-        const declRegex = /\b(?:var|let|const)\s+([a-zA-Z0-9_$]+)/g;
-        let declMatch: RegExpExecArray | null;
-        while ((declMatch = declRegex.exec(result)) !== null) {
-            const name = declMatch[1];
-            if (!RESERVED_WORDS.has(name) && name.length > 2) {
-                declaredVars.add(name);
+    if (collapseWhitespace) {
+        // Protect identifiers interpolated in template literals from renaming
+        const protectedIdents = new Set<string>();
+        for (const tm of result.matchAll(/\$\{([^}]+)\}/g)) {
+            const ids = tm[1].matchAll(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b/g);
+            for (const id of ids) {
+                protectedIdents.add(id[1]);
             }
         }
 
-        // Find function names and parameters: function name(param1, param2)
-        const fnRegex = /\bfunction\s+([a-zA-Z0-9_$]+)\s*\(([^)]*)\)/g;
-        let fnMatch: RegExpExecArray | null;
-        while ((fnMatch = fnRegex.exec(result)) !== null) {
-            const fnName = fnMatch[1];
-            if (!RESERVED_WORDS.has(fnName) && fnName.length > 2) {
-                declaredVars.add(fnName);
+        const declared = new Set<string>();
+        const declBlocks = result.matchAll(/\b(?:var|let|const)\s+([^;]+?)(?=[;}\n]|$)/g);
+        for (const b of declBlocks) {
+            const idMatches = b[1].matchAll(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)\b(?:\s*[,=:\)\}\]]|$)/g);
+            for (const m of idMatches) {
+                if (!RESERVED_WORDS.has(m[1]) && !protectedIdents.has(m[1]) && m[1].length > 1) {
+                    declared.add(m[1]);
+                }
             }
-            const params = fnMatch[2].split(',').map((p) => p.trim());
-            for (const param of params) {
-                if (param && !RESERVED_WORDS.has(param) && param.length > 1) {
-                    declaredVars.add(param);
+        }
+        const arrowMatches = result.matchAll(/(?:\(([^)]*)\)|([a-zA-Z_$][a-zA-Z0-9_$]*))\s*=>/g);
+        for (const m of arrowMatches) {
+            const params = (m[1] || m[2] || '').split(',');
+            for (const p of params) {
+                const clean = p
+                    .trim()
+                    .replace(/^\(+/, '')
+                    .match(/^[a-zA-Z_$][a-zA-Z0-9_$]*/)?.[0];
+                if (
+                    clean &&
+                    !RESERVED_WORDS.has(clean) &&
+                    !protectedIdents.has(clean) &&
+                    clean.length > 1
+                ) {
+                    declared.add(clean);
+                }
+            }
+        }
+        const fnMatches = result.matchAll(/\bfunction\s*([a-zA-Z0-9_$]*)\s*\(([^)]*)\)/g);
+        for (const m of fnMatches) {
+            if (
+                m[1] &&
+                !RESERVED_WORDS.has(m[1]) &&
+                !protectedIdents.has(m[1]) &&
+                m[1].length > 1
+            ) {
+                declared.add(m[1]);
+            }
+            const params = m[2].split(',');
+            for (const p of params) {
+                const clean = p
+                    .trim()
+                    .replace(/^\(+/, '')
+                    .match(/^[a-zA-Z_$][a-zA-Z0-9_$]*/)?.[0];
+                if (
+                    clean &&
+                    !RESERVED_WORDS.has(clean) &&
+                    !protectedIdents.has(clean) &&
+                    clean.length > 1
+                ) {
+                    declared.add(clean);
                 }
             }
         }
 
-        if (declaredVars.size > 0) {
+        if (declared.size > 0) {
             const mangleMap = new Map<string, string>();
-            let varIndex = 0;
+            let idx = 0;
             const letters = 'abcdefghijklmnopqrstuvwxyz';
-            for (const varName of declaredVars) {
-                const shortName = `_${letters[varIndex % letters.length]}${varIndex >= letters.length ? Math.floor(varIndex / letters.length) : ''}`;
-                mangleMap.set(varName, shortName);
-                varIndex++;
+            for (const v of declared) {
+                const short = `_${letters[idx % letters.length]}${idx >= letters.length ? Math.floor(idx / letters.length) : ''}`;
+                mangleMap.set(v, short);
+                idx++;
             }
 
-            // Replace declared variables outside string literals
             let mangled = '';
             lastIndex = 0;
             tokenRegex.lastIndex = 0;
             while ((match = tokenRegex.exec(result)) !== null) {
-                let codeChunk = result.slice(lastIndex, match.index);
+                let chunk = result.slice(lastIndex, match.index);
                 for (const [orig, short] of mangleMap.entries()) {
-                    codeChunk = codeChunk.replace(new RegExp(`\\b${orig}\\b`, 'g'), short);
+                    chunk = chunk.replace(
+                        new RegExp(`(?<!(?<!\\.\\.)\\.)(?<![a-zA-Z0-9_$])${orig}\\b`, 'g'),
+                        short,
+                    );
                 }
-                mangled += codeChunk;
+                mangled += chunk;
                 mangled += match[0];
                 lastIndex = match.index + match[0].length;
             }
             let remaining = result.slice(lastIndex);
             for (const [orig, short] of mangleMap.entries()) {
-                remaining = remaining.replace(new RegExp(`\\b${orig}\\b`, 'g'), short);
+                remaining = remaining.replace(
+                    new RegExp(`(?<!(?<!\\.\\.)\\.)(?<![a-zA-Z0-9_$])${orig}\\b`, 'g'),
+                    short,
+                );
             }
             mangled += remaining;
             result = mangled;
