@@ -60,14 +60,11 @@
         "build:fast": "bun build.ts --no-types",
         "build:clean": "rm -rf dist",
         "check": "tsc --noEmit",
-        "check:branch": "bun run scripts/check-branch.ts",
-        "check:compression": "bun run scripts/compare-compression.ts",
         "format": "prettier --write .",
         "format:check": "prettier --check .",
         "lint": "bun run check && bun run format:check",
         "test": "bun test",
-        "version:bump": "bun run scripts/bump-version.ts",
-        "release": "bun run scripts/bump-version.ts --commit",
+        "release": "bumpp package.json deno.json",
         "example": "bun run examples/bot.tsx",
         "prepublishOnly": "bun run build"
     },
@@ -115,6 +112,7 @@
         "@types/bun": "^1.2.0",
         "@types/html-minifier-terser": "^7.0.2",
         "@types/react": "^19.3.0",
+        "bumpp": "^12.3.0",
         "grammy": "^1.46.0",
         "prettier": "^3.10.1",
         "typescript": "^5.7.0"

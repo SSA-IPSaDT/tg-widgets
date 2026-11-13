@@ -19,7 +19,7 @@ hooks {
                 check = "hk util no-commit-to-branch --branch main --branch master"
             }
             ["check_branch_convention"] {
-                check = "bun run scripts/check-branch.ts"
+                check = "sh -c 'branch=$(git rev-parse --abbrev-ref HEAD); case \"$branch\" in feat/*|fix/*|chore/*|docs/*|refactor/*|test/*|perf/*|release/*|hotfix/*|main|master|HEAD) exit 0;; *) echo \"Branch $branch must match conventional naming (feat/, fix/, chore/, docs/, refactor/, test/, perf/, release/, hotfix/)\"; exit 1;; esac'"
             }
             ["check_merge_conflict"] = Builtins.check_merge_conflict
             ["trailing_whitespace"] = Builtins.trailing_whitespace

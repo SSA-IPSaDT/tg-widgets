@@ -9,12 +9,8 @@ hk = "2.9.0"
 description = "Typecheck TypeScript code without emitting artifacts"
 run = "bun run check"
 
-[tasks.check-branch]
-description = "Validate active git branch naming convention"
-run = "bun run scripts/check-branch.ts"
-
 [tasks.format]
-description = "Format all code files according to bunfig.toml rules"
+description = "Format all code files according to prettier rules"
 run = "bun run format"
 
 [tasks.format-check]
@@ -33,13 +29,9 @@ run = "bun test"
 description = "Clean, bundle ESM/CJS distributions, and generate types"
 run = "bun run build"
 
-[tasks.bump]
-description = "Automatically analyze commits and bump package version in package.json, deno.json, and CHANGELOG.md"
-run = "bun run scripts/bump-version.ts"
-
 [tasks.release]
-description = "Bump version and create git release commit and tag"
-run = "bun run scripts/bump-version.ts --commit"
+description = "Interactively bump version, create git commit and tag via bumpp"
+run = "bun run release"
 
 [tasks.hooks-install]
 description = "Install hk git hooks into the repository"
