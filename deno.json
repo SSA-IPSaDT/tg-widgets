@@ -9,7 +9,7 @@
     },
     "publish": {
         "include": ["src/", "mod.ts", "deno.json", "README.md", "LICENSE", "CHANGELOG.md"],
-        "exclude": ["src/react-shim.d.ts"]
+        "exclude": ["src/types/", "src/react-shim.d.ts"]
     },
     "compilerOptions": {
         "jsx": "react",

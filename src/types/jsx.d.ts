@@ -7,9 +7,9 @@ declare global {
     }
 
     interface Window {
-        TelegramWidget?: import('../src/widget-bridge').TelegramWidgetBridge;
+        TelegramWidget?: import('../widget-bridge').TelegramWidgetBridge;
     }
-    var TelegramWidget: import('../src/widget-bridge').TelegramWidgetBridge | undefined;
+    var TelegramWidget: import('../widget-bridge').TelegramWidgetBridge | undefined;
 }
 
 export {};
