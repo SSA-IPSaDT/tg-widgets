@@ -22,22 +22,15 @@ const storageQueues = new Map<string, Promise<unknown>>();
 const serializeByStorageKey = async <T>(key: string, task: () => Promise<T>): Promise<T> => {
     const prev = storageQueues.get(key) ?? Promise.resolve();
     let resolveTask: () => void;
-    const taskPromise = new Promise<void>((resolve) => {
-        resolveTask = resolve;
-    });
-    const chained = prev.then(
-        () => taskPromise,
-        () => taskPromise,
-    );
+    const taskPromise = new Promise<void>((r) => (resolveTask = r));
+    const chained = prev.finally(() => taskPromise);
     storageQueues.set(key, chained);
     try {
         await prev;
         return await task();
     } finally {
         resolveTask!();
-        if (storageQueues.get(key) === chained) {
-            storageQueues.delete(key);
-        }
+        if (storageQueues.get(key) === chained) storageQueues.delete(key);
     }
 };
 
@@ -96,7 +89,8 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
             }
         }
 
-        if (!registeredRecord) {
+        const screen = registeredRecord ? screensById.get(registeredRecord.screenId) : undefined;
+        if (!registeredRecord || !screen) {
             logger.warn(
                 `[telegram-widgets] No registered screen found for storage key ${storageKey}. Consider configuring persistent storage.`,
             );
@@ -107,22 +101,23 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
             return;
         }
 
-        const screen = screensById.get(registeredRecord.screenId);
-        if (!screen) {
-            await rawApi.answerWidgetQuery({
-                widget_query_id: query.id,
-                data: JSON.stringify({ error: 'SCREEN_NOT_FOUND' }),
-            });
-            return;
-        }
-
+        const rawDataStr = query.data ?? '';
+        const isRefresh = !rawDataStr || rawDataStr === 'refresh' || rawDataStr === 'reload';
         const screenType = getWidgetScreenType(screen);
+
         if (
             screenType === 'static' ||
             screenType === 'client' ||
             !screen.actions ||
             Object.keys(screen.actions).length === 0
         ) {
+            if (isRefresh) {
+                await rawApi.answerWidgetQuery({
+                    widget_query_id: query.id,
+                    data: JSON.stringify(registeredRecord.state ?? {}),
+                });
+                return;
+            }
             logger.warn(
                 `[telegram-widgets] Received widget_query for non-interactive screen "${screen.id}" (type: ${screenType}).`,
             );
@@ -134,7 +129,7 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
         }
 
         // Parse action name and payload with codec support
-        const { action: actionName, payload } = decodeWidgetAction(query.data ?? '', {
+        const { action: actionName, payload } = decodeWidgetAction(rawDataStr, {
             decompress: config.codec.decompressActionPayload,
             customReverseMap: config.codec.customReverseKeys,
         });
@@ -145,6 +140,13 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
         >;
         const handler = actions[actionName];
         if (!handler) {
+            if (isRefresh) {
+                await rawApi.answerWidgetQuery({
+                    widget_query_id: query.id,
+                    data: JSON.stringify(registeredRecord.state ?? {}),
+                });
+                return;
+            }
             logger.warn(
                 `[telegram-widgets] Unhandled action "${actionName}" for screen "${screen.id}".`,
             );

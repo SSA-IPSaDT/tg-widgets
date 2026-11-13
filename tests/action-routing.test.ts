@@ -576,4 +576,42 @@ describe('Action Routing & widget_query Module', () => {
             newsletter: true,
         });
     });
+
+    it('gracefully handles refresh / reload widget queries by returning current state', async () => {
+        const setup = setupRouterTest({
+            initialState: { votes: { grammy: 48, telegraf: 21, aiogram: 35 }, userVote: 'grammy' },
+        });
+
+        setup.storage.set('100:200', {
+            screenId: 'cart-screen',
+            state: { votes: { grammy: 48, telegraf: 21, aiogram: 35 }, userVote: 'grammy' },
+            updatedAt: Date.now(),
+        });
+
+        const makeCtx = (queryId: string, actionData: string) => ({
+            update: {
+                widget_query: {
+                    id: queryId,
+                    chat: { id: 100 },
+                    message_id: 200,
+                    chat_instance: 'inst',
+                    from: { id: 1, first_name: 'Alex' },
+                    data: actionData,
+                },
+            },
+            api: { raw: setup.mockRawApi },
+        });
+
+        // Test with empty string (native client reload)
+        await setup.plugin.middleware(makeCtx('q_reload', '') as never, async () => {});
+        expect(setup.answeredQueries.length).toBe(1);
+        expect(setup.answeredQueries[0].id).toBe('q_reload');
+        expect(setup.answeredQueries[0].data).not.toContain('UNKNOWN_ACTION');
+
+        // Test with 'refresh'
+        await setup.plugin.middleware(makeCtx('q_refresh', 'refresh') as never, async () => {});
+        expect(setup.answeredQueries.length).toBe(2);
+        expect(setup.answeredQueries[1].id).toBe('q_refresh');
+        expect(setup.answeredQueries[1].data).not.toContain('UNKNOWN_ACTION');
+    });
 });

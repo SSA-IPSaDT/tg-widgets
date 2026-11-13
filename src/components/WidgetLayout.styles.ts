@@ -15,7 +15,7 @@ export const BASE_RESET_CSS =
     '*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}' +
     'button,[role="button"],summary,.tg-btn,.tg-switch,.tg-checkbox,.tg-radio,.tg-stepper-btn,.tg-segmented-btn,[data-action]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;cursor:pointer;}' +
     '@keyframes tg-pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.85);}}' +
-    '.tg-badge-pulse{animation:tg-pulse 1.8s infinite ease-in-out;display:inline-block;}' +
+    '.tg-badge-pulse{animation:tg-pulse 1.8s infinite ease-in-out;display:inline-block;transform-origin:center;will-change:transform,opacity;}' +
     '.tg-widget-root{display:flex!important;flex-direction:column!important;box-sizing:border-box;width:100%;height:auto!important;overflow:visible!important;}' +
     '.tg-widget-root>style{display:none!important;}' +
     'details>summary::-webkit-details-marker,details>summary::marker{display:none!important;}' +
