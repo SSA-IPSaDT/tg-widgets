@@ -61,20 +61,17 @@ export const accordionScreen = defineClientWidgetScreen({
                 </CardHeader>
                 <CardContent>
                     <Accordion>
-                        <AccordionItem
-                            title="How do HTML widgets work?"
-                            open={true}
-                        >
-                            Widgets render directly inside the chat message bubble
-                            using Telegram's embedded QuickJS sandbox.
+                        <AccordionItem title="How do HTML widgets work?" open={true}>
+                            Widgets render directly inside the chat message bubble using Telegram's
+                            embedded QuickJS sandbox.
                         </AccordionItem>
                         <AccordionItem title="Is internet required to render?">
-                            No, the widget code is bundled into the message and
-                            renders instantly in local offline mode.
+                            No, the widget code is bundled into the message and renders instantly in
+                            local offline mode.
                         </AccordionItem>
                         <Collapsible title="How do widgets communicate with the bot?">
-                            Via TelegramWidget.request(), delivering compact action
-                            payloads (up to 64 bytes) to update.widget_query.
+                            Via TelegramWidget.request(), delivering compact action payloads (up to
+                            64 bytes) to update.widget_query.
                         </Collapsible>
                     </Accordion>
                 </CardContent>

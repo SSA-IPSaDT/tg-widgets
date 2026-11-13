@@ -1,9 +1,6 @@
 import { describe, expect, it } from 'bun:test';
 import { createTelegramWidgetsPlugin } from '../src/plugin';
-import {
-    defineStaticWidgetScreen,
-    defineDynamicWidgetScreen,
-} from '../src/screen';
+import { defineStaticWidgetScreen, defineDynamicWidgetScreen } from '../src/screen';
 import { MemoryWidgetsStorage } from '../src/storage';
 
 describe('Action Routing & widget_query Module', () => {
@@ -26,8 +23,16 @@ describe('Action Routing & widget_query Module', () => {
                 answeredQueries.push({ id: params.widget_query_id, data: params.data });
                 return { ok: true };
             },
-            answerCallbackQuery: async (params: { callback_query_id: string; text?: string; show_alert?: boolean }) => {
-                answeredCallbacks.push({ id: params.callback_query_id, text: params.text, show_alert: params.show_alert });
+            answerCallbackQuery: async (params: {
+                callback_query_id: string;
+                text?: string;
+                show_alert?: boolean;
+            }) => {
+                answeredCallbacks.push({
+                    id: params.callback_query_id,
+                    text: params.text,
+                    show_alert: params.show_alert,
+                });
                 return { ok: true };
             },
         };

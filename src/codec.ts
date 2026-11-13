@@ -90,10 +90,7 @@ export const registerCodecKeys = (mappings: Record<string, string>): void => {
  * @param customMap Optional dictionary override.
  * @returns Compressed clone of the data structure.
  */
-export const compressKeys = <T = unknown>(
-    data: T,
-    customMap?: Record<string, string>,
-): unknown => {
+export const compressKeys = <T = unknown>(data: T, customMap?: Record<string, string>): unknown => {
     if (data === null || data === undefined) {
         return data;
     }
@@ -130,9 +127,7 @@ export const decompressKeys = <T = unknown>(
     }
 
     if (Array.isArray(data)) {
-        return data.map((item) =>
-            decompressKeys(item, customReverseMap),
-        ) as unknown as T;
+        return data.map((item) => decompressKeys(item, customReverseMap)) as unknown as T;
     }
 
     if (typeof data === 'object') {
@@ -154,10 +149,7 @@ export const decompressKeys = <T = unknown>(
  * @param customMap Optional key mapping dictionary.
  * @returns Compact JSON string.
  */
-export const packPayload = (
-    payload: unknown,
-    customMap?: Record<string, string>,
-): string => {
+export const packPayload = (payload: unknown, customMap?: Record<string, string>): string => {
     const compressed = compressKeys(payload, customMap);
     return JSON.stringify(compressed);
 };
@@ -217,10 +209,7 @@ export const unpackState = <T = Record<string, unknown>>(
         return { state: {} as T };
     }
 
-    const decompressed = unpackPayload<Record<string, unknown>>(
-        rawState,
-        customReverseMap,
-    );
+    const decompressed = unpackPayload<Record<string, unknown>>(rawState, customReverseMap);
     if (!decompressed || typeof decompressed !== 'object') {
         return { state: {} as T };
     }

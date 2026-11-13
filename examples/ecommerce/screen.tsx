@@ -149,9 +149,22 @@ export const ecommerceScreen = defineWidgetScreen({
             <WidgetLayout fullWidth padding="6px 8px">
                 <Card fullWidth style={{ position: 'relative' }}>
                     <CardHeader>
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
                             <CardTitle>HyperSpeed Running Shoes</CardTitle>
-                            <Badge variant="success" icon={LucideIcon({ icon: LucideIcons.Check, size: 15, strokeWidth: 2.2 })} />
+                            <Badge
+                                variant="success"
+                                icon={LucideIcon({
+                                    icon: LucideIcons.Check,
+                                    size: 15,
+                                    strokeWidth: 2.2,
+                                })}
+                            />
                         </div>
                         <CardDescription>
                             Authentic performance footwear with express delivery
@@ -160,7 +173,15 @@ export const ecommerceScreen = defineWidgetScreen({
                     <CardContent>
                         {/* Size selection */}
                         <div>
-                            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65, marginBottom: 6 }}>
+                            <div
+                                style={{
+                                    fontSize: 12,
+                                    fontWeight: 600,
+                                    color: 'var(--tg-theme-text-color, #111827)',
+                                    opacity: 0.65,
+                                    marginBottom: 6,
+                                }}
+                            >
                                 Select Size (EU):
                             </div>
                             <div style={{ display: 'flex', gap: 8 }}>
@@ -173,10 +194,16 @@ export const ecommerceScreen = defineWidgetScreen({
                                             style={{
                                                 flex: 1,
                                                 padding: '6px 0',
-                                                border: active ? '1px solid var(--tg-theme-button-color, #2481cc)' : '1px solid rgba(120, 120, 128, 0.24)',
+                                                border: active
+                                                    ? '1px solid var(--tg-theme-button-color, #2481cc)'
+                                                    : '1px solid rgba(120, 120, 128, 0.24)',
                                                 borderRadius: 8,
-                                                background: active ? 'var(--tg-theme-button-color, #2481cc)' : 'transparent',
-                                                color: active ? '#ffffff' : 'var(--tg-theme-text-color, inherit)',
+                                                background: active
+                                                    ? 'var(--tg-theme-button-color, #2481cc)'
+                                                    : 'transparent',
+                                                color: active
+                                                    ? '#ffffff'
+                                                    : 'var(--tg-theme-text-color, inherit)',
                                                 fontWeight: 600,
                                                 fontSize: 13,
                                                 cursor: 'pointer',
@@ -192,12 +219,22 @@ export const ecommerceScreen = defineWidgetScreen({
                         <Divider />
 
                         {/* Quantity and unit pricing */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
                             <div>
-                                <div style={{ fontSize: 13, fontWeight: 500 }}>
-                                    Quantity
-                                </div>
-                                <div style={{ fontSize: 12, color: 'var(--tg-theme-text-color, #111827)', opacity: 0.65 }}>
+                                <div style={{ fontSize: 13, fontWeight: 500 }}>Quantity</div>
+                                <div
+                                    style={{
+                                        fontSize: 12,
+                                        color: 'var(--tg-theme-text-color, #111827)',
+                                        opacity: 0.65,
+                                    }}
+                                >
                                     ${props.pricePerUnit} / pair
                                 </div>
                             </div>
@@ -205,7 +242,8 @@ export const ecommerceScreen = defineWidgetScreen({
                                 style={{
                                     display: 'inline-flex',
                                     alignItems: 'center',
-                                    background: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.14))',
+                                    background:
+                                        'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.14))',
                                     borderRadius: 8,
                                     padding: 3,
                                     gap: 4,
@@ -229,7 +267,8 @@ export const ecommerceScreen = defineWidgetScreen({
                                         boxSizing: 'border-box',
                                         borderRadius: 6,
                                         border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
-                                        background: 'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
+                                        background:
+                                            'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
                                         color: 'var(--tg-theme-text-color, inherit)',
                                         display: 'inline-flex',
                                         alignItems: 'center',
@@ -246,7 +285,15 @@ export const ecommerceScreen = defineWidgetScreen({
                                         style: { display: 'block', margin: 'auto' },
                                     })}
                                 </button>
-                                <span id="ecom-qty" style={{ minWidth: 28, textAlign: 'center', fontWeight: 600, fontSize: 14 }}>
+                                <span
+                                    id="ecom-qty"
+                                    style={{
+                                        minWidth: 28,
+                                        textAlign: 'center',
+                                        fontWeight: 600,
+                                        fontSize: 14,
+                                    }}
+                                >
                                     {props.quantity}
                                 </span>
                                 <button
@@ -266,7 +313,8 @@ export const ecommerceScreen = defineWidgetScreen({
                                         boxSizing: 'border-box',
                                         borderRadius: 6,
                                         border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
-                                        background: 'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
+                                        background:
+                                            'var(--tg-theme-section-bg-color, var(--tg-theme-bg-color, #ffffff))',
                                         color: 'var(--tg-theme-text-color, inherit)',
                                         display: 'inline-flex',
                                         alignItems: 'center',
@@ -289,9 +337,22 @@ export const ecommerceScreen = defineWidgetScreen({
                         <Divider />
 
                         {/* Order total */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                alignItems: 'center',
+                            }}
+                        >
                             <span style={{ fontSize: 14, fontWeight: 600 }}>Total:</span>
-                            <span id="ecom-total" style={{ fontSize: 20, fontWeight: 800, color: 'var(--tg-theme-link-color, var(--tg-theme-text-color, #2481cc))' }}>
+                            <span
+                                id="ecom-total"
+                                style={{
+                                    fontSize: 20,
+                                    fontWeight: 800,
+                                    color: 'var(--tg-theme-link-color, var(--tg-theme-text-color, #2481cc))',
+                                }}
+                            >
                                 ${total}
                             </span>
                         </div>

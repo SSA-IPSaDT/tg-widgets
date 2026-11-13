@@ -68,9 +68,7 @@ export const cardsScreen = defineWidgetScreen({
                             })}
                         />
                     </div>
-                    <CardDescription>
-                        Summary of activity over the last 30 days
-                    </CardDescription>
+                    <CardDescription>Summary of activity over the last 30 days</CardDescription>
                 </CardHeader>
                 <CardContent>
                     <div
@@ -132,9 +130,7 @@ export const cardsScreen = defineWidgetScreen({
                             >
                                 Transactions
                             </div>
-                            <div style={{ fontSize: 16, fontWeight: 700 }}>
-                                142
-                            </div>
+                            <div style={{ fontSize: 16, fontWeight: 700 }}>142</div>
                         </div>
                         <div
                             style={{
@@ -152,9 +148,7 @@ export const cardsScreen = defineWidgetScreen({
                             >
                                 Conversion
                             </div>
-                            <div style={{ fontSize: 16, fontWeight: 700 }}>
-                                98.4%
-                            </div>
+                            <div style={{ fontSize: 16, fontWeight: 700 }}>98.4%</div>
                         </div>
                     </div>
                 </CardContent>
@@ -167,12 +161,7 @@ export const cardsScreen = defineWidgetScreen({
                             boxSizing: 'border-box',
                         }}
                     >
-                        <Button
-                            id="btn-statement"
-                            variant="secondary"
-                            fullWidth
-                            size="md"
-                        >
+                        <Button id="btn-statement" variant="secondary" fullWidth size="md">
                             Statement
                         </Button>
                         <Button

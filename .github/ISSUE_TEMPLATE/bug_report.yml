@@ -1,87 +1,87 @@
 name: 🐛 Bug Report
 description: Report a bug, broken styling, runtime error, or unexpected behavior in @ipsadt/tg-widgets
-title: "fix: [Short bug summary]"
-labels: ["bug", "needs-triage"]
+title: 'fix: [Short bug summary]'
+labels: ['bug', 'needs-triage']
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Thanks for taking the time to report an issue! Please provide as much detail as possible so we can reproduce and fix it quickly.
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for taking the time to report an issue! Please provide as much detail as possible so we can reproduce and fix it quickly.
 
-  - type: dropdown
-    id: runtime
-    attributes:
-      label: JavaScript Runtime
-      description: Which runtime are you using?
-      options:
-        - Bun (>= 1.2.0)
-        - Node.js (>= 20.0.0)
-        - Deno (>= 1.40.0)
-        - Other (please specify in details)
-    validations:
-      required: true
-
-  - type: input
-    id: package-version
-    attributes:
-      label: Package Version
-      description: What version of `@ipsadt/tg-widgets` are you running? (e.g. 0.1.0)
-      placeholder: "0.1.0"
-    validations:
-      required: true
-
-  - type: dropdown
-    id: tg-client
-    attributes:
-      label: Telegram Client Platform
-      description: On which Telegram client does the issue occur?
-      options:
-        - All platforms
-        - Telegram for iOS
-        - Telegram for Android
-        - Telegram Desktop (macOS / Windows / Linux)
-        - Telegram Web (A / K)
-    validations:
-      required: true
-
-  - type: textarea
-    id: description
-    attributes:
-      label: Bug Description & Reproduction Steps
-      description: Clear and concise description of what happened and steps to reproduce.
-      placeholder: |
-        1. Create a widget with Button and Card...
-        2. Call `ctx.widgets.send('screenId')`...
-        3. Click the button on Telegram iOS...
-        4. See error or clipping...
-    validations:
-      required: true
-
-  - type: textarea
-    id: code-snippet
-    attributes:
-      label: Minimal Reproducible Code
-      description: Paste a minimal TSX / code snippet demonstrating the bug.
-      render: tsx
-      placeholder: |
-        export const MyBubble = () => (
-          <WidgetLayout>
-            <Button variant="primary">Click</Button>
-          </WidgetLayout>
-        );
-
-  - type: textarea
-    id: expected-behavior
-    attributes:
-      label: Expected Behavior
-      description: What did you expect to happen instead?
-
-  - type: checkboxes
-    id: checklist
-    attributes:
-      label: Self-Check
-      options:
-        - label: I have verified this is not an issue with my Telegram Bot Token or Bot API limits.
+    - type: dropdown
+      id: runtime
+      attributes:
+          label: JavaScript Runtime
+          description: Which runtime are you using?
+          options:
+              - Bun (>= 1.2.0)
+              - Node.js (>= 20.0.0)
+              - Deno (>= 1.40.0)
+              - Other (please specify in details)
+      validations:
           required: true
-        - label: I searched existing issues and confirmed this bug has not already been reported.
+
+    - type: input
+      id: package-version
+      attributes:
+          label: Package Version
+          description: What version of `@ipsadt/tg-widgets` are you running? (e.g. 0.1.0)
+          placeholder: '0.1.0'
+      validations:
           required: true
+
+    - type: dropdown
+      id: tg-client
+      attributes:
+          label: Telegram Client Platform
+          description: On which Telegram client does the issue occur?
+          options:
+              - All platforms
+              - Telegram for iOS
+              - Telegram for Android
+              - Telegram Desktop (macOS / Windows / Linux)
+              - Telegram Web (A / K)
+      validations:
+          required: true
+
+    - type: textarea
+      id: description
+      attributes:
+          label: Bug Description & Reproduction Steps
+          description: Clear and concise description of what happened and steps to reproduce.
+          placeholder: |
+              1. Create a widget with Button and Card...
+              2. Call `ctx.widgets.send('screenId')`...
+              3. Click the button on Telegram iOS...
+              4. See error or clipping...
+      validations:
+          required: true
+
+    - type: textarea
+      id: code-snippet
+      attributes:
+          label: Minimal Reproducible Code
+          description: Paste a minimal TSX / code snippet demonstrating the bug.
+          render: tsx
+          placeholder: |
+              export const MyBubble = () => (
+                <WidgetLayout>
+                  <Button variant="primary">Click</Button>
+                </WidgetLayout>
+              );
+
+    - type: textarea
+      id: expected-behavior
+      attributes:
+          label: Expected Behavior
+          description: What did you expect to happen instead?
+
+    - type: checkboxes
+      id: checklist
+      attributes:
+          label: Self-Check
+          options:
+              - label: I have verified this is not an issue with my Telegram Bot Token or Bot API limits.
+                required: true
+              - label: I searched existing issues and confirmed this bug has not already been reported.
+                required: true

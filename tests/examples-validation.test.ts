@@ -36,7 +36,8 @@ describe('Examples Validation Suite', () => {
                 expect(typeof screen.component).toBe('function');
             });
 
-            const getProps = () => (anyScreen.initialState ? anyScreen.initialState() : {}) as never;
+            const getProps = () =>
+                (anyScreen.initialState ? anyScreen.initialState() : {}) as never;
 
             it('renders markup that strictly complies with Profile 1 (no <input>, <textarea>, <select>)', () => {
                 const markup = screen.component(getProps());

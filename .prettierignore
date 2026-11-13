@@ -1,0 +1,8 @@
+dist
+node_modules
+.git
+.cache
+bun.lock
+bun.lockb
+*.min.js
+*.pkl

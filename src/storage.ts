@@ -10,17 +10,8 @@ export interface WidgetScreenRecord<TState = Record<string, unknown>> {
  * instead of in-memory caching.
  */
 export interface WidgetsStorage {
-    get(
-        key: string,
-    ):
-        | Promise<WidgetScreenRecord | undefined>
-        | WidgetScreenRecord
-        | undefined;
-    set(
-        key: string,
-        value: WidgetScreenRecord,
-        ttlSeconds?: number,
-    ): Promise<void> | void;
+    get(key: string): Promise<WidgetScreenRecord | undefined> | WidgetScreenRecord | undefined;
+    set(key: string, value: WidgetScreenRecord, ttlSeconds?: number): Promise<void> | void;
     delete(key: string): Promise<void> | void;
     has?(key: string): Promise<boolean> | boolean;
     clear?(): Promise<void> | void;
@@ -82,11 +73,7 @@ export class MemoryWidgetsStorage implements WidgetsStorage {
         return item.record;
     }
 
-    public set(
-        key: string,
-        value: WidgetScreenRecord,
-        ttlSeconds?: number,
-    ): void {
+    public set(key: string, value: WidgetScreenRecord, ttlSeconds?: number): void {
         this.entries.delete(key);
 
         // Enforce max entry limit by evicting oldest item
@@ -97,8 +84,7 @@ export class MemoryWidgetsStorage implements WidgetsStorage {
             }
         }
 
-        const ttlMs =
-            ttlSeconds !== undefined ? ttlSeconds * 1000 : this.defaultTtlMs;
+        const ttlMs = ttlSeconds !== undefined ? ttlSeconds * 1000 : this.defaultTtlMs;
         const expiresAt = ttlMs > 0 ? Date.now() + ttlMs : undefined;
 
         this.entries.set(key, {

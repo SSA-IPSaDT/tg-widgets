@@ -50,12 +50,7 @@ export const Radio = ({
                 stroke="var(--tg-theme-button-color, #2481cc)"
                 strokeWidth="2"
             />
-            <circle
-                cx="10"
-                cy="10"
-                r="5"
-                fill="var(--tg-theme-button-color, #2481cc)"
-            />
+            <circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color, #2481cc)" />
         </svg>
     ) : (
         <svg
@@ -113,11 +108,7 @@ export const Radio = ({
                         gap: 2,
                     }}
                 >
-                    {label && (
-                        <span style={{ fontSize: 14, fontWeight: 500 }}>
-                            {label}
-                        </span>
-                    )}
+                    {label && <span style={{ fontSize: 14, fontWeight: 500 }}>{label}</span>}
                     {description && (
                         <span
                             class="tg-description"

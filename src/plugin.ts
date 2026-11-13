@@ -9,11 +9,7 @@ import {
     registerCodecKeys,
     unpackState,
 } from './codec';
-import {
-    inspectWidgetSize,
-    inspectWidgetSizeAsync,
-    type WidgetSizeReport,
-} from './jsx';
+import { inspectWidgetSize, inspectWidgetSizeAsync, type WidgetSizeReport } from './jsx';
 import {
     DEFAULT_MINIFY_OPTIONS,
     minifyHtml,
@@ -37,8 +33,7 @@ export interface WidgetsLogger {
 const defaultLogger: WidgetsLogger = {
     info: (msg, ...args) => console.log(`[telegram-widgets] ${msg}`, ...args),
     warn: (msg, ...args) => console.warn(`[telegram-widgets] ${msg}`, ...args),
-    error: (msg, ...args) =>
-        console.error(`[telegram-widgets] ${msg}`, ...args),
+    error: (msg, ...args) => console.error(`[telegram-widgets] ${msg}`, ...args),
 };
 
 /**
@@ -46,11 +41,7 @@ const defaultLogger: WidgetsLogger = {
  * - 'prod' | 'production': Optimized for minimal byte sizes, full Terser minification, CSS purging, and strict limit checks.
  * - 'dev' | 'development': Optimized for readability, developer ergonomics, uncompressed JSON states, and non-blocking warnings.
  */
-export type PluginEnvironmentMode =
-    | 'production'
-    | 'development'
-    | 'prod'
-    | 'dev';
+export type PluginEnvironmentMode = 'production' | 'development' | 'prod' | 'dev';
 
 /**
  * Codec compression mode.
@@ -123,12 +114,7 @@ export interface WidgetMinifyConfig extends WidgetMinifyOptions {
     engine?: MinifierEngine;
 }
 
-export type MinifierConfig =
-    | boolean
-    | MinifierEngine
-    | 'dev'
-    | 'prod'
-    | WidgetMinifyConfig;
+export type MinifierConfig = boolean | MinifierEngine | 'dev' | 'prod' | WidgetMinifyConfig;
 
 /**
  * Configuration for validating payload byte limits against Telegram's 4096-byte deflate constraint.
@@ -146,11 +132,7 @@ export interface SizeLimitOptions {
      * - 'ignore': Silently ignores size violations.
      * Default: 'error' in prod, 'warn' in dev.
      */
-    onExceeded?:
-        | 'error'
-        | 'warn'
-        | 'ignore'
-        | ((report: WidgetSizeReport) => void);
+    onExceeded?: 'error' | 'warn' | 'ignore' | ((report: WidgetSizeReport) => void);
 
     /**
      * Log size metrics on every send / render (default: false in prod, true in dev).
@@ -222,11 +204,7 @@ export interface ResolvedPluginConfig {
     };
     sizeLimit: {
         maxBytes: number;
-        onExceeded:
-            | 'error'
-            | 'warn'
-            | 'ignore'
-            | ((report: WidgetSizeReport) => void);
+        onExceeded: 'error' | 'warn' | 'ignore' | ((report: WidgetSizeReport) => void);
         autoInspect: boolean;
     };
     defaults: WidgetDefaults;
@@ -255,13 +233,7 @@ export interface TelegramWidgetQueryPayload {
     message_id?: number;
     inline_message_id?: string;
     chat_instance: string;
-    chat_type?:
-        | 'sender'
-        | 'private'
-        | 'group'
-        | 'supergroup'
-        | 'channel'
-        | string;
+    chat_type?: 'sender' | 'private' | 'group' | 'supergroup' | 'channel' | string;
     type?: unknown;
     data?: string;
 }
@@ -312,9 +284,7 @@ export interface UpdateWidgetOptions<TProps> {
     compressState?: boolean;
 }
 
-export interface WidgetsController<
-    TScreens extends Record<string, AnyWidgetScreen>,
-> {
+export interface WidgetsController<TScreens extends Record<string, AnyWidgetScreen>> {
     /**
      * Sends a rendered widget message to the specified (or current) chat.
      */
@@ -381,9 +351,8 @@ export interface WidgetsController<
     readonly config: ResolvedPluginConfig;
 }
 
-export type BubblesController<
-    TScreens extends Record<string, AnyWidgetScreen>,
-> = WidgetsController<TScreens>;
+export type BubblesController<TScreens extends Record<string, AnyWidgetScreen>> =
+    WidgetsController<TScreens>;
 
 export type WidgetsFlavor<TScreens extends Record<string, AnyWidgetScreen>> = {
     widgets: WidgetsController<TScreens>;
@@ -393,9 +362,7 @@ export type WidgetsFlavor<TScreens extends Record<string, AnyWidgetScreen>> = {
 export type BubblesFlavor<TScreens extends Record<string, AnyWidgetScreen>> =
     WidgetsFlavor<TScreens>;
 
-export interface CreateWidgetsPluginOptions<
-    TScreens extends Record<string, AnyWidgetScreen>,
-> {
+export interface CreateWidgetsPluginOptions<TScreens extends Record<string, AnyWidgetScreen>> {
     /**
      * Dictionary of widget screens registered in the bot.
      */
@@ -480,20 +447,16 @@ const getStorageKey = (
 const resolvePluginConfig = (
     options: CreateWidgetsPluginOptions<Record<string, AnyWidgetScreen>>,
 ): ResolvedPluginConfig => {
-    const isExplicitProd =
-        options.mode === 'prod' || options.mode === 'production';
-    const isExplicitDev =
-        options.mode === 'dev' || options.mode === 'development';
-    const isProd =
-        isExplicitProd ||
-        (!isExplicitDev && process.env.NODE_ENV === 'production');
+    const isExplicitProd = options.mode === 'prod' || options.mode === 'production';
+    const isExplicitDev = options.mode === 'dev' || options.mode === 'development';
+    const isProd = isExplicitProd || (!isExplicitDev && process.env.NODE_ENV === 'production');
 
     const resolvedMode: 'prod' | 'dev' = isProd ? 'prod' : 'dev';
     const debug = Boolean(
         options.debug ||
-            options.logger === 'debug' ||
-            options.logger === 'verbose' ||
-            options.logger === true,
+        options.logger === 'debug' ||
+        options.logger === 'verbose' ||
+        options.logger === true,
     );
 
     // 1. Resolve Codec settings
@@ -524,8 +487,7 @@ const resolvePluginConfig = (
                 Object.entries(customKeys).map(([k, v]) => [v, k]),
             );
         }
-        decompressActionPayload =
-            options.codec.decompressActionPayload !== false;
+        decompressActionPayload = options.codec.decompressActionPayload !== false;
         injectClientSnippet = Boolean(options.codec.injectClientSnippet);
     } else {
         // Default: only compress if explicitly requested via mode: 'prod'
@@ -534,14 +496,12 @@ const resolvePluginConfig = (
 
     const isCodecActive = codecMode === 'prod';
     compressState =
-        typeof options.codec === 'object' &&
-        options.codec?.compressState !== undefined
+        typeof options.codec === 'object' && options.codec?.compressState !== undefined
             ? options.codec.compressState
             : isCodecActive;
 
     compressAnswer =
-        typeof options.codec === 'object' &&
-        options.codec?.compressAnswer !== undefined
+        typeof options.codec === 'object' && options.codec?.compressAnswer !== undefined
             ? options.codec.compressAnswer
             : isCodecActive;
 
@@ -559,23 +519,15 @@ const resolvePluginConfig = (
     } else if (options.minifier === 'fast') {
         minifierEnabled = true;
         minifierEngine = 'fast';
-    } else if (
-        options.minifier === 'terser' ||
-        options.minifier === 'prod'
-    ) {
+    } else if (options.minifier === 'terser' || options.minifier === 'prod') {
         minifierEnabled = true;
         minifierEngine = 'terser';
     } else if (options.minifier === 'dev') {
         minifierEnabled = false;
         minifierEngine = 'none';
-    } else if (
-        typeof options.minifier === 'object' &&
-        options.minifier !== null
-    ) {
+    } else if (typeof options.minifier === 'object' && options.minifier !== null) {
         minifierEnabled = options.minifier.enabled ?? true;
-        minifierEngine =
-            options.minifier.engine ??
-            (minifierEnabled ? 'terser' : 'none');
+        minifierEngine = options.minifier.engine ?? (minifierEnabled ? 'terser' : 'none');
         minifierOptions = {
             ...DEFAULT_MINIFY_OPTIONS,
             ...options.minifier,
@@ -593,20 +545,13 @@ const resolvePluginConfig = (
 
     // 3. Resolve Size Limit settings
     let maxBytes = 4096;
-    let onExceeded:
-        | 'error'
-        | 'warn'
-        | 'ignore'
-        | ((report: WidgetSizeReport) => void) =
+    let onExceeded: 'error' | 'warn' | 'ignore' | ((report: WidgetSizeReport) => void) =
         resolvedMode === 'prod' ? 'error' : 'warn';
     let autoInspect = debug;
 
     if (typeof options.sizeLimit === 'number') {
         maxBytes = options.sizeLimit;
-    } else if (
-        typeof options.sizeLimit === 'object' &&
-        options.sizeLimit !== null
-    ) {
+    } else if (typeof options.sizeLimit === 'object' && options.sizeLimit !== null) {
         if (options.sizeLimit.maxBytes !== undefined) {
             maxBytes = options.sizeLimit.maxBytes;
         }
@@ -645,9 +590,7 @@ const resolvePluginConfig = (
     };
 };
 
-export const createTelegramWidgetsPlugin = <
-    TScreens extends Record<string, AnyWidgetScreen>,
->(
+export const createTelegramWidgetsPlugin = <TScreens extends Record<string, AnyWidgetScreen>>(
     options: CreateWidgetsPluginOptions<TScreens>,
 ): {
     middleware: MiddlewareFn<Context & WidgetsFlavor<TScreens>>;
@@ -670,18 +613,11 @@ export const createTelegramWidgetsPlugin = <
         options.debug === true
     ) {
         logger = {
-            info: (msg, ...args) =>
-                console.log(`[telegram-widgets:debug] ${msg}`, ...args),
-            warn: (msg, ...args) =>
-                console.warn(`[telegram-widgets:warn] ${msg}`, ...args),
-            error: (msg, ...args) =>
-                console.error(`[telegram-widgets:error] ${msg}`, ...args),
+            info: (msg, ...args) => console.log(`[telegram-widgets:debug] ${msg}`, ...args),
+            warn: (msg, ...args) => console.warn(`[telegram-widgets:warn] ${msg}`, ...args),
+            error: (msg, ...args) => console.error(`[telegram-widgets:error] ${msg}`, ...args),
         };
-    } else if (
-        options.logger &&
-        typeof options.logger === 'object' &&
-        'info' in options.logger
-    ) {
+    } else if (options.logger && typeof options.logger === 'object' && 'info' in options.logger) {
         logger = options.logger;
     } else {
         logger = defaultLogger;
@@ -689,10 +625,7 @@ export const createTelegramWidgetsPlugin = <
 
     // Resolve storage
     let storage: WidgetsStorage;
-    if (
-        options.storage &&
-        typeof (options.storage as WidgetsStorage).get === 'function'
-    ) {
+    if (options.storage && typeof (options.storage as WidgetsStorage).get === 'function') {
         storage = options.storage as WidgetsStorage;
     } else if (options.storage && typeof options.storage === 'object') {
         const storageOpts = options.storage as StorageOptions;
@@ -737,26 +670,18 @@ export const createTelegramWidgetsPlugin = <
             if (typeof overrideMinifier === 'boolean') {
                 isMinifyEnabled = overrideMinifier;
                 engine = overrideMinifier ? 'terser' : 'none';
-            } else if (
-                overrideMinifier === 'none' ||
-                overrideMinifier === 'dev'
-            ) {
+            } else if (overrideMinifier === 'none' || overrideMinifier === 'dev') {
                 isMinifyEnabled = false;
                 engine = 'none';
             } else if (overrideMinifier === 'fast') {
                 isMinifyEnabled = true;
                 engine = 'fast';
-            } else if (
-                overrideMinifier === 'terser' ||
-                overrideMinifier === 'prod'
-            ) {
+            } else if (overrideMinifier === 'terser' || overrideMinifier === 'prod') {
                 isMinifyEnabled = true;
                 engine = 'terser';
             } else if (typeof overrideMinifier === 'object') {
                 isMinifyEnabled = overrideMinifier.enabled ?? true;
-                engine =
-                    overrideMinifier.engine ??
-                    (isMinifyEnabled ? 'terser' : 'none');
+                engine = overrideMinifier.engine ?? (isMinifyEnabled ? 'terser' : 'none');
                 customOpts = { ...customOpts, ...overrideMinifier };
             }
         }
@@ -790,10 +715,7 @@ export const createTelegramWidgetsPlugin = <
 
         if (typeof overrideSizeLimit === 'number') {
             maxBytes = overrideSizeLimit;
-        } else if (
-            typeof overrideSizeLimit === 'object' &&
-            overrideSizeLimit !== null
-        ) {
+        } else if (typeof overrideSizeLimit === 'object' && overrideSizeLimit !== null) {
             if (overrideSizeLimit.maxBytes !== undefined) {
                 maxBytes = overrideSizeLimit.maxBytes;
             }
@@ -808,10 +730,7 @@ export const createTelegramWidgetsPlugin = <
         const report = inspectWidgetSize(finalHtml, { minify: false });
 
         if (autoInspect) {
-            const pct = (
-                (report.compressedByteLength / maxBytes) *
-                100
-            ).toFixed(1);
+            const pct = ((report.compressedByteLength / maxBytes) * 100).toFixed(1);
             logger.info(
                 `Screen "${screenId}" size: ${report.compressedByteLength} / ${maxBytes} B (${pct}%) [raw: ${report.byteLength} B]`,
             );
@@ -833,10 +752,7 @@ export const createTelegramWidgetsPlugin = <
         return report;
     };
 
-    const middleware: MiddlewareFn<Context & WidgetsFlavor<TScreens>> = async (
-        ctx,
-        next,
-    ) => {
+    const middleware: MiddlewareFn<Context & WidgetsFlavor<TScreens>> = async (ctx, next) => {
         const rawApi = ctx.api.raw as unknown as RawWidgetApiMethods;
 
         const controller: WidgetsController<TScreens> = {
@@ -888,37 +804,28 @@ export const createTelegramWidgetsPlugin = <
                 let initState: Record<string, unknown> = {};
 
                 if (screenType === 'dynamic') {
-                    initState = (screen.initialState
-                        ? screen.initialState(sendOpts.props as never)
-                        : {}) as Record<string, unknown>;
+                    initState = (
+                        screen.initialState ? screen.initialState(sendOpts.props as never) : {}
+                    ) as Record<string, unknown>;
 
-                    const shouldCompress =
-                        sendOpts.compressState ?? config.codec.compressState;
+                    const shouldCompress = sendOpts.compressState ?? config.codec.compressState;
 
                     chatData = shouldCompress
-                        ? packState(
-                              screen.id,
-                              initState,
-                              config.codec.customKeys,
-                          )
+                        ? packState(screen.id, initState, config.codec.customKeys)
                         : JSON.stringify({
                               ...initState,
                               __screen: screen.id,
                           });
                 } else if (screenType === 'client' && screen.initialState) {
-                    initState = (screen.initialState(
-                        sendOpts.props as never,
-                    ) ?? {}) as Record<string, unknown>;
+                    initState = (screen.initialState(sendOpts.props as never) ?? {}) as Record<
+                        string,
+                        unknown
+                    >;
 
-                    const shouldCompress =
-                        sendOpts.compressState ?? config.codec.compressState;
+                    const shouldCompress = sendOpts.compressState ?? config.codec.compressState;
 
                     chatData = shouldCompress
-                        ? packState(
-                              screen.id,
-                              initState,
-                              config.codec.customKeys,
-                          )
+                        ? packState(screen.id, initState, config.codec.customKeys)
                         : JSON.stringify({
                               ...initState,
                               __screen: screen.id,
@@ -930,9 +837,7 @@ export const createTelegramWidgetsPlugin = <
                 // - 'static' and 'client' screens disable queries by default (purely local)
                 const defaultAllowQueries = screenType === 'dynamic';
                 const allowQueries =
-                    sendOpts.allowQueries ??
-                    config.defaults.allowQueries ??
-                    defaultAllowQueries;
+                    sendOpts.allowQueries ?? config.defaults.allowQueries ?? defaultAllowQueries;
 
                 const parseMode =
                     sendOpts.parseMode ??
@@ -959,18 +864,10 @@ export const createTelegramWidgetsPlugin = <
 
                 // Storage allocation:
                 // Only persist state for dynamic screens; bypass storage for static and client-only
-                const shouldSaveStorage =
-                    screenType === 'dynamic' && sendOpts.skipStorage !== true;
+                const shouldSaveStorage = screenType === 'dynamic' && sendOpts.skipStorage !== true;
 
-                if (
-                    shouldSaveStorage &&
-                    result &&
-                    typeof result.message_id === 'number'
-                ) {
-                    const storageKey = getStorageKey(
-                        targetChatId,
-                        result.message_id,
-                    );
+                if (shouldSaveStorage && result && typeof result.message_id === 'number') {
+                    const storageKey = getStorageKey(targetChatId, result.message_id);
                     if (storageKey) {
                         await storage.set(storageKey, {
                             screenId: screen.id,
@@ -996,9 +893,7 @@ export const createTelegramWidgetsPlugin = <
                     ...sendOpts,
                     replyParameters:
                         sendOpts.replyParameters ??
-                        (currentMsgId
-                            ? { message_id: currentMsgId }
-                            : undefined),
+                        (currentMsgId ? { message_id: currentMsgId } : undefined),
                 });
             },
 
@@ -1078,20 +973,16 @@ export const createTelegramWidgetsPlugin = <
                 const currentState =
                     updateOpts.state ??
                     (updateOpts.props && screen.initialState
-                        ? (screen.initialState(
-                              updateOpts.props as never,
-                          ) as Record<string, unknown>)
+                        ? (screen.initialState(updateOpts.props as never) as Record<
+                              string,
+                              unknown
+                          >)
                         : (existingRecord?.state ?? {}));
 
-                const shouldCompress =
-                    updateOpts.compressState ?? config.codec.compressState;
+                const shouldCompress = updateOpts.compressState ?? config.codec.compressState;
 
                 const chatData = shouldCompress
-                    ? packState(
-                          screen.id,
-                          currentState,
-                          config.codec.customKeys,
-                      )
+                    ? packState(screen.id, currentState, config.codec.customKeys)
                     : JSON.stringify({
                           ...currentState,
                           __screen: screen.id,
@@ -1124,20 +1015,13 @@ export const createTelegramWidgetsPlugin = <
         ctx.bubbles = controller;
 
         // Process incoming update.widget_query
-        const rawUpdate = ctx.update as unknown as
-            Record<string, unknown> | undefined;
-        if (
-            !rawUpdate ||
-            typeof rawUpdate !== 'object' ||
-            !('widget_query' in rawUpdate)
-        ) {
+        const rawUpdate = ctx.update as unknown as Record<string, unknown> | undefined;
+        if (!rawUpdate || typeof rawUpdate !== 'object' || !('widget_query' in rawUpdate)) {
             await next();
             return;
         }
 
-        const query = rawUpdate.widget_query as
-            | TelegramWidgetQueryPayload
-            | undefined;
+        const query = rawUpdate.widget_query as TelegramWidgetQueryPayload | undefined;
         if (!query) {
             await next();
             return;
@@ -1156,9 +1040,7 @@ export const createTelegramWidgetsPlugin = <
         }
 
         if (!storageKey) {
-            logger.warn(
-                '[telegram-widgets] Missing chat/message identifier in widget_query.',
-            );
+            logger.warn('[telegram-widgets] Missing chat/message identifier in widget_query.');
             await rawApi.answerWidgetQuery({
                 widget_query_id: query.id,
                 data: JSON.stringify({ error: 'MISSING_MESSAGE_CONTEXT' }),
@@ -1170,14 +1052,8 @@ export const createTelegramWidgetsPlugin = <
 
         // Fallback: If not found in storage, attempt to recover screenId and state if embedded in query data
         if (!registeredRecord && query.data && typeof query.data === 'string') {
-            if (
-                query.data.includes('"_s"') ||
-                query.data.includes('"__screen"')
-            ) {
-                const recovered = unpackState(
-                    query.data,
-                    config.codec.customReverseKeys,
-                );
+            if (query.data.includes('"_s"') || query.data.includes('"__screen"')) {
+                const recovered = unpackState(query.data, config.codec.customReverseKeys);
                 if (recovered.screenId) {
                     registeredRecord = {
                         screenId: recovered.screenId,
@@ -1226,20 +1102,14 @@ export const createTelegramWidgetsPlugin = <
         }
 
         // Parse action name and payload with codec support
-        const { action: actionName, payload } = decodeWidgetAction(
-            query.data ?? '',
-            {
-                decompress: config.codec.decompressActionPayload,
-                customReverseMap: config.codec.customReverseKeys,
-            },
-        );
+        const { action: actionName, payload } = decodeWidgetAction(query.data ?? '', {
+            decompress: config.codec.decompressActionPayload,
+            customReverseMap: config.codec.customReverseKeys,
+        });
 
         const actions = (screen.actions ?? {}) as Record<
             string,
-            (
-                c: WidgetActionContext<Record<string, unknown>>,
-                p: unknown,
-            ) => unknown
+            (c: WidgetActionContext<Record<string, unknown>>, p: unknown) => unknown
         >;
         const handler = actions[actionName];
         if (!handler) {
@@ -1276,9 +1146,7 @@ export const createTelegramWidgetsPlugin = <
                 return currentState;
             },
             setState: async (
-                nextState:
-                    | Partial<Record<string, unknown>>
-                    | Record<string, unknown>,
+                nextState: Partial<Record<string, unknown>> | Record<string, unknown>,
             ) => {
                 const merged = { ...currentState, ...nextState };
                 currentState = merged;
@@ -1306,22 +1174,15 @@ export const createTelegramWidgetsPlugin = <
                     .catch((err) => {
                         const msg = String(err);
                         if (!msg.includes('message is not modified')) {
-                            logger.warn(
-                                `Failed to editMessageWidgetData for ${storageKey}`,
-                                err,
-                            );
+                            logger.warn(`Failed to editMessageWidgetData for ${storageKey}`, err);
                         }
                     });
             },
             answer: async (data?: unknown) => {
                 isAnswered = true;
                 if (data && typeof data === 'object' && 'text' in data) {
-                    const notifyText = String(
-                        (data as { text: unknown }).text,
-                    );
-                    const showAlert = Boolean(
-                        (data as { show_alert?: boolean }).show_alert,
-                    );
+                    const notifyText = String((data as { text: unknown }).text);
+                    const showAlert = Boolean((data as { show_alert?: boolean }).show_alert);
                     try {
                         await (rawApi as any).answerCallbackQuery?.({
                             callback_query_id: query.id,
@@ -1341,18 +1202,13 @@ export const createTelegramWidgetsPlugin = <
                     typeof responseData === 'object' &&
                     responseData !== null
                 ) {
-                    serialized = packPayload(
-                        responseData,
-                        config.codec.customKeys,
-                    );
+                    serialized = packPayload(responseData, config.codec.customKeys);
                 } else {
                     serialized = JSON.stringify(responseData);
                 }
 
                 if (config.debug) {
-                    logger.info(
-                        `Answering query #${query.id} with data: ${serialized}`,
-                    );
+                    logger.info(`Answering query #${query.id} with data: ${serialized}`);
                 }
 
                 await rawApi.answerWidgetQuery({

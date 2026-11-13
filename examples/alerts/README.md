@@ -21,31 +21,27 @@ Source code: [`screen.tsx`](./screen.tsx)
 import { Alert, defineStaticWidgetScreen, h, WidgetLayout } from '@ipsadt/tg-widgets';
 
 export const alertsScreen = defineStaticWidgetScreen({
-  id: 'alerts',
-  component: () => (
-    <WidgetLayout gap={8} fullWidth padding="8px 10px">
-      <Alert
-        variant="info"
-        title="Information"
-        description="Widgets adapt to user theme colors."
-      />
-      <Alert
-        variant="success"
-        title="Saved"
-        description="Changes synchronized successfully."
-      />
-      <Alert
-        variant="warning"
-        title="Warning"
-        description="Check parameters before proceeding."
-      />
-      <Alert
-        variant="destructive"
-        title="Error"
-        description="Action rejected by server."
-      />
-    </WidgetLayout>
-  ),
+    id: 'alerts',
+    component: () => (
+        <WidgetLayout gap={8} fullWidth padding="8px 10px">
+            <Alert
+                variant="info"
+                title="Information"
+                description="Widgets adapt to user theme colors."
+            />
+            <Alert
+                variant="success"
+                title="Saved"
+                description="Changes synchronized successfully."
+            />
+            <Alert
+                variant="warning"
+                title="Warning"
+                description="Check parameters before proceeding."
+            />
+            <Alert variant="destructive" title="Error" description="Action rejected by server." />
+        </WidgetLayout>
+    ),
 });
 ```
 

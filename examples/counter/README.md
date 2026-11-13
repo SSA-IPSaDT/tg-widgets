@@ -10,11 +10,11 @@ Source code: [`screen.tsx`](./screen.tsx)
 
 1. `<Script fn={clientCounterScript} args={[{ count }]} />` serializes the TypeScript function into a self-executing inline script (IIFE) inside the widget.
 2. Clicking a button triggers client-side optimistic UI updates:
-   ```ts
-   window.TelegramWidget.request('inc').then((response) => {
-     // Synchronize response payload with client state
-   });
-   ```
+    ```ts
+    window.TelegramWidget.request('inc').then((response) => {
+        // Synchronize response payload with client state
+    });
+    ```
 3. The server receives the widget action via `update.widget_query`, runs the `inc` handler, persists updated state to storage, and responds via `answerWidgetQuery`.
 
 ---

@@ -32,15 +32,9 @@ export interface RawWidgetApiMethods {
         public_data?: string;
     }): Promise<unknown>;
 
-    editSharedWidgetData?(params: {
-        widget_id?: string;
-        public_data: string;
-    }): Promise<unknown>;
+    editSharedWidgetData?(params: { widget_id?: string; public_data: string }): Promise<unknown>;
 
-    answerWidgetQuery(params: {
-        widget_query_id: string;
-        data?: string;
-    }): Promise<unknown>;
+    answerWidgetQuery(params: { widget_query_id: string; data?: string }): Promise<unknown>;
 }
 
 export interface WidgetActionContext<TState> {
@@ -49,13 +43,7 @@ export interface WidgetActionContext<TState> {
     messageId?: number;
     inlineMessageId?: string;
     chatInstance: string;
-    chatType?:
-        | 'sender'
-        | 'private'
-        | 'group'
-        | 'supergroup'
-        | 'channel'
-        | string;
+    chatType?: 'sender' | 'private' | 'group' | 'supergroup' | 'channel' | string;
     from: {
         id: number;
         firstName: string;
@@ -72,11 +60,7 @@ export interface WidgetActionContext<TState> {
 
 export type BubbleActionContext<TState> = WidgetActionContext<TState>;
 
-export type WidgetActionHandler<
-    TState,
-    TPayload = unknown,
-    TResult = unknown,
-> = (
+export type WidgetActionHandler<TState, TPayload = unknown, TResult = unknown> = (
     ctx: WidgetActionContext<TState>,
     payload?: TPayload,
 ) => Promise<TResult> | TResult;
@@ -119,8 +103,10 @@ export interface ClientWidgetScreen<TProps = unknown, TState = unknown> {
     initialState?: (props?: TProps) => TState;
 }
 
-export type ClientBubbleScreen<TProps = unknown, TState = unknown> =
-    ClientWidgetScreen<TProps, TState>;
+export type ClientBubbleScreen<TProps = unknown, TState = unknown> = ClientWidgetScreen<
+    TProps,
+    TState
+>;
 
 /**
  * Dynamic widget screen with bidirectional bot communication and state persistence.
@@ -177,9 +163,7 @@ export type AnyBubbleScreen = AnyWidgetScreen;
 /**
  * Determines the architectural paradigm of a widget screen.
  */
-export const getWidgetScreenType = (
-    screen: AnyWidgetScreen,
-): WidgetScreenType => {
+export const getWidgetScreenType = (screen: AnyWidgetScreen): WidgetScreenType => {
     if (screen.type) {
         return screen.type;
     }
@@ -224,10 +208,7 @@ export const defineStaticBubbleScreen = defineStaticWidgetScreen;
  * - Server storage is bypassed (0 server sessions/records stored)
  * - Client scripts in <script> are fully minified via Terser/fast engine
  */
-export const defineClientWidgetScreen = <
-    TProps = unknown,
-    TState = unknown,
->(options: {
+export const defineClientWidgetScreen = <TProps = unknown, TState = unknown>(options: {
     id: string;
     component: (props: TProps) => string;
     initialState?: (props: TProps) => TState;
@@ -235,9 +216,7 @@ export const defineClientWidgetScreen = <
     type: 'client',
     id: options.id,
     component: options.component,
-    initialState: options.initialState as
-        | ((props?: TProps) => TState)
-        | undefined,
+    initialState: options.initialState as ((props?: TProps) => TState) | undefined,
 });
 
 export const defineClientBubbleScreen = defineClientWidgetScreen;
@@ -249,10 +228,10 @@ export const defineClientBubbleScreen = defineClientWidgetScreen;
 export const defineDynamicWidgetScreen = <
     TProps = unknown,
     TState = unknown,
-    TActions extends Record<
+    TActions extends Record<string, WidgetActionHandler<TState, unknown, unknown>> = Record<
         string,
         WidgetActionHandler<TState, unknown, unknown>
-    > = Record<string, WidgetActionHandler<TState, unknown, unknown>>,
+    >,
 >(options: {
     id: string;
     component: (props: TProps) => string;
@@ -275,10 +254,10 @@ export const defineDynamicBubbleScreen = defineDynamicWidgetScreen;
 export const defineWidgetScreen = <
     TProps = unknown,
     TState = unknown,
-    TActions extends Record<
+    TActions extends Record<string, WidgetActionHandler<TState, unknown, unknown>> = Record<
         string,
         WidgetActionHandler<TState, unknown, unknown>
-    > = Record<string, WidgetActionHandler<TState, unknown, unknown>>,
+    >,
 >(options: {
     type?: WidgetScreenType;
     id: string;
@@ -298,7 +277,7 @@ export const defineWidgetScreen = <
         type,
         id: options.id,
         component: options.component,
-        initialState: (options.initialState ?? (() => ({} as TState))) as (
+        initialState: (options.initialState ?? (() => ({}) as TState)) as (
             props?: TProps,
         ) => TState,
         actions: (options.actions ?? {}) as TActions,

@@ -5,10 +5,7 @@ import {
     createBubblesPlugin,
     type WidgetsLogger,
 } from '../src/plugin';
-import {
-    defineStaticWidgetScreen,
-    defineDynamicWidgetScreen,
-} from '../src/screen';
+import { defineStaticWidgetScreen, defineDynamicWidgetScreen } from '../src/screen';
 import { MemoryWidgetsStorage } from '../src/storage';
 
 describe('Plugin Controller Module', () => {
@@ -289,10 +286,14 @@ describe('Plugin Controller Module', () => {
             expect(syncReport.compressedByteLength).toBeGreaterThan(0);
             expect(syncReport.isValid).toBe(true);
 
-            const asyncReport = await (ctx as any).widgets.renderAsync('hero', { heading: 'Inspect Me' });
+            const asyncReport = await (ctx as any).widgets.renderAsync('hero', {
+                heading: 'Inspect Me',
+            });
             expect(asyncReport.isValid).toBe(true);
 
-            const inspectReport = await (ctx as any).widgets.inspect('hero', { heading: 'Inspect Me' });
+            const inspectReport = await (ctx as any).widgets.inspect('hero', {
+                heading: 'Inspect Me',
+            });
             expect(inspectReport.maxAllowed).toBe(4096);
             expect(inspectReport.isValid).toBe(true);
         });
@@ -301,7 +302,8 @@ describe('Plugin Controller Module', () => {
             const oversizedScreen = defineStaticWidgetScreen({
                 id: 'huge',
                 // Generate uncompressible content exceeding 300 bytes
-                component: () => `<div>${Array.from({ length: 500 }, (_, i) => `<i>${(i * 997) % 1000}</i>`).join('')}</div>`,
+                component: () =>
+                    `<div>${Array.from({ length: 500 }, (_, i) => `<i>${(i * 997) % 1000}</i>`).join('')}</div>`,
             });
 
             const sentCalls: Array<unknown> = [];
@@ -339,7 +341,8 @@ describe('Plugin Controller Module', () => {
 
             const oversizedScreen = defineStaticWidgetScreen({
                 id: 'huge-cb',
-                component: () => `<div>${Array.from({ length: 400 }, (_, i) => `<b>${(i * 31) % 99}</b>`).join('')}</div>`,
+                component: () =>
+                    `<div>${Array.from({ length: 400 }, (_, i) => `<b>${(i * 31) % 99}</b>`).join('')}</div>`,
             });
 
             const plugin = createTelegramWidgetsPlugin({

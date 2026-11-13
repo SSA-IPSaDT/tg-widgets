@@ -12,11 +12,11 @@ Source code: [`screen.tsx`](./screen.tsx)
 2. **100% Native HTML**: Built on standard `<details>` and `<summary>` elements, officially supported in **Telegram QuickJS Profile 1**.
 3. **Zero JavaScript Overhead**: Expanding and collapsing items occurs natively without executing client-side JavaScript or sending network requests.
 4. **Smooth Chevron Transitions**: Uses CSS transforms to rotate the chevron icon when opened:
-   ```css
-   details[open] .tg-accordion-chevron {
-     transform: rotate(90deg) !important;
-   }
-   ```
+    ```css
+    details[open] .tg-accordion-chevron {
+        transform: rotate(90deg) !important;
+    }
+    ```
 5. **Fast Touch Interaction**: Configured with `touch-action: manipulation` to eliminate the 300ms mobile tap delay.
 
 ---
@@ -25,46 +25,46 @@ Source code: [`screen.tsx`](./screen.tsx)
 
 ```tsx
 import {
-  Accordion,
-  AccordionItem,
-  Badge,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Collapsible,
-  defineClientWidgetScreen,
-  h,
-  WidgetLayout,
+    Accordion,
+    AccordionItem,
+    Badge,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+    Collapsible,
+    defineClientWidgetScreen,
+    h,
+    WidgetLayout,
 } from '@ipsadt/tg-widgets';
 
 export const accordionScreen = defineClientWidgetScreen({
-  id: 'accordion',
-  component: () => (
-    <WidgetLayout fullWidth padding="6px 8px">
-      <Card fullWidth>
-        <CardHeader>
-          <CardTitle>Frequently Asked Questions</CardTitle>
-          <CardDescription>Native details and summary elements</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Accordion>
-            <AccordionItem title="How do HTML widgets work?" open={true}>
-              Widgets render directly inside the chat message bubble.
-            </AccordionItem>
-            <Collapsible title="Is internet required?">
-              No, widgets render offline with zero network latency.
-            </Collapsible>
-          </Accordion>
-        </CardContent>
-        <CardFooter>
-          <span>Tap any item to expand details</span>
-        </CardFooter>
-      </Card>
-    </WidgetLayout>
-  ),
+    id: 'accordion',
+    component: () => (
+        <WidgetLayout fullWidth padding="6px 8px">
+            <Card fullWidth>
+                <CardHeader>
+                    <CardTitle>Frequently Asked Questions</CardTitle>
+                    <CardDescription>Native details and summary elements</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Accordion>
+                        <AccordionItem title="How do HTML widgets work?" open={true}>
+                            Widgets render directly inside the chat message bubble.
+                        </AccordionItem>
+                        <Collapsible title="Is internet required?">
+                            No, widgets render offline with zero network latency.
+                        </Collapsible>
+                    </Accordion>
+                </CardContent>
+                <CardFooter>
+                    <span>Tap any item to expand details</span>
+                </CardFooter>
+            </Card>
+        </WidgetLayout>
+    ),
 });
 ```
 

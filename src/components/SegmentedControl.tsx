@@ -24,11 +24,7 @@ export const SegmentedControl = ({
     const selectedId = activeId ?? items[0]?.id;
 
     return (
-        <div
-            id={id}
-            class={`tg-segmented-control ${className}`.trim()}
-            style={style}
-        >
+        <div id={id} class={`tg-segmented-control ${className}`.trim()} style={style}>
             {items.map((item) => {
                 const isActive = item.id === selectedId;
                 return (

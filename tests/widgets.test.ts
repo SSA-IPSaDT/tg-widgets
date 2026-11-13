@@ -88,9 +88,7 @@ describe('@ipsadt/tg-widgets', () => {
         );
 
         const html = h('div', { style, className: 'my-box' }, 'Hello World');
-        expect(html).toBe(
-            `<div style="${css}" class="my-box">Hello World</div>`,
-        );
+        expect(html).toBe(`<div style="${css}" class="my-box">Hello World</div>`);
     });
 
     test('renders Telegram native and Profile 1 UI components correctly without input tags', () => {
@@ -339,9 +337,10 @@ describe('@ipsadt/tg-widgets', () => {
             action: 'msg',
             payload: 'hello',
         });
-        expect(decodeWidgetAction('{"action":"vote","payload":{"id":1}}')).toEqual(
-            { action: 'vote', payload: { id: 1 } },
-        );
+        expect(decodeWidgetAction('{"action":"vote","payload":{"id":1}}')).toEqual({
+            action: 'vote',
+            payload: { id: 1 },
+        });
     });
 
     test('MemoryWidgetsStorage supports LRU eviction and TTL', async () => {
@@ -374,8 +373,7 @@ describe('@ipsadt/tg-widgets', () => {
     test('plugin sends widget, answers actions, and supports pluggable storage', async () => {
         const testScreen = defineWidgetScreen({
             id: 'counter',
-            component: (props: { initial: number }) =>
-                `<div>Count: ${props.initial}</div>`,
+            component: (props: { initial: number }) => `<div>Count: ${props.initial}</div>`,
             initialState: (props: { initial: number }) => ({
                 count: props.initial,
             }),
@@ -416,15 +414,11 @@ describe('@ipsadt/tg-widgets', () => {
                         sentParams = params;
                         return { message_id: 200 };
                     },
-                    editMessageWidgetData: async (
-                        params: Record<string, unknown>,
-                    ) => {
+                    editMessageWidgetData: async (params: Record<string, unknown>) => {
                         editedParams = params;
                         return true;
                     },
-                    answerWidgetQuery: async (
-                        params: Record<string, unknown>,
-                    ) => {
+                    answerWidgetQuery: async (params: Record<string, unknown>) => {
                         answeredParams = params;
                         return true;
                     },
@@ -474,9 +468,7 @@ describe('@ipsadt/tg-widgets', () => {
         });
         expect(editedParams?.chat_id).toBe(100);
         expect(editedParams?.message_id).toBe(200);
-        const updatedManualState = JSON.parse(
-            editedParams?.chat_data as string,
-        );
+        const updatedManualState = JSON.parse(editedParams?.chat_data as string);
         expect(updatedManualState.count).toBe(42);
 
         // Verify storage updated
@@ -777,12 +769,12 @@ describe('@ipsadt/tg-widgets', () => {
 
         // 1. Key compression
         const compressed = compressKeys(verboseState) as Record<string, unknown>;
-        expect(compressed.o).toBe(true);  // notifications -> o
+        expect(compressed.o).toBe(true); // notifications -> o
         expect(compressed.e).toBe(false); // soundEffects -> e
-        expect(compressed.m).toBe(true);  // privateMode -> m
-        expect(compressed.c).toBe(42);    // count -> c
+        expect(compressed.m).toBe(true); // privateMode -> m
+        expect(compressed.c).toBe(42); // count -> c
         expect(compressed.l).toBe('pro'); // plan -> l
-        expect(compressed.k).toBe(3);     // tickets -> k
+        expect(compressed.k).toBe(3); // tickets -> k
         expect(compressed.notifications).toBeUndefined();
 
         // 2. Transparent decompression
@@ -794,14 +786,19 @@ describe('@ipsadt/tg-widgets', () => {
         expect(packed).toContain('"_s":"profile"');
         expect(packed).toContain('"o":true');
         expect(packed).toContain('"m":true');
-        expect(packed.length).toBeLessThan(JSON.stringify({ ...verboseState, __screen: 'profile' }).length);
+        expect(packed.length).toBeLessThan(
+            JSON.stringify({ ...verboseState, __screen: 'profile' }).length,
+        );
 
         const unpacked = unpackState(packed);
         expect(unpacked.screenId).toBe('profile');
         expect(unpacked.state).toEqual(verboseState);
 
         // 4. Action encoding with compression
-        const actionStr = encodeCompressedWidgetAction('toggle', { setting: 'notifications', enabled: true });
+        const actionStr = encodeCompressedWidgetAction('toggle', {
+            setting: 'notifications',
+            enabled: true,
+        });
         expect(actionStr).toBe('toggle:{"g":"notifications","b":true}');
         expect(validateWidgetActionData(actionStr)).toBe(true);
 
@@ -840,7 +837,9 @@ describe('@ipsadt/tg-widgets', () => {
                 notifications: true,
             }),
             actions: {
-                toggle: async (ctx: WidgetActionContext<{ plan: string; notifications: boolean }>) => {
+                toggle: async (
+                    ctx: WidgetActionContext<{ plan: string; notifications: boolean }>,
+                ) => {
                     const next = { ...ctx.state, notifications: !ctx.state.notifications };
                     await ctx.setState(next);
                     return next;
@@ -934,8 +933,8 @@ describe('@ipsadt/tg-widgets', () => {
         });
 
         const prodChatData = JSON.parse(sentParams?.chat_data as string);
-        expect(prodChatData.o).toBe(true);       // notifications -> o
-        expect(prodChatData.l).toBe('pro');      // plan -> l
+        expect(prodChatData.o).toBe(true); // notifications -> o
+        expect(prodChatData.l).toBe('pro'); // plan -> l
         expect(prodChatData._s).toBe('settings'); // __screen -> _s
         expect(prodChatData.notifications).toBeUndefined();
         expect(sentParams?.width).toBe(2);
@@ -968,9 +967,9 @@ describe('@ipsadt/tg-widgets', () => {
 
         await strictPlugin.middleware(strictCtx, async () => {});
 
-        expect(
-            strictCtx.widgets.send('settings', { props: { plan: 'pro' } }),
-        ).rejects.toThrow(/exceeds maximum limit/);
+        expect(strictCtx.widgets.send('settings', { props: { plan: 'pro' } })).rejects.toThrow(
+            /exceeds maximum limit/,
+        );
 
         // 5. Test sizeLimit validation onExceeded: 'warn' (does not throw)
         let warnLogged = false;

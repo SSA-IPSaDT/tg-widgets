@@ -17,10 +17,8 @@ export const Skeleton = ({
     style,
     className = '',
 }: SkeletonProps): string => {
-    const computedHeight =
-        height ?? (variant === 'text' ? 14 : variant === 'circle' ? width : 40);
-    const borderRadius =
-        radius ?? (variant === 'circle' ? '50%' : variant === 'text' ? 4 : 8);
+    const computedHeight = height ?? (variant === 'text' ? 14 : variant === 'circle' ? width : 40);
+    const borderRadius = radius ?? (variant === 'circle' ? '50%' : variant === 'text' ? 4 : 8);
 
     return (
         <div

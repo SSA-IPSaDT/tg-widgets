@@ -1,23 +1,13 @@
 import { Bot, Context, InlineKeyboard } from 'grammy';
-import {
-    createTelegramWidgetsPlugin,
-    inspectWidgetSizeAsync,
-    type WidgetsFlavor,
-} from '../src';
-import {
-    cryptoScreen,
-    profileScreen,
-    screens,
-    tournamentScreen,
-} from './index';
+import { createTelegramWidgetsPlugin, inspectWidgetSizeAsync, type WidgetsFlavor } from '../src';
+import { cryptoScreen, profileScreen, screens, tournamentScreen } from './index';
 
 type BotContext = Context & WidgetsFlavor<typeof screens>;
 
 // Environment configuration
 const token = process.env.BOT_TOKEN;
 const isTestEnv =
-    process.env.TELEGRAM_TEST_ENV === 'true' ||
-    process.env.USE_TEST_SERVER === 'true';
+    process.env.TELEGRAM_TEST_ENV === 'true' || process.env.USE_TEST_SERVER === 'true';
 const apiRoot = process.env.BOT_API_ROOT;
 
 if (!token) {

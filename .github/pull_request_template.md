@@ -19,6 +19,7 @@
 ## 📐 Payload & Performance Impact
 
 <!-- If adding or modifying UI components, please report inspectWidgetSize() numbers or confirm it remains compact. -->
+
 - [ ] Verified that changes do not introduce bulky inline CSS or violate Telegram's `deflate level 9 <= 4096B` ceiling.
 
 ## ✅ Checklist

@@ -42,21 +42,11 @@ export const Switch = ({
         >
             {(label || description) && (
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    {label && (
-                        <span style={{ fontWeight: 500, fontSize: 14 }}>
-                            {label}
-                        </span>
-                    )}
-                    {description && (
-                        <span class="tg-description">
-                            {description}
-                        </span>
-                    )}
+                    {label && <span style={{ fontWeight: 500, fontSize: 14 }}>{label}</span>}
+                    {description && <span class="tg-description">{description}</span>}
                 </div>
             )}
-            <div
-                class={`tg-switch-track ${checked ? 'active' : ''}`.trim()}
-            >
+            <div class={`tg-switch-track ${checked ? 'active' : ''}`.trim()}>
                 <div class="tg-switch-thumb" />
             </div>
         </button>

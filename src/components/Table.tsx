@@ -62,8 +62,7 @@ export const TableHeader = ({
 }): string => (
     <thead
         style={{
-            background:
-                'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.06))',
+            background: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.06))',
             borderBottom:
                 '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
             ...style,
@@ -94,8 +93,7 @@ export const TableFooter = ({
             borderTop:
                 '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
             fontWeight: 600,
-            background:
-                'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.04))',
+            background: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.04))',
             ...style,
         }}
     >
@@ -144,7 +142,7 @@ export const TableHead = ({
             padding: '8px 10px',
             fontWeight: 600,
             color: 'var(--tg-theme-text-color, #111827)',
-            opacity: 0.70,
+            opacity: 0.7,
             textAlign: align,
             fontSize: 12,
             ...style,

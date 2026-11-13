@@ -1,0 +1,58 @@
+# mise.toml - Development environment & task runner configuration
+# Documentation: https://mise.jdx.dev
+
+[tools]
+bun = "latest"
+hk = "2.9.0"
+
+[tasks.check]
+description = "Typecheck TypeScript code without emitting artifacts"
+run = "bun run check"
+
+[tasks.check-branch]
+description = "Validate active git branch naming convention"
+run = "bun run scripts/check-branch.ts"
+
+[tasks.format]
+description = "Format all code files according to bunfig.toml rules"
+run = "bun run format"
+
+[tasks.format-check]
+description = "Verify code formatting without writing files"
+run = "bun run format:check"
+
+[tasks.lint]
+description = "Run full lint suite: typecheck and format check"
+run = "bun run lint"
+
+[tasks.test]
+description = "Run complete Bun test suite across all test files"
+run = "bun test"
+
+[tasks.build]
+description = "Clean, bundle ESM/CJS distributions, and generate types"
+run = "bun run build"
+
+[tasks.bump]
+description = "Automatically analyze commits and bump package version in package.json, deno.json, and CHANGELOG.md"
+run = "bun run scripts/bump-version.ts"
+
+[tasks.release]
+description = "Bump version and create git release commit and tag"
+run = "bun run scripts/bump-version.ts --commit"
+
+[tasks.hooks-install]
+description = "Install hk git hooks into the repository"
+run = "hk install --mise"
+
+[tasks.pre-commit]
+description = "Run hk pre-commit hook (branch check, format check, typecheck)"
+run = "hk run pre-commit"
+
+[tasks.commit-msg]
+description = "Run hk commit-msg hook (Conventional Commits validation)"
+run = "hk run commit-msg"
+
+[tasks.pre-push]
+description = "Run hk pre-push hook (full test suite and build verification)"
+run = "hk run pre-push"

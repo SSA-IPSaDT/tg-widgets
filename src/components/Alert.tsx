@@ -79,11 +79,7 @@ export const Alert = ({
             }}
             {...dataAttrs}
         >
-            {currentIcon && (
-                <div class="tg-alert-icon">
-                    {currentIcon}
-                </div>
-            )}
+            {currentIcon && <div class="tg-alert-icon">{currentIcon}</div>}
             <div class="tg-alert-body">
                 {title && <div class="tg-alert-title">{title}</div>}
                 {description && (
@@ -98,16 +94,10 @@ export const Alert = ({
 };
 
 export const AlertTitle = ({ children }: { children?: unknown }): string => (
-    <div class="tg-alert-title">
-        {children}
-    </div>
+    <div class="tg-alert-title">{children}</div>
 );
 
-export const AlertDescription = ({
-    children,
-}: {
-    children?: unknown;
-}): string => (
+export const AlertDescription = ({ children }: { children?: unknown }): string => (
     <div class="tg-alert-desc" style={{ fontWeight: 500 }}>
         {children}
     </div>

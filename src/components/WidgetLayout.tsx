@@ -136,7 +136,7 @@ const BASE_RESET_CSS =
     '.tg-alert-info{background:rgba(36,129,204,0.10);border:1px solid rgba(36,129,204,0.28);}' +
     '.tg-alert-info .tg-alert-icon{background:rgba(36,129,204,0.18);color:var(--tg-theme-link-color,#2481cc);}' +
     '.tg-alert-success{background:rgba(16,185,129,0.10);border:1px solid rgba(16,185,129,0.28);}' +
-    '.tg-alert-success .tg-alert-icon{background:rgba(16,185,129,0.18);color:#10b981;}'+
+    '.tg-alert-success .tg-alert-icon{background:rgba(16,185,129,0.18);color:#10b981;}' +
     '.tg-alert-warning{background:rgba(245,158,11,0.10);border:1px solid rgba(245,158,11,0.28);}' +
     '.tg-alert-warning .tg-alert-icon{background:rgba(245,158,11,0.18);color:#f59e0b;}' +
     '.tg-alert-destructive{background:rgba(239,68,68,0.10);border:1px solid rgba(239,68,68,0.28);}' +
@@ -179,8 +179,7 @@ export const WidgetLayout = ({
     const safeAreaStyle = safeArea
         ? {
               paddingBottom: 'max(8px, env(safe-area-inset-bottom, 0px))',
-              paddingRight:
-                  'max(12px, var(--tg-content-safe-area-corner-right, 0px))',
+              paddingRight: 'max(12px, var(--tg-content-safe-area-corner-right, 0px))',
           }
         : {};
 
@@ -234,11 +233,7 @@ export const WidgetLayout = ({
     };
 
     return (
-        <div
-            class={`tg-widget-root ${className}`.trim()}
-            style={layoutStyle}
-            {...dataAttrs}
-        >
+        <div class={`tg-widget-root ${className}`.trim()} style={layoutStyle} {...dataAttrs}>
             <style>{BASE_RESET_CSS}</style>
             {children}
         </div>

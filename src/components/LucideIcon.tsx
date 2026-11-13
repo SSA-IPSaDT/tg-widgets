@@ -72,10 +72,7 @@ export const LucideIcon = ({
 
     // Override stroke width (1.75 default provides crisp modern aesthetic)
     if (strokeWidth !== undefined) {
-        svg = svg.replace(
-            /\bstroke-width="[^"]*"/g,
-            `stroke-width="${strokeWidth}"`,
-        );
+        svg = svg.replace(/\bstroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`);
     }
 
     // Replace stroke color if custom value provided

@@ -104,12 +104,7 @@ export interface AccordionProps {
  *   <AccordionItem title="Section 2">Content 2</AccordionItem>
  * </Accordion>
  */
-export const Accordion = ({
-    id,
-    children,
-    style,
-    className = '',
-}: AccordionProps): string => {
+export const Accordion = ({ id, children, style, className = '' }: AccordionProps): string => {
     return (
         <div
             id={id}

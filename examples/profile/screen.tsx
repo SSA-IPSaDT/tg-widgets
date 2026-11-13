@@ -17,7 +17,7 @@ import {
     Switch,
     type WidgetActionContext,
     WidgetLayout,
-} from "../../src";
+} from '../../src';
 
 /**
  * State contract for the user profile widget.
@@ -170,9 +170,7 @@ export const profileScreen = defineWidgetScreen({
                                 {props.name.charAt(0)}
                             </div>
                             <div>
-                                <CardTitle style={{ fontSize: 15 }}>
-                                    {props.name}
-                                </CardTitle>
+                                <CardTitle style={{ fontSize: 15 }}>{props.name}</CardTitle>
                                 <CardDescription style={{ fontSize: 12 }}>
                                     {props.username}
                                 </CardDescription>
@@ -253,8 +251,8 @@ export const profileScreen = defineWidgetScreen({
         </WidgetLayout>
     ),
     initialState: () => ({
-        name: "Alex Smirnov",
-        username: "@alex_dev",
+        name: 'Alex Smirnov',
+        username: '@alex_dev',
         notifications: true,
         privateMode: false,
         soundEffects: true,
@@ -268,9 +266,7 @@ export const profileScreen = defineWidgetScreen({
             await ctx.setState(next);
             return next;
         },
-        toggleProfilePrivate: async (
-            ctx: WidgetActionContext<ProfileState>,
-        ) => {
+        toggleProfilePrivate: async (ctx: WidgetActionContext<ProfileState>) => {
             const next = {
                 ...ctx.state,
                 privateMode: !ctx.state.privateMode,
@@ -296,17 +292,17 @@ export const profileScreen = defineWidgetScreen({
                             `👤 *User Profile (Text Mode)*\n\n` +
                             `*Name:* ${ctx.state.name}\n` +
                             `*Username:* ${ctx.state.username}\n\n` +
-                            `🔔 *Notifications:* ${ctx.state.notifications ? "Enabled" : "Disabled"}\n` +
-                            `🔒 *Private Mode:* ${ctx.state.privateMode ? "Enabled" : "Disabled"}\n` +
-                            `🔊 *Sound Effects:* ${ctx.state.soundEffects ? "Enabled" : "Disabled"}\n\n` +
+                            `🔔 *Notifications:* ${ctx.state.notifications ? 'Enabled' : 'Disabled'}\n` +
+                            `🔒 *Private Mode:* ${ctx.state.privateMode ? 'Enabled' : 'Disabled'}\n` +
+                            `🔊 *Sound Effects:* ${ctx.state.soundEffects ? 'Enabled' : 'Disabled'}\n\n` +
                             `_Message switched to classic text view._`,
-                        parse_mode: "Markdown",
+                        parse_mode: 'Markdown',
                         reply_markup: {
                             inline_keyboard: [
                                 [
                                     {
-                                        text: "📱 Return to Widget View",
-                                        callback_data: "show_profile",
+                                        text: '📱 Return to Widget View',
+                                        callback_data: 'show_profile',
                                     },
                                 ],
                             ],
@@ -317,7 +313,7 @@ export const profileScreen = defineWidgetScreen({
                 }
             }
             return ctx.answer({
-                text: "Switched to plain text view",
+                text: 'Switched to plain text view',
             });
         },
     },

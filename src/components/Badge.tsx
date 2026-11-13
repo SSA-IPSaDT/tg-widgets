@@ -1,14 +1,8 @@
-import { h } from "../jsx";
+import { h } from '../jsx';
 
 export interface BadgeProps {
     id?: string;
-    variant?:
-        | 'default'
-        | 'accent'
-        | 'destructive'
-        | 'outline'
-        | 'success'
-        | 'warning';
+    variant?: 'default' | 'accent' | 'destructive' | 'outline' | 'success' | 'warning';
     size?: 'sm' | 'md';
     dot?: boolean;
     pulse?: boolean;
@@ -35,9 +29,7 @@ export const Badge = ({
     const hasChildren =
         children !== undefined &&
         children !== null &&
-        (Array.isArray(children)
-            ? children.length > 0
-            : String(children).trim().length > 0);
+        (Array.isArray(children) ? children.length > 0 : String(children).trim().length > 0);
     const isSquare = square ?? (Boolean(icon) && !hasChildren);
     const squareDim = size === 'md' ? 30 : 26;
     const squareClass = isSquare ? 'tg-badge-square' : '';
@@ -45,7 +37,9 @@ export const Badge = ({
     return (
         <span
             id={id}
-            class={`tg-badge tg-badge-${variant} ${sizeClass} ${squareClass} ${className}`.replace(/\s+/g, ' ').trim()}
+            class={`tg-badge tg-badge-${variant} ${sizeClass} ${squareClass} ${className}`
+                .replace(/\s+/g, ' ')
+                .trim()}
             style={{
                 ...(isSquare
                     ? {
@@ -78,24 +72,24 @@ export const Badge = ({
         >
             {(dot || (pulse && !icon)) && (
                 <span
-                    class={pulse ? "tg-badge-pulse" : ""}
+                    class={pulse ? 'tg-badge-pulse' : ''}
                     style={{
                         width: 6,
                         height: 6,
-                        borderRadius: "50%",
-                        backgroundColor: "currentColor",
-                        display: "inline-block",
+                        borderRadius: '50%',
+                        backgroundColor: 'currentColor',
+                        display: 'inline-block',
                         flexShrink: 0,
                     }}
                 />
             )}
             {icon && (
                 <span
-                    class={pulse ? "tg-badge-pulse" : ""}
+                    class={pulse ? 'tg-badge-pulse' : ''}
                     style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        justifyContent: "center",
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
                         lineHeight: 0,
                         flexShrink: 0,
                     }}

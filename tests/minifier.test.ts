@@ -1,9 +1,5 @@
 import { describe, expect, test } from 'bun:test';
-import {
-    minifyHtml,
-    minifyHtmlSync,
-    purgeUnusedCss,
-} from '../src';
+import { minifyHtml, minifyHtmlSync, purgeUnusedCss } from '../src';
 
 describe('Minifier & CSS Purging Pipeline', () => {
     describe('purgeUnusedCss()', () => {
@@ -107,7 +103,9 @@ describe('Minifier & CSS Purging Pipeline', () => {
                 </div>
             `;
             const minified = minifyHtmlSync(raw, { purgeCss: false });
-            expect(minified).toBe('<div class="container"><span>Item 1</span><span>Item 2</span></div>');
+            expect(minified).toBe(
+                '<div class="container"><span>Item 1</span><span>Item 2</span></div>',
+            );
         });
 
         test('strips HTML comments', () => {
@@ -117,7 +115,8 @@ describe('Minifier & CSS Purging Pipeline', () => {
         });
 
         test('strips redundant xmlns attribute from inline SVGs to save bytes', () => {
-            const raw = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M0 0"/></svg>';
+            const raw =
+                '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M0 0"/></svg>';
             const minified = minifyHtmlSync(raw, { purgeCss: false });
             expect(minified).not.toContain('xmlns="http://www.w3.org/2000/svg"');
             expect(minified).toContain('<svg width="16" height="16">');

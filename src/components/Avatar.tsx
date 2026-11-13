@@ -37,14 +37,7 @@ export const Avatar = ({
         lg: 18,
     }[size];
 
-    const defaultRadius =
-        shape === 'circle'
-            ? '50%'
-            : size === 'lg'
-              ? 16
-              : size === 'md'
-                ? 12
-                : 8;
+    const defaultRadius = shape === 'circle' ? '50%' : size === 'lg' ? 16 : size === 'md' ? 12 : 8;
 
     const computedRadius = radius !== undefined ? radius : defaultRadius;
 
@@ -69,8 +62,7 @@ export const Avatar = ({
                     width: '100%',
                     height: '100%',
                     borderRadius: computedRadius,
-                    background:
-                        'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.16))',
+                    background: 'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.16))',
                     color: 'var(--tg-theme-text-color, inherit)',
                     fontSize,
                     fontWeight: 600,

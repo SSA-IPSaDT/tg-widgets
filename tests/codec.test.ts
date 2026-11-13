@@ -287,7 +287,11 @@ describe('Bidirectional Codec & 64-byte Action Protocol', () => {
 
         test('encodeCompressedWidgetAction uses custom codec dictionary', () => {
             const customMap = { orderNumber: 'on' };
-            const encoded = encodeCompressedWidgetAction('order', { orderNumber: '123' }, customMap);
+            const encoded = encodeCompressedWidgetAction(
+                'order',
+                { orderNumber: '123' },
+                customMap,
+            );
             expect(encoded).toContain('order:');
             expect(encoded).toContain('"on":"123"');
 

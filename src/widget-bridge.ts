@@ -54,14 +54,8 @@ export interface TelegramWidgetContentSafeAreaInset {
 }
 
 export interface TelegramWidgetWallet {
-    sendTransaction(
-        transaction: unknown,
-        data: string,
-    ): Promise<TelegramWidgetRequestAnswer>;
-    signData(
-        payload: unknown,
-        data: string,
-    ): Promise<TelegramWidgetRequestAnswer>;
+    sendTransaction(transaction: unknown, data: string): Promise<TelegramWidgetRequestAnswer>;
+    signData(payload: unknown, data: string): Promise<TelegramWidgetRequestAnswer>;
 }
 
 export interface TelegramWidgetHapticFeedback {
@@ -71,10 +65,7 @@ export interface TelegramWidgetHapticFeedback {
 }
 
 export type TelegramWidgetEventType =
-    | 'chatDataChanged'
-    | 'publicDataChanged'
-    | 'themeChanged'
-    | 'contentSafeAreaChanged';
+    'chatDataChanged' | 'publicDataChanged' | 'themeChanged' | 'contentSafeAreaChanged';
 
 export interface TelegramWidgetBridge {
     /**

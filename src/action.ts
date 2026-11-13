@@ -130,15 +130,12 @@ export const decodeWidgetAction = (
             const decompressed =
                 options?.decompress === false
                     ? parsed
-                    : (decompressKeys(
-                          parsed,
-                          options?.customReverseMap,
-                      ) as Record<string, unknown>);
+                    : (decompressKeys(parsed, options?.customReverseMap) as Record<
+                          string,
+                          unknown
+                      >);
 
-            const action =
-                (decompressed.action as string) ??
-                (decompressed.a as string) ??
-                '';
+            const action = (decompressed.action as string) ?? (decompressed.a as string) ?? '';
             const payload = decompressed.payload ?? decompressed.p;
 
             return {

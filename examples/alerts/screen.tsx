@@ -1,9 +1,4 @@
-import {
-    Alert,
-    defineStaticWidgetScreen,
-    h,
-    WidgetLayout,
-} from '../../src';
+import { Alert, defineStaticWidgetScreen, h, WidgetLayout } from '../../src';
 
 /**
  * State contract for the alerts widget (static screen, no mutable state).

@@ -48,9 +48,7 @@ const controlsClientScript = (initial: ControlsState) => {
         }
 
         if ('newsletter' in partialState) {
-            const checkboxSvg = document
-                .getElementById('chk-newsletter')
-                ?.querySelector('svg');
+            const checkboxSvg = document.getElementById('chk-newsletter')?.querySelector('svg');
             if (checkboxSvg) {
                 checkboxSvg.outerHTML = state.newsletter
                     ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect width="20" height="20" rx="5" fill="var(--tg-theme-button-color,#2481cc)"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
@@ -234,9 +232,7 @@ export const controlsScreen = defineWidgetScreen({
                             }}
                         >
                             <div>
-                                <div style={{ fontSize: 14, fontWeight: 500 }}>
-                                    Seat Allocation
-                                </div>
+                                <div style={{ fontSize: 14, fontWeight: 500 }}>Seat Allocation</div>
                                 <div
                                     class="tg-description"
                                     style={{
@@ -333,10 +329,7 @@ export const controlsScreen = defineWidgetScreen({
             await ctx.setState(next);
             return next;
         },
-        setPlan: async (
-            ctx: WidgetActionContext<ControlsState>,
-            payload?: unknown,
-        ) => {
+        setPlan: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
             const next = { ...ctx.state, plan: String(payload ?? 'basic') };
             await ctx.setState(next);
             return next;

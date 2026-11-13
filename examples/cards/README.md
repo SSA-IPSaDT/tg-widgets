@@ -19,46 +19,50 @@ Source code: [`screen.tsx`](./screen.tsx)
 
 ```tsx
 import {
-  Badge,
-  Button,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  defineWidgetScreen,
-  h,
-  ProgressBar,
-  Typography,
-  WidgetLayout,
+    Badge,
+    Button,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+    defineWidgetScreen,
+    h,
+    ProgressBar,
+    Typography,
+    WidgetLayout,
 } from '@ipsadt/tg-widgets';
 
 export const cardsScreen = defineWidgetScreen({
-  id: 'cards',
-  component: () => (
-    <WidgetLayout fullWidth padding="6px 8px">
-      <Card fullWidth>
-        <CardHeader>
-          <CardTitle>Balance Analytics</CardTitle>
-          <CardDescription>Activity overview</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Typography variant="title">14,820 TON</Typography>
-          <ProgressBar percent={72} />
-        </CardContent>
-        <CardFooter>
-          <Button id="btn-statement" variant="secondary" fullWidth>Statement</Button>
-          <Button id="btn-topup" variant="primary" fullWidth>Add Funds</Button>
-        </CardFooter>
-      </Card>
-    </WidgetLayout>
-  ),
-  initialState: () => ({}),
-  actions: {
-    statement: async (ctx) => ctx.answer({ text: '📄 Generating statement...' }),
-    topup: async (ctx) => ctx.answer({ text: '💳 Opening payment gateway...' }),
-  },
+    id: 'cards',
+    component: () => (
+        <WidgetLayout fullWidth padding="6px 8px">
+            <Card fullWidth>
+                <CardHeader>
+                    <CardTitle>Balance Analytics</CardTitle>
+                    <CardDescription>Activity overview</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <Typography variant="title">14,820 TON</Typography>
+                    <ProgressBar percent={72} />
+                </CardContent>
+                <CardFooter>
+                    <Button id="btn-statement" variant="secondary" fullWidth>
+                        Statement
+                    </Button>
+                    <Button id="btn-topup" variant="primary" fullWidth>
+                        Add Funds
+                    </Button>
+                </CardFooter>
+            </Card>
+        </WidgetLayout>
+    ),
+    initialState: () => ({}),
+    actions: {
+        statement: async (ctx) => ctx.answer({ text: '📄 Generating statement...' }),
+        topup: async (ctx) => ctx.answer({ text: '💳 Opening payment gateway...' }),
+    },
 });
 ```
 

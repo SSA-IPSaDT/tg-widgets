@@ -109,7 +109,8 @@ const tournamentClientScript = (initial: TournamentState) => {
             } else if (widget?.openLink) {
                 widget.openLink('https://t.me/bot/tournament?startapp=participant');
             } else {
-                window.location.href = 'tg://resolve?domain=bot&app=tournament&startapp=participant';
+                window.location.href =
+                    'tg://resolve?domain=bot&app=tournament&startapp=participant';
             }
         } catch {
             // fallback
@@ -164,12 +165,12 @@ export const tournamentScreen = defineWidgetScreen({
                             fontSize: 13,
                             fontWeight: 500,
                             color: 'var(--tg-theme-text-color, #111827)',
-                            opacity: 0.90,
+                            opacity: 0.9,
                             lineHeight: 1.45,
                         }}
                     >
-                        Join our annual spring chess championship (Rapid 10+5).
-                        We welcome both competitive players and event volunteers!
+                        Join our annual spring chess championship (Rapid 10+5). We welcome both
+                        competitive players and event volunteers!
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -240,7 +241,8 @@ export const tournamentScreen = defineWidgetScreen({
                             opacity: 0.85,
                         }}
                     >
-                        Participants: {props.participantsCount} • Volunteers: {props.volunteersCount}
+                        Participants: {props.participantsCount} • Volunteers:{' '}
+                        {props.volunteersCount}
                     </div>
 
                     <Divider />

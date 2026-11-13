@@ -10,13 +10,8 @@ export interface ScriptProps<T extends unknown[]> {
  * @example
  * <Script fn={clientScript} args={[{ count: 0 }]} />
  */
-export const Script = <T extends unknown[]>({
-    fn,
-    args,
-}: ScriptProps<T>): string => {
-    const serializedArgs = (args ?? [])
-        .map((arg) => JSON.stringify(arg))
-        .join(',');
+export const Script = <T extends unknown[]>({ fn, args }: ScriptProps<T>): string => {
+    const serializedArgs = (args ?? []).map((arg) => JSON.stringify(arg)).join(',');
     const code = `(${fn.toString()})(${serializedArgs});`;
     return `<script>${code}</script>`;
 };

@@ -19,6 +19,7 @@ Instead, please report it via one of the following private channels:
 2. **Direct Email**: Send details and reproduction steps to [naylour@tuta.io](mailto:naylour@tuta.io).
 
 ### Response SLA:
+
 - We acknowledge valid vulnerability reports within **48 hours**.
 - We aim to provide a security patch or mitigation within **7 days** of confirmation.
 - Public credit will be attributed in release notes once the patch is published.

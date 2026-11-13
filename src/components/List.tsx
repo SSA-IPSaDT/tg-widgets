@@ -8,12 +8,7 @@ export interface ListProps {
     className?: string;
 }
 
-export const List = ({
-    variant = 'card',
-    children,
-    style,
-    className = '',
-}: ListProps): string => {
+export const List = ({ variant = 'card', children, style, className = '' }: ListProps): string => {
     const isCard = variant === 'card';
     return (
         <div
@@ -78,9 +73,7 @@ export const ListItem = ({
             }}
             {...dataAttrs}
         >
-            {left && (
-                <div style={{ flexShrink: 0, display: 'flex' }}>{left}</div>
-            )}
+            {left && <div style={{ flexShrink: 0, display: 'flex' }}>{left}</div>}
             <div
                 style={{
                     display: 'flex',

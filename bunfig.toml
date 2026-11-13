@@ -1,0 +1,34 @@
+# Bun Configuration (bunfig.toml)
+# https://bun.sh/docs/runtime/bunfig
+
+telemetry = false
+
+[test]
+# Test runner configuration for Bun test runner
+root = "tests"
+timeout = 15000
+coverage = false
+
+[install]
+# Package manager configuration
+production = false
+exact = false
+frozenLockfile = false
+
+[format]
+# Code formatting rules (integrated with Prettier and hk git hooks)
+tabWidth = 4
+useTabs = false
+semi = true
+singleQuote = true
+trailingComma = "all"
+printWidth = 100
+bracketSpacing = true
+arrowParens = "always"
+
+[check]
+# Code verification and static analysis settings (tsc --noEmit)
+strict = true
+noEmit = true
+tsconfig = "tsconfig.json"
+failOnError = true

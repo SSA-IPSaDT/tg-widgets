@@ -1,14 +1,7 @@
 import { h } from '../jsx';
 
 export interface TypographyProps {
-    variant?:
-        | 'title'
-        | 'headline'
-        | 'subhead'
-        | 'body'
-        | 'caption'
-        | 'footnote'
-        | 'code';
+    variant?: 'title' | 'headline' | 'subhead' | 'body' | 'caption' | 'footnote' | 'code';
     color?: 'default' | 'hint' | 'link' | 'accent' | 'destructive' | 'success';
     weight?: 'regular' | 'medium' | 'semibold' | 'bold';
     align?: 'left' | 'center' | 'right';
@@ -90,10 +83,7 @@ export const Typography = ({
     };
 
     return (
-        <Tag
-            class={`tg-text tg-text-${variant} ${className}`}
-            style={baseStyle}
-        >
+        <Tag class={`tg-text tg-text-${variant} ${className}`} style={baseStyle}>
             {children}
         </Tag>
     );

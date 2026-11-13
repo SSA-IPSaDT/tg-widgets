@@ -6,8 +6,8 @@
         "declaration": true,
         "declarationMap": false,
         "rootDir": "./src",
-        "outDir": "./dist",
+        "outDir": "./dist"
     },
     "include": ["src/**/*"],
-    "exclude": ["tests/**/*", "node_modules", "dist"],
+    "exclude": ["tests/**/*", "node_modules", "dist"]
 }

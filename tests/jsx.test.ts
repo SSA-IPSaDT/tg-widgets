@@ -97,7 +97,9 @@ describe('JSX Engine & Inline CSS Styler', () => {
         test('renders void self-closing elements with self-closing syntax', () => {
             expect(h('br', null)).toBe('<br />');
             expect(h('hr', { className: 'divider' })).toBe('<hr class="divider" />');
-            expect(h('img', { src: 'icon.png', alt: 'Test' })).toBe('<img src="icon.png" alt="Test" />');
+            expect(h('img', { src: 'icon.png', alt: 'Test' })).toBe(
+                '<img src="icon.png" alt="Test" />',
+            );
         });
 
         test('filters out null, undefined, and false children', () => {
@@ -147,16 +149,16 @@ describe('JSX Engine & Inline CSS Styler', () => {
 
             const multiple = jsxs('div', {
                 className: 'box',
-                children: [
-                    jsx('span', { children: 'A' }),
-                    jsx('span', { children: 'B' }),
-                ],
+                children: [jsx('span', { children: 'A' }), jsx('span', { children: 'B' })],
             });
             expect(multiple).toBe('<div class="box"><span>A</span><span>B</span></div>');
         });
 
         test('jsxDEV handles development key and source arguments gracefully', () => {
-            const devEl = jsxDEV('h1', { children: 'Title' }, 'my-key', false, { fileName: 'test.tsx', lineNumber: 1 });
+            const devEl = jsxDEV('h1', { children: 'Title' }, 'my-key', false, {
+                fileName: 'test.tsx',
+                lineNumber: 1,
+            });
             expect(devEl).toBe('<h1>Title</h1>');
         });
     });

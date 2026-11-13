@@ -25,6 +25,6 @@ Source code: [`screen.tsx`](./screen.tsx)
 
 ## 📸 Telegram Preview
 
-> *Add `screenshot.png` here after testing in Telegram:*
+> _Add `screenshot.png` here after testing in Telegram:_
 
 ![Crypto Screenshot](./screenshot.png)

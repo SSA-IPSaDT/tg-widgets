@@ -41,12 +41,7 @@ export const Checkbox = ({
                 marginTop: description ? 2 : 0,
             }}
         >
-            <rect
-                width="20"
-                height="20"
-                rx="5"
-                fill="var(--tg-theme-button-color, #2481cc)"
-            />
+            <rect width="20" height="20" rx="5" fill="var(--tg-theme-button-color, #2481cc)" />
             <path
                 d="M5.5 10.5L8.5 13.5L14.5 7"
                 stroke="var(--tg-theme-button-text-color, #ffffff)"
@@ -112,11 +107,7 @@ export const Checkbox = ({
                         gap: 2,
                     }}
                 >
-                    {label && (
-                        <span style={{ fontSize: 14, fontWeight: 500 }}>
-                            {label}
-                        </span>
-                    )}
+                    {label && <span style={{ fontSize: 14, fontWeight: 500 }}>{label}</span>}
                     {description && (
                         <span
                             class="tg-description"

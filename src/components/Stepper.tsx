@@ -38,12 +38,7 @@ export const Stepper = ({
     const isMax = max !== undefined && value >= max;
 
     return (
-        <div
-            id={id}
-            class={`tg-stepper ${className}`.trim()}
-            style={style}
-            {...dataAttrs}
-        >
+        <div id={id} class={`tg-stepper ${className}`.trim()} style={style} {...dataAttrs}>
             <button
                 type="button"
                 data-action={decrementAction}
@@ -56,9 +51,7 @@ export const Stepper = ({
                     strokeWidth: 2.2,
                 })}
             </button>
-            <span class="tg-stepper-val">
-                {value}
-            </span>
+            <span class="tg-stepper-val">{value}</span>
             <button
                 type="button"
                 data-action={incrementAction}

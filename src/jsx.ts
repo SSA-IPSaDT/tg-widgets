@@ -39,8 +39,7 @@ const UNITLESS_PROPS = new Set([
     'order',
 ]);
 
-const toKebab = (prop: string): string =>
-    prop.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
+const toKebab = (prop: string): string => prop.replace(/[A-Z]/g, (m) => `-${m.toLowerCase()}`);
 
 /**
  * Formats a CSS style object into a minified inline CSS string.
@@ -48,16 +47,11 @@ const toKebab = (prop: string): string =>
  * @param style Style property key-value map.
  * @returns Minified inline CSS string.
  */
-export const formatStyle = (
-    style: Record<string, string | number | undefined | null>,
-): string => {
+export const formatStyle = (style: Record<string, string | number | undefined | null>): string => {
     return Object.entries(style)
         .filter(([, v]) => v !== undefined && v !== null && v !== '')
         .map(([k, v]) => {
-            const rawVal =
-                typeof v === 'number' && !UNITLESS_PROPS.has(k)
-                    ? `${v}px`
-                    : String(v);
+            const rawVal = typeof v === 'number' && !UNITLESS_PROPS.has(k) ? `${v}px` : String(v);
             const val = rawVal.replace(/"/g, "'");
             return `${toKebab(k)}:${val}`;
         })
@@ -100,24 +94,15 @@ export const h = (
 
     const attrs = props
         ? Object.entries(props)
-              .filter(
-                  ([k, v]) => k !== 'children' && v !== undefined && v !== null,
-              )
+              .filter(([k, v]) => k !== 'children' && v !== undefined && v !== null)
               .map(([k, v]) => {
                   const attrName = k === 'className' ? 'class' : k;
                   if (typeof v === 'boolean') {
                       return v ? ` ${attrName}` : '';
                   }
-                  if (
-                      attrName === 'style' &&
-                      typeof v === 'object' &&
-                      v !== null
-                  ) {
+                  if (attrName === 'style' && typeof v === 'object' && v !== null) {
                       const css = formatStyle(
-                          v as Record<
-                              string,
-                              string | number | undefined | null
-                          >,
+                          v as Record<string, string | number | undefined | null>,
                       );
                       return css ? ` style="${css}"` : '';
                   }
@@ -127,11 +112,7 @@ export const h = (
         : '';
 
     const allChildren =
-        children.length > 0
-            ? children
-            : props && 'children' in props
-              ? [props.children]
-              : [];
+        children.length > 0 ? children : props && 'children' in props ? [props.children] : [];
 
     const content = allChildren
         .flat(Infinity)
@@ -237,10 +218,7 @@ export const inspectWidgetSizeAsync = async (
  * @param options Render and minification options.
  * @returns Complete HTML document string.
  */
-export const renderWidget = (
-    bodyContent: string,
-    options: WidgetRenderOptions = {},
-): string => {
+export const renderWidget = (bodyContent: string, options: WidgetRenderOptions = {}): string => {
     const report = inspectWidgetSize(bodyContent, options);
 
     if (!report.isValid) {

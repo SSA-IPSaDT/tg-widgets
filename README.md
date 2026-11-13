@@ -100,13 +100,7 @@ export const counterClientScript = ({ count }: CounterClientProps): void => {
 ### 2. Define the TSX Template (`Bubble.tsx`)
 
 ```tsx
-import {
-    Button,
-    Card,
-    h,
-    Script,
-    WidgetLayout,
-} from '@ipsadt/tg-widgets';
+import { Button, Card, h, Script, WidgetLayout } from '@ipsadt/tg-widgets';
 
 import { counterClientScript } from './Bubble.client';
 
@@ -117,9 +111,7 @@ export interface CounterBubbleProps {
 export const CounterBubble = ({ count }: CounterBubbleProps): string => (
     <WidgetLayout>
         <Card>
-            <div style={{ fontSize: 16, fontWeight: 600 }}>
-                Interactive Counter
-            </div>
+            <div style={{ fontSize: 16, fontWeight: 600 }}>Interactive Counter</div>
             <div>
                 Current Count: <strong id="count-val">{count}</strong>
             </div>
@@ -136,11 +128,11 @@ export const CounterBubble = ({ count }: CounterBubbleProps): string => (
 
 `@ipsadt/tg-widgets` supports three purpose-built screen paradigms tailored to your interaction needs:
 
-| Paradigm | Builder Function | Queries (`allow_queries`) | State Storage | Payload Byte Overhead | Ideal For |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Completely Static** | `defineStaticWidgetScreen` | `false` | Bypassed (0 bytes) | Minimal (No JS, no `chat_data`) | Receipts, alert banners, announcements, static dashboards |
-| **Client-Interactive** | `defineClientWidgetScreen` | `false` | Bypassed (0 bytes) | Ultra-light | Accordions (`<details>`), tabs, local calculators, haptics |
-| **Dynamic Interactive** | `defineDynamicWidgetScreen` | `true` | Persisted & Synced | Standard (Compressed codec) | Counters, polls, shopping carts, checkout, games |
+| Paradigm                | Builder Function            | Queries (`allow_queries`) | State Storage      | Payload Byte Overhead           | Ideal For                                                  |
+| :---------------------- | :-------------------------- | :------------------------ | :----------------- | :------------------------------ | :--------------------------------------------------------- |
+| **Completely Static**   | `defineStaticWidgetScreen`  | `false`                   | Bypassed (0 bytes) | Minimal (No JS, no `chat_data`) | Receipts, alert banners, announcements, static dashboards  |
+| **Client-Interactive**  | `defineClientWidgetScreen`  | `false`                   | Bypassed (0 bytes) | Ultra-light                     | Accordions (`<details>`), tabs, local calculators, haptics |
+| **Dynamic Interactive** | `defineDynamicWidgetScreen` | `true`                    | Persisted & Synced | Standard (Compressed codec)     | Counters, polls, shopping carts, checkout, games           |
 
 #### A. Completely Static Screen (`defineStaticWidgetScreen`)
 
@@ -223,10 +215,7 @@ export const counterScreen = defineDynamicWidgetScreen({
 ### 4. Register Plugin in grammY (`bot.ts`)
 
 ```typescript
-import {
-    createTelegramWidgetsPlugin,
-    type WidgetsFlavor,
-} from '@ipsadt/tg-widgets';
+import { createTelegramWidgetsPlugin, type WidgetsFlavor } from '@ipsadt/tg-widgets';
 import { Bot, Context } from 'grammy';
 
 import { counterScreen } from './screen';
@@ -277,27 +266,27 @@ const widgets = createTelegramWidgetsPlugin({
     codec: {
         mode: 'prod',
         customKeys: { userLevel: 'ul', gems: 'gm' }, // Domain-specific dictionary
-        compressState: true,                         // Compress chat_data
-        compressAnswer: true,                        // Compress answerWidgetQuery responses
+        compressState: true, // Compress chat_data
+        compressAnswer: true, // Compress answerWidgetQuery responses
     },
 
     // 3. HTML/CSS/JS minifier ('terser' | 'fast' | false | WidgetMinifyConfig)
     minifier: {
-        engine: 'terser',                            // 'terser' (deep), 'fast' (regex), or 'none'
-        purgeCss: true,                              // Prune unused CSS rules from <style>
+        engine: 'terser', // 'terser' (deep), 'fast' (regex), or 'none'
+        purgeCss: true, // Prune unused CSS rules from <style>
     },
 
     // 4. Payload size limit verification (Telegram limit: 4096B deflate level 9)
     sizeLimit: {
         maxBytes: 4096,
-        onExceeded: 'error',                         // 'error' throws, 'warn' logs warning
-        autoInspect: true,                           // Log size metrics on send
+        onExceeded: 'error', // 'error' throws, 'warn' logs warning
+        autoInspect: true, // Log size metrics on send
     },
 
     // 5. State storage (WidgetsStorage instance or convenient memory config)
     storage: {
-        defaultTtlSeconds: 86400,                    // State expiration TTL (24h)
-        maxEntries: 2000,                            // Maximum LRU entries
+        defaultTtlSeconds: 86400, // State expiration TTL (24h)
+        maxEntries: 2000, // Maximum LRU entries
     },
 
     // 6. Global defaults for sent widgets
@@ -322,10 +311,10 @@ const widgets = createTelegramWidgetsPlugin({
 | `ctx.widgets.send(screenId, options)`              | Sends a widget to the target `chatId` (or current chat).                                                |
 | `ctx.widgets.reply(screenId, options)`             | Sends a widget as a direct reply to the current incoming message.                                       |
 | `ctx.widgets.render(screenId, props)`              | Pure render without sending. Returns `{ html, byteLength, compressedByteLength, isValid, maxAllowed }`. |
-| `ctx.widgets.inspect(screenId, props, options?)`   | Inspects compressed deflate size with active plugin minification options.                                |
+| `ctx.widgets.inspect(screenId, props, options?)`   | Inspects compressed deflate size with active plugin minification options.                               |
 | `ctx.widgets.update(messageId, screenId, options)` | Updates the server `chat_data` state of an active widget message.                                       |
 | `ctx.widgets.getScreen(screenId)`                  | Returns the registered screen descriptor.                                                               |
-| `ctx.widgets.config`                               | Readonly access to the resolved plugin configuration (`mode`, `codec`, `minifier`, `sizeLimit`, etc.). |
+| `ctx.widgets.config`                               | Readonly access to the resolved plugin configuration (`mode`, `codec`, `minifier`, `sizeLimit`, etc.).  |
 
 _Note: `ctx.bubbles` is provided as an exact alias to `ctx.widgets` for backwards compatibility._
 
@@ -353,12 +342,12 @@ All components strictly inherit native Telegram theme CSS variables:
 | `<Checkbox />`                  | `id`, `name`, `label`, `description`, `checked`, `disabled`                                                                                  | Native-styled Telegram checkbox.                                                |
 | `<Radio />` / `<RadioGroup />`  | `id`, `name`, `value`, `label`, `description`, `checked`, `disabled`                                                                         | Native-styled Telegram radio buttons.                                           |
 | `<Switch />` / `<Toggle />`     | `id`, `name`, `label`, `description`, `checked`, `disabled`                                                                                  | Smooth animated toggle switch.                                                  |
-| `<Stepper />`                   | `id`, `value`, `min`, `max`, `step`, `decrementAction`, `incrementAction`, `disabled`                                                       | Strict non-deforming square-button stepper control compliant with Profile 1.     |
+| `<Stepper />`                   | `id`, `value`, `min`, `max`, `step`, `decrementAction`, `incrementAction`, `disabled`                                                        | Strict non-deforming square-button stepper control compliant with Profile 1.    |
 | `<ProgressBar />`               | `percent` (0-100), `color`, `trackColor`, `height`                                                                                           | Progress track for quotas, polls, or progress bars.                             |
 | `<Alert />`                     | `variant` (`info`, `success`, `warning`, `destructive`), `title`, `description`, `icon`                                                      | Status notification card with accent border indicator.                          |
 | `<Accordion />`                 | `items` (`title`, `content`, `defaultOpen`), `chevron`                                                                                       | Telegram native collapsible disclosure sections.                                |
 | `<Table />`                     | `columns`, `data`, `striped`, `compact`                                                                                                      | Lightweight responsive tabular data viewer.                                     |
-| `<SegmentedControl />`          | `name`, `options` (`value`, `label`, `icon`), `value`, `action`                                                                               | iOS/macOS styled native tabbed segment picker.                                  |
+| `<SegmentedControl />`          | `name`, `options` (`value`, `label`, `icon`), `value`, `action`                                                                              | iOS/macOS styled native tabbed segment picker.                                  |
 | `<Avatar />`                    | `src`, `fallback`, `size` (`xs`, `sm`, `md`, `lg`), `shape` (`circle`, `rounded`), `badge`                                                   | User/chat avatar with fallback initials and status badge.                       |
 | `<List />` & `<ListItem />`     | `left`, `title`, `subtitle`, `right`, `chevron`, `interactive`, `disabled`                                                                   | Telegram cell item with left avatar/icon and right badge/chevron.               |
 | `<Divider />` / `<Separator />` | `inset` (boolean or px number), `color`                                                                                                      | Subtle separator matching Telegram list dividers.                               |
