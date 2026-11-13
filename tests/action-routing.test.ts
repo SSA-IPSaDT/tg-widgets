@@ -469,4 +469,56 @@ describe('Action Routing & widget_query Module', () => {
         const stored = setup.storage.get('inline:inline_msg_999');
         expect(stored?.state).toEqual({ inlineCount: 2 });
     });
+
+    it('serializes concurrent widget queries for the same storageKey in strict FIFO order', async () => {
+        let executionOrder: number[] = [];
+        const setup = setupRouterTest({
+            initialState: { count: 0 },
+            screenActions: {
+                inc: async (actCtx: any) => {
+                    const current = actCtx.state.count;
+                    // Introduce artificial latency to simulate async storage/network I/O
+                    await new Promise((r) => setTimeout(r, 10));
+                    const next = current + 1;
+                    executionOrder.push(next);
+                    await actCtx.setState({ count: next });
+                    return { count: next };
+                },
+            },
+        });
+
+        setup.storage.set('100:200', {
+            screenId: 'cart-screen',
+            state: { count: 0 },
+            updatedAt: Date.now(),
+        });
+
+        const makeCtx = (queryId: string) => ({
+            update: {
+                widget_query: {
+                    id: queryId,
+                    chat: { id: 100 },
+                    message_id: 200,
+                    chat_instance: 'inst',
+                    from: { id: 1, first_name: 'Alex' },
+                    data: 'inc',
+                },
+            },
+            api: { raw: setup.mockRawApi },
+        });
+
+        // Fire 5 concurrent queries simultaneously
+        await Promise.all([
+            setup.plugin.middleware(makeCtx('q1') as never, async () => {}),
+            setup.plugin.middleware(makeCtx('q2') as never, async () => {}),
+            setup.plugin.middleware(makeCtx('q3') as never, async () => {}),
+            setup.plugin.middleware(makeCtx('q4') as never, async () => {}),
+            setup.plugin.middleware(makeCtx('q5') as never, async () => {}),
+        ]);
+
+        expect(setup.answeredQueries.length).toBe(5);
+        expect(executionOrder).toEqual([1, 2, 3, 4, 5]);
+        const finalStored = setup.storage.get('100:200');
+        expect(finalStored?.state).toEqual({ count: 5 });
+    });
 });

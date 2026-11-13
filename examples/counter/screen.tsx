@@ -14,6 +14,9 @@ import {
     WidgetActionContext,
     WidgetLayout,
 } from '../../src';
+import { clientCounterScript } from './client';
+
+export { clientCounterScript } from './client';
 
 /**
  * State contract for the interactive counter widget.
@@ -21,66 +24,6 @@ import {
 export interface CounterState {
     count: number;
 }
-
-/**
- * Client-side script providing instant optimistic UI updates and server synchronization.
- */
-const clientCounterScript = (args: { count: number }) => {
-    const widget = window.TelegramWidget;
-    const incrementButton = document.getElementById('btn-inc');
-    const decrementButton = document.getElementById('btn-dec');
-    const counterValueElement = document.getElementById('counter-val');
-    let count = args.count;
-
-    const setCount = (newCount: number) => {
-        count = newCount;
-        if (counterValueElement) counterValueElement.textContent = String(count);
-    };
-
-    const syncState = () => {
-        try {
-            if (widget?.chatData) {
-                const parsedData = JSON.parse(widget.chatData);
-                if (typeof parsedData?.count === 'number') setCount(parsedData.count);
-            }
-        } catch {
-            // ignore JSON parse errors
-        }
-    };
-
-    syncState();
-    widget?.onEvent?.('chatDataChanged', syncState);
-
-    incrementButton?.addEventListener('click', () => {
-        widget?.HapticFeedback?.impactOccurred?.('light');
-        setCount(count + 1);
-        widget?.request?.('inc').then((response) => {
-            if (response?.result) {
-                try {
-                    const parsedData = JSON.parse(response.result);
-                    if (typeof parsedData?.count === 'number') setCount(parsedData.count);
-                } catch {
-                    // ignore JSON parse errors
-                }
-            }
-        });
-    });
-
-    decrementButton?.addEventListener('click', () => {
-        widget?.HapticFeedback?.impactOccurred?.('light');
-        setCount(count - 1);
-        widget?.request?.('dec').then((response) => {
-            if (response?.result) {
-                try {
-                    const parsedData = JSON.parse(response.result);
-                    if (typeof parsedData?.count === 'number') setCount(parsedData.count);
-                } catch {
-                    // ignore JSON parse errors
-                }
-            }
-        });
-    });
-};
 
 /**
  * Interactive counter widget screen demonstrating client-side IIFE scripting,
