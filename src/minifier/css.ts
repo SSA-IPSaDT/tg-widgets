@@ -55,11 +55,15 @@ export const minifyCssString = (css: string, options: CssMinifyOptions = {}): st
         );
     }
 
-    // 4. Zero units, decimal shortening, and user-select pruning
+    // 4. Zero units, decimal shortening, user-select, and theme color fallbacks
     result = result
         .replace(/(:\s*|\s+)0(?:px|em|rem|%|pt)(?=[;}\s])/g, '$10')
         .replace(/(:\s*|\s|,|\()0\.([0-9]+)/g, '$1.$2')
-        .replace(/(?:-webkit-)?user-select:\s*none;?/g, '');
+        .replace(/(?:-webkit-)?user-select:\s*none;?/g, '')
+        .replace(
+            /var\((--tg-theme-[a-zA-Z0-9_-]+),(?:#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|[a-zA-Z]+)\)/g,
+            'var($1)',
+        );
 
     // 5. Consolidate directional rules inside { ... } blocks or inline declarations
     if (result.includes('{')) {

@@ -138,7 +138,7 @@ export const WidgetLayout = ({
         ...(isFullHeight ? { height: '100%', flex: 1 } : {}),
         ...(height !== undefined ? { height } : {}),
         ...(minHeight !== undefined ? { minHeight } : {}),
-        color: 'var(--tg-theme-text-color, #111827)',
+        color: 'var(--tg-theme-text-color)',
         display: 'flex',
         flexDirection: 'column',
         gap,

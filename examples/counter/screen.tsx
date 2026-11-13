@@ -88,7 +88,7 @@ export const counterScreen = defineDynamicWidgetScreen({
                             style={{
                                 fontSize: 52,
                                 fontWeight: 800,
-                                color: 'var(--tg-theme-button-color, #2481cc)',
+                                color: 'var(--tg-theme-button-color)',
                                 letterSpacing: -1,
                             }}
                         >

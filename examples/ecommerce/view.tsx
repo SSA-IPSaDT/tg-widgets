@@ -66,7 +66,7 @@ export const EcommerceProductView = (props: EcommerceState): string => {
                             <div
                                 style={{
                                     fontSize: 12,
-                                    color: 'var(--tg-theme-text-color, #111827)',
+                                    color: 'var(--tg-theme-text-color)',
                                     opacity: 0.65,
                                 }}
                             >
@@ -91,7 +91,7 @@ export const EcommerceProductView = (props: EcommerceState): string => {
                             style={{
                                 fontSize: 20,
                                 fontWeight: 800,
-                                color: 'var(--tg-theme-link-color, var(--tg-theme-text-color, #2481cc))',
+                                color: 'var(--tg-theme-link-color, var(--tg-theme-text-color))',
                             }}
                         >
                             ${total}

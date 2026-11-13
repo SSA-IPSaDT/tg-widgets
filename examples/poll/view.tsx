@@ -57,9 +57,9 @@ export const PollView = (props: PollState) => {
                 <CardContent>
                     <style>
                         {'.poll-row{position:relative;overflow:hidden;border-radius:var(--tg-radius-md,10px);border:1px solid rgba(120,120,128,0.16);background:rgba(120,120,128,0.06);padding:12px 14px;min-height:46px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;cursor:pointer;user-select:none;touch-action:manipulation;transition:border-color .12s,background .12s;}' +
-                            '.poll-row.selected{border-color:var(--tg-accent-color,var(--tg-theme-button-color,#2481cc));}' +
-                            '.poll-row.selected::before{content:"";position:absolute;inset:0;background:var(--tg-accent-color,var(--tg-theme-button-color,#2481cc));opacity:0.08;pointer-events:none;}' +
-                            '.poll-bar{position:absolute;top:0;left:0;bottom:0;background:var(--tg-accent-color,var(--tg-theme-button-color,#2481cc));opacity:0.22;border-radius:var(--tg-radius-md,9px);transition:width .15s cubic-bezier(0.2,0,0,1);z-index:0;}'}
+                            '.poll-row.selected{border-color:var(--tg-accent-color,var(--tg-theme-button-color));}' +
+                            '.poll-row.selected::before{content:"";position:absolute;inset:0;background:var(--tg-accent-color,var(--tg-theme-button-color));opacity:0.08;pointer-events:none;}' +
+                            '.poll-bar{position:absolute;top:0;left:0;bottom:0;background:var(--tg-accent-color,var(--tg-theme-button-color));opacity:0.22;border-radius:var(--tg-radius-md,9px);transition:width .15s cubic-bezier(0.2,0,0,1);z-index:0;}'}
                     </style>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                         {options.map((opt) => {
@@ -122,7 +122,7 @@ export const PollView = (props: PollState) => {
                         style={{
                             fontSize: 11.5,
                             fontWeight: 500,
-                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
+                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color))',
                             opacity: 0.85,
                         }}
                     >
@@ -134,7 +134,7 @@ export const PollView = (props: PollState) => {
                         style={{
                             fontSize: 11.5,
                             fontWeight: 500,
-                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
+                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color))',
                             opacity: 0.85,
                         }}
                     >

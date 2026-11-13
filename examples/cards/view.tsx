@@ -85,7 +85,7 @@ export const CardsView = () => (
                         display: 'flex',
                         justifyContent: 'space-between',
                         fontSize: 12,
-                        color: 'var(--tg-theme-text-color, #111827)',
+                        color: 'var(--tg-theme-text-color)',
                         opacity: 0.65,
                     }}
                 >
@@ -112,7 +112,7 @@ export const CardsView = () => (
                         <div
                             style={{
                                 fontSize: 11,
-                                color: 'var(--tg-theme-text-color, #111827)',
+                                color: 'var(--tg-theme-text-color)',
                                 opacity: 0.65,
                             }}
                         >
@@ -130,7 +130,7 @@ export const CardsView = () => (
                         <div
                             style={{
                                 fontSize: 11,
-                                color: 'var(--tg-theme-text-color, #111827)',
+                                color: 'var(--tg-theme-text-color)',
                                 opacity: 0.65,
                             }}
                         >

@@ -80,7 +80,7 @@ export const accordionScreen = defineClientWidgetScreen({
                         style={{
                             fontSize: 11.5,
                             fontWeight: 500,
-                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
+                            color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color))',
                             opacity: 0.85,
                         }}
                     >

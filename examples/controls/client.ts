@@ -24,7 +24,7 @@ export const controlsClientScript = (initial: ControlsState) => {
         return res;
     };
 
-    const cBtn = 'var(--tg-theme-button-color,#2481cc)';
+    const cBtn = 'var(--tg-theme-button-color)';
     const sWrap = (inner: string) =>
         `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">${inner}</svg>`;
     const updateUI = (up: Partial<ControlsState>) => {
