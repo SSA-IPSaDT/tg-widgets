@@ -4,6 +4,13 @@ Interactive community poll with animated real-time percentage bars, haptic feedb
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Interactive Poll Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Voting, animated percentage progress bars, server sync, and theme adaptation. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Highlights

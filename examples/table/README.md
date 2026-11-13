@@ -4,6 +4,13 @@ Native data tables styled in the shadcn/ui aesthetic for receipts, invoices, lea
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Data Table Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Native structured data tables, receipts layout, and dark/light theme adaptation. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Telegram Profile 1 Implementation Highlights

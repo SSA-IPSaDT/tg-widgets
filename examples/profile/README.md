@@ -4,6 +4,13 @@ User profile dashboard featuring custom avatar styling, preference switches, inf
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="User Profile Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Toggling profile preferences, testing fallback plain text mode, and theme switching. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Highlights
@@ -24,7 +31,5 @@ Source code: [`screen.tsx`](./screen.tsx)
 ---
 
 ## 📸 Telegram Preview
-
-> _Add `screenshot.png` here after testing in Telegram:_
 
 ![Profile Screenshot](./screenshot.png)

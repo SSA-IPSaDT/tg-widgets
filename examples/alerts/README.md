@@ -4,6 +4,13 @@ The **Alerts** screen demonstrates system status messages, warnings, confirmatio
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Alerts Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Static alerts and Lucide vector icons adapting across dark and light Telegram themes. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Architectural Features
@@ -52,3 +59,9 @@ export const alertsScreen = defineStaticWidgetScreen({
 ```text
 /alerts
 ```
+
+---
+
+## 📸 Telegram Preview
+
+![Alerts Screenshot](./screenshot.png)

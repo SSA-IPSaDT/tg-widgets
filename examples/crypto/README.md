@@ -4,6 +4,13 @@ Card-based cryptocurrency wallet widget demonstrating balance presentation, quic
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Crypto Wallet Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: TON balance display, address copy with native haptics, and light/dark theme adaptation. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Features
@@ -24,7 +31,5 @@ Source code: [`screen.tsx`](./screen.tsx)
 ---
 
 ## 📸 Telegram Preview
-
-> _Add `screenshot.png` here after testing in Telegram:_
 
 ![Crypto Screenshot](./screenshot.png)

@@ -4,6 +4,13 @@ Interactive form control collection featuring switches, checkboxes, radio groups
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Form Controls Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Toggling switch, incrementing/decrementing stepper, selecting radio options, and light/dark theme adaptation. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Profile 1 Compatibility Highlights

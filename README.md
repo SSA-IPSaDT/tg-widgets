@@ -20,6 +20,13 @@
 
 Zero-runtime TSX UI Kit and type-safe [grammY](https://grammy.dev) plugin for **Telegram Bot API 10.4 HTML Widgets (Interactive Bubbles)**.
 
+<p align="center">
+  <img src="media/overview.gif" alt="@ipsadt/tg-widgets Bot API 10.4 Live Showcase" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live showcase: Connecting to Telegram Test DC, executing <code>/start</code>, and mounting interactive widgets with real-time compression diagnostics.</em>
+</p>
+
 ---
 
 > [!IMPORTANT]

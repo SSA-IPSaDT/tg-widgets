@@ -4,6 +4,13 @@ Event registration widget featuring role selection (Volunteer vs Player), live r
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Chess Tournament Registration Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Role selection, live registration tallies, and theme switching. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Highlights
@@ -24,7 +31,5 @@ Source code: [`screen.tsx`](./screen.tsx)
 ---
 
 ## 📸 Telegram Preview
-
-> _Add `screenshot.png` here after testing in Telegram:_
 
 ![Tournament Screenshot](./screenshot.png)

@@ -4,6 +4,13 @@ Interactive counter widget demonstrating bidirectional communication between cli
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Interactive Counter Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Increments/decrements with optimistic client lock, server sync, and theme adaptation. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 How It Works

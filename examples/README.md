@@ -2,6 +2,13 @@
 
 Interactive showcase Telegram bot (`bot.tsx`) demonstrating all UI components, state management, client-side scripts, and server actions inside real Telegram messages.
 
+<p align="center">
+  <img src="./overview.gif" alt="@ipsadt/tg-widgets Showcase Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live showcase demo: Starting the bot with Bun on Telegram Test DC, sending <code>/start</code>, and navigating the 11 component screens.</em>
+</p>
+
 ---
 
 ## 🛠️ Quick Start
@@ -77,20 +84,53 @@ All example screens follow the standard `@ipsadt/tg-widgets` contract:
 
 ## 📸 Screen Media & Visual Previews
 
-Save screenshots and animations directly inside each screen's directory:
+Every component screen includes high-resolution static captures, auto-playing interactive GIFs, and modern WebM videos demonstrating real-time Telegram client theme adaptation (Dark ⇄ Light mode):
 
-| Screen              | Directory & Filename                                  |           Recommended Format           | What to Capture                                                      |
-| :------------------ | :---------------------------------------------------- | :------------------------------------: | :------------------------------------------------------------------- |
-| **Live Counter**    | [`examples/counter/demo.gif`](./counter/)             | **Animated GIF** (or `screenshot.png`) | Tap `Increment` button, see lock + number increase (+1).             |
-| **Form Controls**   | [`examples/controls/demo.gif`](./controls/)           | **Animated GIF** (or `screenshot.png`) | Toggle switch, increment/decrement stepper, choose radio.            |
-| **Live Poll**       | [`examples/poll/demo.gif`](./poll/)                   | **Animated GIF** (or `screenshot.png`) | Tap poll choice, animated progress bar expansion, percentage update. |
-| **E-Commerce**      | [`examples/ecommerce/demo.gif`](./ecommerce/)         | **Animated GIF** (or `screenshot.png`) | Select size pill, stepper quantity, click Add to Cart with toast.    |
-| **Accordion**       | [`examples/accordion/demo.gif`](./accordion/)         | **Animated GIF** (or `screenshot.png`) | Fold and unfold native accordion items without latency.              |
-| **Data Table**      | [`examples/table/screenshot.png`](./table/)           |             **Static PNG**             | Receipt items table with clean borders and rounded corners.          |
-| **Alerts & Badges** | [`examples/alerts/screenshot.png`](./alerts/)         |             **Static PNG**             | Lucide status banners (Info, Success, Warning, Error) with badges.   |
-| **Cards & Metrics** | [`examples/cards/screenshot.png`](./cards/)           |             **Static PNG**             | Metric card, progress bar, action buttons.                           |
-| **User Profile**    | [`examples/profile/screenshot.png`](./profile/)       |             **Static PNG**             | Avatar, notification switches, plaintext toggle.                     |
-| **Chess Event**     | [`examples/tournament/screenshot.png`](./tournament/) |             **Static PNG**             | Tournament registration card with Mini App button.                   |
-| **Crypto Wallet**   | [`examples/crypto/screenshot.png`](./crypto/)         |             **Static PNG**             | TON balance card with copy-address action.                           |
+| Screen               | Command       |           Animated Preview           |                  Static Capture                  |                HD Video                | Highlights                                                                    |
+| :------------------- | :------------ | :----------------------------------: | :----------------------------------------------: | :------------------------------------: | :---------------------------------------------------------------------------- |
+| **Accordion**        | `/accordion`  | [🎬 demo.gif](./accordion/demo.gif)  | [🖼️ screenshot.png](./accordion/screenshot.png)  | [📹 demo.webm](./accordion/demo.webm)  | Native disclosure `<details>`, smooth chevron rotation, theme adaptation.     |
+| **Form Controls**    | `/controls`   |  [🎬 demo.gif](./controls/demo.gif)  |  [🖼️ screenshot.png](./controls/screenshot.png)  |  [📹 demo.webm](./controls/demo.webm)  | SVG switches, radios, checkboxes, numeric stepper, theme switching.           |
+| **User Profile**     | `/profile`    |  [🎬 demo.gif](./profile/demo.gif)   |  [🖼️ screenshot.png](./profile/screenshot.png)   |  [📹 demo.webm](./profile/demo.webm)   | Avatar badge, toggles, graceful plain-text fallback toggle.                   |
+| **Chess Tournament** | `/tournament` | [🎬 demo.gif](./tournament/demo.gif) | [🖼️ screenshot.png](./tournament/screenshot.png) | [📹 demo.webm](./tournament/demo.webm) | Volunteer/Player roles, live counters, Mini App launch button.                |
+| **Crypto Wallet**    | `/crypto`     |   [🎬 demo.gif](./crypto/demo.gif)   |   [🖼️ screenshot.png](./crypto/screenshot.png)   |   [📹 demo.webm](./crypto/demo.webm)   | TON balance, native clipboard copy with haptic feedback, theme switching.     |
+| **E-Commerce**       | `/ecommerce`  | [🎬 demo.gif](./ecommerce/demo.gif)  | [🖼️ screenshot.png](./ecommerce/screenshot.png)  | [📹 demo.webm](./ecommerce/demo.webm)  | Dynamic shoe size pills, live price calculation, order checkout toast.        |
+| **Alerts & Badges**  | `/alerts`     |   [🎬 demo.gif](./alerts/demo.gif)   |   [🖼️ screenshot.png](./alerts/screenshot.png)   |   [📹 demo.webm](./alerts/demo.webm)   | Lucide vector banners (Info, Success, Warning, Error), custom accent borders. |
+| **Cards & Metrics**  | `/cards`      |   [🎬 demo.gif](./cards/demo.gif)    |   [🖼️ screenshot.png](./cards/screenshot.png)    |   [📹 demo.webm](./cards/demo.webm)    | Compound shadcn cards, metric grid, accessible ProgressBar.                   |
+| **Live Poll**        | `/poll`       |    [🎬 demo.gif](./poll/demo.gif)    |    [🖼️ screenshot.png](./poll/screenshot.png)    |    [📹 demo.webm](./poll/demo.webm)    | Optimistic vote selection, animated progress bar expansion, haptics.          |
+| **Data Table**       | `/table`      |   [🎬 demo.gif](./table/demo.gif)    |   [🖼️ screenshot.png](./table/screenshot.png)    |   [📹 demo.webm](./table/demo.webm)    | Native `<table>`, receipts layout, theme-integrated list separators.          |
+| **Live Counter**     | `/counter`    |  [🎬 demo.gif](./counter/demo.gif)   |  [🖼️ screenshot.png](./counter/screenshot.png)   |  [📹 demo.webm](./counter/demo.webm)   | IIFE client script, optimistic input lock, bidirectional server sync.         |
+
+<details open>
+<summary><b>🖼️ Visual Screenshot Gallery (All 11 Screens)</b></summary>
+<br />
+
+<p align="center">
+  <a href="./accordion/"><img src="./accordion/screenshot.png" width="31%" alt="Accordion" /></a>
+  &nbsp;
+  <a href="./controls/"><img src="./controls/screenshot.png" width="31%" alt="Form Controls" /></a>
+  &nbsp;
+  <a href="./profile/"><img src="./profile/screenshot.png" width="31%" alt="User Profile" /></a>
+</p>
+<p align="center">
+  <a href="./tournament/"><img src="./tournament/screenshot.png" width="31%" alt="Chess Tournament" /></a>
+  &nbsp;
+  <a href="./crypto/"><img src="./crypto/screenshot.png" width="31%" alt="Crypto Wallet" /></a>
+  &nbsp;
+  <a href="./ecommerce/"><img src="./ecommerce/screenshot.png" width="31%" alt="E-Commerce" /></a>
+</p>
+<p align="center">
+  <a href="./alerts/"><img src="./alerts/screenshot.png" width="31%" alt="Alerts" /></a>
+  &nbsp;
+  <a href="./cards/"><img src="./cards/screenshot.png" width="31%" alt="Cards" /></a>
+  &nbsp;
+  <a href="./poll/"><img src="./poll/screenshot.png" width="31%" alt="Live Poll" /></a>
+</p>
+<p align="center">
+  <a href="./table/"><img src="./table/screenshot.png" width="46%" alt="Data Table" /></a>
+  &nbsp;
+  <a href="./counter/"><img src="./counter/screenshot.png" width="46%" alt="Live Counter" /></a>
+</p>
+
+</details>
 
 > 💡 **Tip for Mobile Compact Mode**: Take screenshots on both mobile (Android/iOS) and desktop. On mobile, `WidgetLayout` automatically scales to narrow screens (320px–360px) maintaining strict `1:1` square aspect ratios on buttons.

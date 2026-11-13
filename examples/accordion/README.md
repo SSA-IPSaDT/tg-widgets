@@ -4,6 +4,13 @@ The **Accordion** screen demonstrates native collapsible sections, FAQs, and spo
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Accordion Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Expanding/collapsing accordion items and dynamic light/dark theme adaptation. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Architectural Features
@@ -75,3 +82,9 @@ export const accordionScreen = defineClientWidgetScreen({
 ```text
 /accordion
 ```
+
+---
+
+## 📸 Telegram Preview
+
+![Accordion Screenshot](./screenshot.png)

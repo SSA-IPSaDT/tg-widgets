@@ -4,6 +4,13 @@ Interactive product card with variant selection, live subtotal computation, and 
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="E-Commerce Mini Cart Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Variant picker, stepper quantity adjustments, checkout, and theme switching. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Highlights

@@ -4,6 +4,13 @@ The **Cards & Analytics** screen illustrates compound card compositions inspired
 
 Source code: [`screen.tsx`](./screen.tsx)
 
+<p align="center">
+  <img src="./demo.gif" alt="Cards & Analytics Component Live Demo" width="100%" />
+</p>
+<p align="center">
+  <em>⚡ Live interaction: Compound card metrics, progress bar, tactile actions, and theme switching. <a href="./screenshot.png">Static Screenshot</a> · <a href="./demo.webm">HD WebM</a></em>
+</p>
+
 ---
 
 ## 💡 Key Architectural Features
@@ -73,3 +80,9 @@ export const cardsScreen = defineWidgetScreen({
 ```text
 /cards
 ```
+
+---
+
+## 📸 Telegram Preview
+
+![Cards Screenshot](./screenshot.png)
