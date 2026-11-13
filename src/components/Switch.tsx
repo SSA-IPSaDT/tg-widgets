@@ -1,14 +1,26 @@
 import { h } from '../jsx';
 
+/**
+ * Props for the Switch / Toggle component.
+ */
 export interface SwitchProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Whether switch toggle is ON. */
     checked?: boolean;
+    /** Whether switch is disabled. */
     disabled?: boolean;
+    /** Primary label text or element. */
     label?: unknown;
+    /** Secondary descriptive hint text. */
     description?: unknown;
+    /** Action name or payload triggered on click. */
     action?: string;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Data attributes passed to root button element. */
     [key: `data-${string}`]: string | undefined;
 }
 
@@ -53,4 +65,7 @@ export const Switch = ({
     );
 };
 
-export const Toggle = Switch;
+/**
+ * Alias for Switch representing a toggle control.
+ */
+export const Toggle: (props: SwitchProps) => string = Switch;

@@ -40,7 +40,7 @@ export const TournamentView = (props: TournamentState): string => (
                     style={{
                         fontSize: 13,
                         fontWeight: 500,
-                        color: 'var(--tg-theme-text-color, #111827)',
+                        color: 'var(--tg-theme-text-color)',
                         opacity: 0.9,
                         lineHeight: 1.45,
                     }}
@@ -63,8 +63,7 @@ export const TournamentView = (props: TournamentState): string => (
                             flex: 1,
                             padding: '8px 4px',
                             borderRadius: 10,
-                            background:
-                                'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.10))',
+                            background: 'var(--tg-theme-secondary-bg-color)',
                         }}
                     >
                         <div style={{ fontSize: 11, opacity: 0.65 }}>Date</div>
@@ -75,8 +74,7 @@ export const TournamentView = (props: TournamentState): string => (
                             flex: 1,
                             padding: '8px 4px',
                             borderRadius: 10,
-                            background:
-                                'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.10))',
+                            background: 'var(--tg-theme-secondary-bg-color)',
                         }}
                     >
                         <div style={{ fontSize: 11, opacity: 0.65 }}>Format</div>
@@ -87,8 +85,7 @@ export const TournamentView = (props: TournamentState): string => (
                             flex: 1,
                             padding: '8px 4px',
                             borderRadius: 10,
-                            background:
-                                'var(--tg-theme-secondary-bg-color, rgba(120, 120, 128, 0.10))',
+                            background: 'var(--tg-theme-secondary-bg-color)',
                         }}
                     >
                         <div style={{ fontSize: 11, opacity: 0.65 }}>Prize Pool</div>
@@ -96,7 +93,7 @@ export const TournamentView = (props: TournamentState): string => (
                             style={{
                                 fontSize: 13,
                                 fontWeight: 700,
-                                color: 'var(--tg-theme-link-color, #2481cc)',
+                                color: 'var(--tg-theme-link-color)',
                             }}
                         >
                             $1,000
@@ -113,7 +110,7 @@ export const TournamentView = (props: TournamentState): string => (
                         fontSize: 12.5,
                         textAlign: 'center',
                         fontWeight: 500,
-                        color: 'var(--tg-theme-text-color, inherit)',
+                        color: 'var(--tg-theme-text-color)',
                         opacity: 0.85,
                     }}
                 >
@@ -128,7 +125,7 @@ export const TournamentView = (props: TournamentState): string => (
                         style={{
                             fontSize: 12.5,
                             fontWeight: 600,
-                            color: 'var(--tg-theme-text-color, inherit)',
+                            color: 'var(--tg-theme-text-color)',
                             marginBottom: 8,
                         }}
                     >

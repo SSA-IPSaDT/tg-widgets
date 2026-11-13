@@ -258,6 +258,32 @@ describe('Minifier & CSS Purging Pipeline', () => {
             const reductionPct = ((originalBytes - minifiedBytes) / originalBytes) * 100;
             expect(reductionPct).toBeGreaterThan(40);
         });
+
+        test('executes sub-millisecond without AST overhead and preserves JS strings and template literals', async () => {
+            const scriptMarkup = `
+                <script>
+                    const message = "Do not remove this: // or /* comments inside quotes */";
+                    const regex = /[a-z0-9_-]+\\/[a-z]+/gi;
+                    const template = \`Value is: \${message}\`;
+                    // Outer comment that should be removed
+                    /* Multi-line outer comment */
+                    function handle(x, y) {
+                        return x + y;
+                    }
+                </script>
+            `;
+
+            const start = performance.now();
+            const minified = await minifyHtml(scriptMarkup);
+            const duration = performance.now() - start;
+
+            expect(duration).toBeLessThan(15); // Sub-millisecond to few ms max
+            expect(minified).toContain('"Do not remove this: // or /* comments inside quotes */"');
+            expect(minified).toContain('/[a-z0-9_-]+\\/[a-z]+/gi');
+            expect(minified).toContain('`Value is: ${message}`');
+            expect(minified).not.toContain('Outer comment that should be removed');
+            expect(minified).not.toContain('Multi-line outer comment');
+        });
     });
 
     describe('hoistRepeatedStyles()', () => {

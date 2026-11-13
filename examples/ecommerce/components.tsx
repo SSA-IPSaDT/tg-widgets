@@ -15,7 +15,7 @@ export const SizePicker = ({ sizes, selectedSize }: SizePickerProps) => (
             style={{
                 fontSize: 12,
                 fontWeight: 600,
-                color: 'var(--tg-theme-text-color, #111827)',
+                color: 'var(--tg-theme-text-color)',
                 opacity: 0.65,
                 marginBottom: 6,
             }}

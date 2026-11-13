@@ -1,15 +1,28 @@
 import { h } from '../jsx';
 
+/**
+ * Props for the Radio component.
+ */
 export interface RadioProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Form value of this radio option. */
     value?: string;
+    /** Whether this radio option is selected. */
     checked?: boolean;
+    /** Whether interaction is disabled. */
     disabled?: boolean;
+    /** Primary label text or element. */
     label?: unknown;
+    /** Secondary descriptive hint text. */
     description?: unknown;
+    /** Action name or payload triggered on click. */
     action?: string;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Data attributes passed to root button element. */
     [key: `data-${string}`]: string | undefined;
 }
 
@@ -104,14 +117,28 @@ export const Radio = ({
     );
 };
 
+/**
+ * Props for the RadioGroup container component.
+ */
 export interface RadioGroupProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Vertical spacing between radio buttons in px. */
     gap?: number;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Radio elements inside this group. */
     children?: unknown;
 }
 
+/**
+ * Container component for grouping Radio buttons with consistent vertical spacing.
+ *
+ * @param props - RadioGroup configuration props.
+ * @returns Rendered HTML string.
+ */
 export const RadioGroup = ({
     id,
     gap = 8,

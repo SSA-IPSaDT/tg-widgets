@@ -1,21 +1,60 @@
+/**
+ * Telegram Widgets Action Codec and Serializer.
+ *
+ * Implements compact action and payload encoding designed to fit inside
+ * Telegram Bot API 10.4's strict 64-byte `update.widget_query.data` ceiling.
+ *
+ * @module action
+ */
+
 import { Buffer } from 'node:buffer';
 import { compressKeys, decompressKeys } from './codec';
 
+/**
+ * Parsed widget action representation consisting of an action identifier and optional payload.
+ */
 export interface DecodedWidgetAction {
+    /**
+     * Unique action identifier (e.g. 'toggle', 'increment', 'navigate').
+     */
     action: string;
+    /**
+     * Optional parsed primitive or structured object payload.
+     */
     payload?: unknown;
 }
 
+/**
+ * Options configuring action serialization.
+ */
 export interface EncodeWidgetActionOptions {
+    /**
+     * Enables automatic shortening of object keys via bidirectional codec dictionary (default: false).
+     */
     compress?: boolean;
+    /**
+     * Custom dictionary map of long key names to single-letter codes.
+     */
     customMap?: Record<string, string>;
 }
 
+/**
+ * Options configuring action deserialization.
+ */
 export interface DecodeWidgetActionOptions {
+    /**
+     * Enables automatic decompression of shortened single-letter keys (default: false).
+     */
     decompress?: boolean;
+    /**
+     * Custom reverse dictionary map of single-letter codes back to long key names.
+     */
     customReverseMap?: Record<string, string>;
 }
 
+/**
+ * Maximum byte length permitted for `update.widget_query.data` by Telegram Bot API specification (64 bytes).
+ */
 export const TELEGRAM_MAX_WIDGET_QUERY_DATA_BYTES = 64;
 
 /**

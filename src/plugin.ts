@@ -1,3 +1,12 @@
+/**
+ * Telegram Widgets grammY Plugin Suite.
+ *
+ * Implements the core `createTelegramWidgetsPlugin` factory, request query handler,
+ * state controller dispatcher, and plugin configuration resolvers.
+ *
+ * @module plugin
+ */
+
 import type { Context, MiddlewareFn } from 'grammy';
 import type { AnyWidgetScreen, RawWidgetApiMethods } from './screen';
 import type { WidgetsStorage } from './storage';
@@ -62,5 +71,12 @@ export const createTelegramWidgetsPlugin = <TScreens extends Record<string, AnyW
     return { middleware, screens, storage, config };
 };
 
-export const createWidgetsPlugin = createTelegramWidgetsPlugin;
-export const createBubblesPlugin = createTelegramWidgetsPlugin;
+/**
+ * Shorthand alias for `createTelegramWidgetsPlugin`.
+ */
+export const createWidgetsPlugin: typeof createTelegramWidgetsPlugin = createTelegramWidgetsPlugin;
+
+/**
+ * Bubble-branded alias for `createTelegramWidgetsPlugin`.
+ */
+export const createBubblesPlugin: typeof createTelegramWidgetsPlugin = createTelegramWidgetsPlugin;

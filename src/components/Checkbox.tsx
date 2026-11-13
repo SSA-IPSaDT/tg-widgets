@@ -1,20 +1,61 @@
+/**
+ * Telegram Widgets Checkbox Control Component.
+ *
+ * @module components/Checkbox
+ */
+
 import { h } from '../jsx';
 
+/**
+ * Properties for the Checkbox component.
+ */
 export interface CheckboxProps {
+    /**
+     * Unique HTML element ID.
+     */
     id?: string;
+    /**
+     * Checked state toggle.
+     * @default false
+     */
     checked?: boolean;
+    /**
+     * Whether the control is disabled.
+     * @default false
+     */
     disabled?: boolean;
+    /**
+     * Primary label text or element.
+     */
     label?: unknown;
+    /**
+     * Secondary description text.
+     */
     description?: unknown;
+    /**
+     * Action string dispatched via data-action on change.
+     */
     action?: string;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
+    /**
+     * Arbitrary data-* attributes.
+     */
     [key: `data-${string}`]: string | undefined;
 }
 
 /**
  * Interactive Checkbox control for Telegram Widgets (QuickJS Profile 1 compliant).
  * Renders lightweight vector SVG checkmarks without prohibited `<input>` tags.
+ *
+ * @param props Checkbox properties.
+ * @returns Rendered HTML button element.
  *
  * @example
  * <Checkbox id="chk-terms" checked={true} label="Accept Terms" description="I agree to terms of service" />

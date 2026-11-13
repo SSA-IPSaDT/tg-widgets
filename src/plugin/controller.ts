@@ -14,6 +14,17 @@ import type {
 } from './types';
 import { getStorageKey } from './utils';
 
+/**
+ * Creates a WidgetsController instance attached to a grammY Context.
+ *
+ * @param ctx - grammY context with WidgetsFlavor.
+ * @param rawApi - Telegram raw Bot API methods for widgets.
+ * @param config - Resolved plugin configuration.
+ * @param storage - Storage backend instance.
+ * @param screensById - Map of registered screens by ID.
+ * @param logger - Plugin logger instance.
+ * @returns Initialized WidgetsController.
+ */
 export const createWidgetsController = <TScreens extends Record<string, AnyWidgetScreen>>(
     ctx: Context & WidgetsFlavor<TScreens>,
     rawApi: RawWidgetApiMethods,

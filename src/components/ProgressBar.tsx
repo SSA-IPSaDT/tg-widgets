@@ -1,15 +1,31 @@
 import { h } from '../jsx';
 
+/**
+ * Props for the ProgressBar component.
+ */
 export interface ProgressBarProps {
+    /** Progress percentage from 0 to 100. */
     percent: number;
+    /** Unique DOM element identifier for the inner fill element. */
     id?: string;
+    /** Fill color (CSS color or variable). */
     color?: string;
+    /** Background track color. */
     trackColor?: string;
+    /** Height in pixels of the progress bar track. */
     height?: number;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
 }
 
+/**
+ * Visual progress bar indicator.
+ *
+ * @param props - Progress bar configuration props.
+ * @returns Rendered HTML string.
+ */
 export const ProgressBar = ({
     percent,
     id = 'progress-bar',

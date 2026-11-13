@@ -64,6 +64,7 @@
         "format:check": "prettier --check .",
         "lint": "bun run check && bun run format:check",
         "test": "bun test",
+        "check:compression": "bun run examples/check-compression.ts",
         "release": "bumpp package.json deno.json",
         "example": "bun run examples/bot.tsx",
         "prepublishOnly": "bun run build"
@@ -110,7 +111,6 @@
     },
     "devDependencies": {
         "@types/bun": "^1.2.0",
-        "@types/html-minifier-terser": "^7.0.2",
         "@types/react": "^19.3.0",
         "bumpp": "^12.3.0",
         "grammy": "^1.46.0",
@@ -118,7 +118,6 @@
         "typescript": "^5.7.0"
     },
     "dependencies": {
-        "html-minifier-terser": "^7.2.0",
         "lucide-static": "^1.72.0"
     }
 }

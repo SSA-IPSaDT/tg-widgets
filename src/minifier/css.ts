@@ -1,0 +1,195 @@
+/**
+ * Telegram Widgets CSS Minifier and Dead-Code Pruner.
+ *
+ * Implements high-performance, zero-dependency CSS minification, color compaction,
+ * shorthand consolidation, and automated unused selector pruning for Telegram HTML widgets.
+ *
+ * @module minifier/css
+ */
+
+import type { CssMinifyOptions } from './types';
+
+/**
+ * Consolidates directional properties (e.g. 4 identical margin/padding rules into single shorthand).
+ */
+const consolidateDirectionalRules = (declarations: string): string => {
+    return declarations
+        .replace(
+            /(?:^|;)\s*margin-top:([^;]+);\s*margin-right:\1;\s*margin-bottom:\1;\s*margin-left:\1(?=;|$)/g,
+            ';margin:$1',
+        )
+        .replace(
+            /(?:^|;)\s*padding-top:([^;]+);\s*padding-right:\1;\s*padding-bottom:\1;\s*padding-left:\1(?=;|$)/g,
+            ';padding:$1',
+        )
+        .replace(/(?:^|;)\s*background-color:([^;]+)(?=;|$)/g, ';background:$1')
+        .replace(/^;+/, '');
+};
+
+/**
+ * Minifies raw CSS stylesheet text by stripping comments, collapsing whitespace,
+ * shortening 6-digit hex colors, removing zero units, and stripping redundant trailing semicolons.
+ *
+ * @param css Raw CSS stylesheet string.
+ * @param options CSS minification options.
+ * @returns Minified CSS stylesheet.
+ */
+export const minifyCssString = (css: string, options: CssMinifyOptions = {}): string => {
+    if (!css || typeof css !== 'string') return '';
+
+    const shortenColors = options.shortenColors !== false;
+    const removeTrailingSemicolons = options.removeTrailingSemicolons !== false;
+
+    let result = css
+        // 1. Remove comments
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        // 2. Collapse whitespace
+        .replace(/\s+/g, ' ')
+        .replace(/\s*([;{}:,>+~])\s*/g, '$1');
+
+    // 3. Shorten hex colors (#ffffff -> #fff, #aabbcc -> #abc)
+    if (shortenColors) {
+        result = result.replace(
+            /#([0-9a-fA-F])\1([0-9a-fA-F])\2([0-9a-fA-F])\3(?![0-9a-fA-F])/g,
+            '#$1$2$3',
+        );
+    }
+
+    // 4. Zero units, decimal shortening, user-select, and theme color fallbacks
+    result = result
+        .replace(/(:\s*|\s+)0(?:px|em|rem|%|pt)(?=[;}\s])/g, '$10')
+        .replace(/(:\s*|\s|,|\()0\.([0-9]+)/g, '$1.$2')
+        .replace(/(?:-webkit-)?user-select:\s*none;?/g, '')
+        .replace(
+            /var\((--tg-theme-[a-zA-Z0-9_-]+),(?:#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)|[a-zA-Z]+)\)/g,
+            'var($1)',
+        );
+
+    // 5. Consolidate directional rules inside { ... } blocks or inline declarations
+    if (result.includes('{')) {
+        result = result.replace(
+            /\{([^{}]+)\}/g,
+            (_, block) => `{${consolidateDirectionalRules(block)}}`,
+        );
+    } else {
+        result = consolidateDirectionalRules(result);
+    }
+
+    // 6. Remove trailing semicolons before closing brace
+    if (removeTrailingSemicolons) {
+        result = result.replace(/;}/g, '}');
+    }
+
+    // 7. Remove empty rulesets
+    result = result.replace(/[^{};]+{\s*}/g, '');
+
+    return result.trim();
+};
+
+/**
+ * Removes unused CSS selectors and rules from `<style>` tags based on the actual HTML markup.
+ * Significantly reduces widget CSS payload size to stay safely under the 4096-byte deflate limit.
+ *
+ * @param html Complete HTML document string.
+ * @param options CSS minification options.
+ * @returns HTML string with pruned CSS.
+ */
+export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): string => {
+    if (!html || typeof html !== 'string') return '';
+
+    // Extract document content without <style> tags for selector matching
+    const contentToMatch = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
+
+    return html.replace(/<style([^>]*)>([\s\S]*?)<\/style>/gi, (_, attrs, css) => {
+        const rules: string[] = [];
+        let depth = 0;
+        let current = '';
+
+        for (let i = 0; i < css.length; i++) {
+            const char = css[i];
+            current += char;
+            if (char === '{') {
+                depth++;
+            } else if (char === '}') {
+                depth--;
+                if (depth === 0) {
+                    rules.push(current.trim());
+                    current = '';
+                }
+            }
+        }
+
+        const keptRules: string[] = [];
+        for (const rule of rules) {
+            const firstBrace = rule.indexOf('{');
+            if (firstBrace === -1) continue;
+            const selectorPart = rule.slice(0, firstBrace).trim();
+            const block = rule.slice(firstBrace);
+            if (!selectorPart) continue;
+
+            if (selectorPart.startsWith(':root')) {
+                const decls = block.slice(1, -1).split(';');
+                const kept = decls.filter((d) => {
+                    const m = d.match(/^(--[a-zA-Z0-9_-]+):/);
+                    return !m || contentToMatch.includes(m[1]) || css.includes(`var(${m[1]}`);
+                });
+                keptRules.push(`:root{${kept.join(';')}}`);
+                continue;
+            }
+
+            if (
+                selectorPart.startsWith('html') ||
+                selectorPart.startsWith('body') ||
+                selectorPart.startsWith('*') ||
+                selectorPart.startsWith('.tg-widget-root')
+            ) {
+                keptRules.push(rule);
+                continue;
+            }
+
+            if (selectorPart.startsWith('@keyframes tg-pulse')) {
+                if (contentToMatch.includes('tg-badge-pulse')) keptRules.push(rule);
+                continue;
+            }
+            if (selectorPart.startsWith('@keyframes')) {
+                keptRules.push(rule);
+                continue;
+            }
+            const isElementMatch =
+                (selectorPart.startsWith('details') &&
+                    (contentToMatch.includes('<details') ||
+                        contentToMatch.includes('tg-accordion'))) ||
+                (selectorPart.startsWith('table') &&
+                    (contentToMatch.includes('<table') || contentToMatch.includes('tg-table'))) ||
+                (selectorPart.startsWith('svg') &&
+                    (contentToMatch.includes('<svg') || contentToMatch.includes('lucide')));
+            if (isElementMatch) {
+                keptRules.push(rule);
+                continue;
+            }
+
+            // Comma-separated branches and compound class matching
+            const branches = selectorPart
+                .split(',')
+                .map((b) => b.trim())
+                .filter(Boolean);
+            const validBranches = branches.filter((branch) => {
+                const classMatches = branch.match(/\.([a-zA-Z0-9_-]+)/g);
+                if (!classMatches || classMatches.length === 0) return true;
+                return classMatches.every((cls) => contentToMatch.includes(cls.slice(1)));
+            });
+
+            if (validBranches.length > 0) {
+                keptRules.push(`${validBranches.join(',')}${block}`);
+            }
+        }
+
+        if (keptRules.length === 0) {
+            return '';
+        }
+
+        const combined = keptRules.join('');
+        const minifiedCss = minifyCssString(combined, options);
+        return `<style${attrs}>${minifiedCss}</style>`;
+    });
+};

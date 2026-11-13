@@ -32,6 +32,12 @@ export const pollClientScript = (initial: PollState) => {
         return res;
     };
 
+    const pollRows: Record<'grammy' | 'telegraf' | 'aiogram', HTMLElement | null> = {
+        grammy: document.getElementById('poll-row-grammy'),
+        telegraf: document.getElementById('poll-row-telegraf'),
+        aiogram: document.getElementById('poll-row-aiogram'),
+    };
+
     const updatePollUI = (partialState: Partial<PollState>) => {
         if (!partialState) return;
         state = {
@@ -50,7 +56,7 @@ export const pollClientScript = (initial: PollState) => {
             const count = state.votes[optionKey];
             const percentage = Math.round((count / total) * 100);
 
-            const row = document.getElementById(`poll-row-${optionKey}`);
+            const row = pollRows[optionKey];
             if (row) {
                 const bar = row.querySelector('.poll-bar') as HTMLElement | null;
                 const percentageElement = row.querySelector('.poll-pct');
@@ -89,7 +95,7 @@ export const pollClientScript = (initial: PollState) => {
     const setPollInteractive = (interactive: boolean) => {
         const pollOptions = ['grammy', 'telegraf', 'aiogram'] as const;
         for (const opt of pollOptions) {
-            const row = document.getElementById(`poll-row-${opt}`);
+            const row = pollRows[opt];
             if (row) row.style.pointerEvents = interactive ? '' : 'none';
         }
     };
@@ -125,13 +131,7 @@ export const pollClientScript = (initial: PollState) => {
             });
     };
 
-    document
-        .getElementById('poll-row-grammy')
-        ?.addEventListener('click', () => registerVote('grammy'));
-    document
-        .getElementById('poll-row-telegraf')
-        ?.addEventListener('click', () => registerVote('telegraf'));
-    document
-        .getElementById('poll-row-aiogram')
-        ?.addEventListener('click', () => registerVote('aiogram'));
+    pollRows.grammy?.addEventListener('click', () => registerVote('grammy'));
+    pollRows.telegraf?.addEventListener('click', () => registerVote('telegraf'));
+    pollRows.aiogram?.addEventListener('click', () => registerVote('aiogram'));
 };

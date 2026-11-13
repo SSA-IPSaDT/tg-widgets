@@ -1,5 +1,10 @@
+/**
+ * Props for the Script component.
+ */
 export interface ScriptProps<T extends unknown[]> {
+    /** Client function executed in embedded Telegram QuickJS environment. */
     fn: (...args: T) => void;
+    /** Arguments serialized and passed into the client function. */
     args?: T;
 }
 

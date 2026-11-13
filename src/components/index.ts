@@ -1,3 +1,12 @@
+/**
+ * Telegram Widgets UI Component Library.
+ *
+ * Provides Telegram-native and Profile 1 UI components designed for Bot API 10.4 HTML Widgets,
+ * including Accordion, Alert, Avatar, Badge, Button, Card, Checkbox, Icon, List, Table, and Typography.
+ *
+ * @module components
+ */
+
 export * from './Accordion';
 export * from './Alert';
 export * from './Avatar';

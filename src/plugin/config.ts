@@ -11,6 +11,12 @@ import type {
 
 export * from './resolvers';
 
+/**
+ * Resolves raw user plugin configuration into full normalized configuration.
+ *
+ * @param options - Plugin options passed by user.
+ * @returns Fully normalized ResolvedPluginConfig.
+ */
 export const resolvePluginConfig = (
     options: CreateWidgetsPluginOptions<Record<string, AnyWidgetScreen>>,
 ): ResolvedPluginConfig => {

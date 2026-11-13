@@ -106,5 +106,12 @@ export const renderWidgetAsync = async (
     return report.html;
 };
 
-export const renderBubble = renderWidget;
-export const renderBubbleAsync = renderWidgetAsync;
+/**
+ * Bubble-branded alias for renderWidget.
+ */
+export const renderBubble: typeof renderWidget = renderWidget;
+
+/**
+ * Bubble-branded alias for renderWidgetAsync.
+ */
+export const renderBubbleAsync: typeof renderWidgetAsync = renderWidgetAsync;

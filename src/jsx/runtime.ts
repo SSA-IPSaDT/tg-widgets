@@ -121,6 +121,13 @@ export const Fragment = (props: { children?: unknown[] }): string => {
     return children.flat(Infinity).join('');
 };
 
+/**
+ * JSX automatic runtime function for single children.
+ *
+ * @param tag HTML tag name or functional component.
+ * @param props Component properties and children.
+ * @returns Rendered HTML string.
+ */
 export const jsx = (
     tag: string | ((props: Record<string, unknown>) => string),
     props: Record<string, unknown> | null,
@@ -128,8 +135,19 @@ export const jsx = (
     return h(tag, props);
 };
 
-export const jsxs = jsx;
+/**
+ * JSX automatic runtime function for multiple children.
+ */
+export const jsxs: typeof jsx = jsx;
 
+/**
+ * JSX development runtime function with development metadata.
+ *
+ * @param tag HTML tag name or functional component.
+ * @param props Component properties.
+ * @param _rest Development metadata (file, line number).
+ * @returns Rendered HTML string.
+ */
 export const jsxDEV = (
     tag: string | ((props: Record<string, unknown>) => string),
     props: Record<string, unknown> | null,

@@ -1,17 +1,35 @@
 import { h } from '../jsx';
 
+/**
+ * Props for the Typography component.
+ */
 export interface TypographyProps {
+    /** Typographic scale variant. Default 'body'. */
     variant?: 'title' | 'headline' | 'subhead' | 'body' | 'caption' | 'footnote' | 'code';
+    /** Semantic theme color. Default 'default'. */
     color?: 'default' | 'hint' | 'link' | 'accent' | 'destructive' | 'success';
+    /** Font weight override. */
     weight?: 'regular' | 'medium' | 'semibold' | 'bold';
+    /** Text alignment. */
     align?: 'left' | 'center' | 'right';
+    /** Whether text should truncate with ellipsis if it overflows. */
     truncate?: boolean;
+    /** Semantic HTML wrapper tag. Defaults according to variant. */
     as?: 'div' | 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'code';
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Text or child elements. */
     children?: unknown;
 }
 
+/**
+ * Typographic text element formatted to Telegram theme typography.
+ *
+ * @param props - Typography configuration props.
+ * @returns Rendered HTML string.
+ */
 export const Typography = ({
     variant = 'body',
     color = 'default',
@@ -89,16 +107,33 @@ export const Typography = ({
     );
 };
 
-export const Text = Typography;
+/**
+ * Alias for Typography component.
+ */
+export const Text: (props: TypographyProps) => string = Typography;
 
+/**
+ * Props for the DescriptionText component.
+ */
 export interface DescriptionTextProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Content elements. */
     children?: unknown;
+    /** HTML tag to render. Default 'div'. */
     as?: 'div' | 'span' | 'p';
 }
 
+/**
+ * Secondary description text styled with Telegram subtitle/hint color.
+ *
+ * @param props - DescriptionTextProps.
+ * @returns Rendered HTML string.
+ */
 export const DescriptionText = ({
     id,
     style,

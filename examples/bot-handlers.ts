@@ -10,7 +10,7 @@ export type BotContext = Context & WidgetsFlavor<typeof screens>;
 const getDefaultProps = (screenId: string): any => {
     switch (screenId) {
         case 'controls':
-            return { notifications: true, newsletter: false, plan: 'pro', tickets: 2 };
+            return { notify: true, news: false, plan: 'pro', tickets: 2 };
         case 'counter':
             return { count: 0 };
         case 'poll':

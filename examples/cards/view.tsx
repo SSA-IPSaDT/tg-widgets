@@ -22,11 +22,13 @@ export const cardsClientScript = () => {
 
     document.getElementById('btn-statement')?.addEventListener('click', () => {
         widget?.HapticFeedback?.impactOccurred?.('light');
+        widget?.openLink?.('https://google.com');
         widget?.request?.('statement');
     });
 
     document.getElementById('btn-topup')?.addEventListener('click', () => {
         widget?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.openTelegramLink?.('https://t.me/BotFather');
         widget?.request?.('topup');
     });
 };
@@ -83,7 +85,7 @@ export const CardsView = () => (
                         display: 'flex',
                         justifyContent: 'space-between',
                         fontSize: 12,
-                        color: 'var(--tg-theme-text-color, #111827)',
+                        color: 'var(--tg-theme-text-color)',
                         opacity: 0.65,
                     }}
                 >
@@ -110,7 +112,7 @@ export const CardsView = () => (
                         <div
                             style={{
                                 fontSize: 11,
-                                color: 'var(--tg-theme-text-color, #111827)',
+                                color: 'var(--tg-theme-text-color)',
                                 opacity: 0.65,
                             }}
                         >
@@ -128,7 +130,7 @@ export const CardsView = () => (
                         <div
                             style={{
                                 fontSize: 11,
-                                color: 'var(--tg-theme-text-color, #111827)',
+                                color: 'var(--tg-theme-text-color)',
                                 opacity: 0.65,
                             }}
                         >

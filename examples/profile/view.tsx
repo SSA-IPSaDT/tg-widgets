@@ -46,7 +46,7 @@ export const ProfileView = (props: ProfileState) => (
                                 height: 38,
                                 borderRadius: '50%',
                                 background:
-                                    'linear-gradient(135deg, var(--tg-theme-button-color, #2481cc), #8b5cf6)',
+                                    'linear-gradient(135deg, var(--tg-theme-button-color), #8b5cf6)',
                                 color: '#ffffff',
                                 display: 'flex',
                                 alignItems: 'center',

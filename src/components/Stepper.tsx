@@ -1,17 +1,31 @@
 import { h } from '../jsx';
 import { LucideIcon, LucideIcons } from './LucideIcon';
 
+/**
+ * Props for the Stepper component.
+ */
 export interface StepperProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Current numeric value. */
     value: number;
+    /** Minimum allowable value. Decrement is disabled when value <= min. */
     min?: number;
+    /** Maximum allowable value. Increment is disabled when value >= max. */
     max?: number;
+    /** Step increment/decrement amount. */
     step?: number;
+    /** Whether the entire stepper is disabled. */
     disabled?: boolean;
+    /** Action string fired when decrement button is pressed. Default 'decrement'. */
     decrementAction?: string;
+    /** Action string fired when increment button is pressed. Default 'increment'. */
     incrementAction?: string;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Data attributes passed to root container. */
     [key: `data-${string}`]: string | undefined;
 }
 

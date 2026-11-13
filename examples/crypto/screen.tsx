@@ -33,6 +33,7 @@ const cryptoClientScript = () => {
 
     document.getElementById('btn-send')?.addEventListener('click', () => {
         widget?.HapticFeedback?.impactOccurred?.('medium');
+        widget?.openLink?.('https://google.com');
         widget?.request?.('sendTon');
     });
 
@@ -96,7 +97,7 @@ export const cryptoScreen = defineWidgetScreen({
                                     fontSize: 28,
                                     fontWeight: 800,
                                     letterSpacing: '-0.5px',
-                                    color: 'var(--tg-theme-text-color, inherit)',
+                                    color: 'var(--tg-theme-text-color)',
                                 }}
                             >
                                 {props.balanceTon.toFixed(2)} TON
@@ -104,7 +105,7 @@ export const cryptoScreen = defineWidgetScreen({
                             <div
                                 style={{
                                     fontSize: 13,
-                                    color: 'var(--tg-theme-link-color, var(--tg-theme-text-color, #2481cc))',
+                                    color: 'var(--tg-theme-link-color, var(--tg-theme-text-color))',
                                     fontWeight: 600,
                                     marginTop: 2,
                                 }}

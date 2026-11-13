@@ -1,6 +1,7 @@
 {
     "name": "@ipsadt/tg-widgets",
     "version": "0.3.0",
+    "description": "Zero-runtime TSX UI Kit and type-safe grammY plugin for Telegram Bot API 10.4 HTML Widgets (Interactive Bubbles)",
     "exports": {
         ".": "./mod.ts",
         "./components": "./src/components/index.ts",

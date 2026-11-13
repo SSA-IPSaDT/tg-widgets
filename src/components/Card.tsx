@@ -1,20 +1,75 @@
+/**
+ * Telegram Widgets Card & Section Component.
+ *
+ * @module components/Card
+ */
+
 import { h } from '../jsx';
 
+/**
+ * Properties for the Card component.
+ */
 export interface CardProps {
+    /**
+     * Unique HTML element ID.
+     */
     id?: string;
+    /**
+     * Visual style variant ('default', 'section', 'secondary', 'outlined', or 'inset').
+     * @default 'default'
+     */
     variant?: 'default' | 'section' | 'secondary' | 'outlined' | 'inset';
+    /**
+     * Custom corner radius in pixels.
+     */
     radius?: number;
+    /**
+     * Flexbox gap between children in pixels.
+     * @default 8
+     */
     gap?: number;
+    /**
+     * When true, spans 100% width of parent container.
+     * @default true
+     */
     fullWidth?: boolean;
+    /**
+     * When true, expands vertically to fill available flex height.
+     * @default false
+     */
     fullHeight?: boolean;
+    /**
+     * Optional uppercase section header text or element.
+     */
     header?: unknown;
+    /**
+     * Optional small caption footer text or element.
+     */
     footer?: unknown;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
+    /**
+     * Child elements.
+     */
     children?: unknown;
+    /**
+     * Arbitrary data-* attributes.
+     */
     [key: `data-${string}`]: string | undefined;
 }
 
+/**
+ * Container card component for grouping related information and interactive widgets.
+ *
+ * @param props Card properties.
+ * @returns Rendered HTML div element.
+ */
 export const Card = ({
     id,
     variant = 'default',
@@ -75,15 +130,33 @@ export const Card = ({
     );
 };
 
-export const Section = Card;
+/**
+ * Section container alias for Card.
+ */
+export const Section: (props: CardProps) => string = Card;
 
+/**
+ * Header container element for Card layouts.
+ *
+ * @param props Subcomponent properties.
+ * @returns Rendered HTML div element.
+ */
 export const CardHeader = ({
     children,
     style,
     className = '',
 }: {
+    /**
+     * Child elements.
+     */
     children?: unknown;
+    /**
+     * Custom style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class name.
+     */
     className?: string;
 }): string => (
     <div class={`tg-card-header ${className}`.trim()} style={style}>
@@ -91,13 +164,28 @@ export const CardHeader = ({
     </div>
 );
 
+/**
+ * Primary title typography for Card layouts.
+ *
+ * @param props Subcomponent properties.
+ * @returns Rendered HTML div element.
+ */
 export const CardTitle = ({
     children,
     style,
     className = '',
 }: {
+    /**
+     * Child elements.
+     */
     children?: unknown;
+    /**
+     * Custom style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class name.
+     */
     className?: string;
 }): string => (
     <div class={`tg-card-title ${className}`.trim()} style={style}>
@@ -105,13 +193,28 @@ export const CardTitle = ({
     </div>
 );
 
+/**
+ * Subtitle and description typography for Card layouts.
+ *
+ * @param props Subcomponent properties.
+ * @returns Rendered HTML div element.
+ */
 export const CardDescription = ({
     children,
     style,
     className = '',
 }: {
+    /**
+     * Child elements.
+     */
     children?: unknown;
+    /**
+     * Custom style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class name.
+     */
     className?: string;
 }): string => (
     <div class={`tg-description ${className}`.trim()} style={style}>
@@ -119,13 +222,28 @@ export const CardDescription = ({
     </div>
 );
 
+/**
+ * Main content body for Card layouts.
+ *
+ * @param props Subcomponent properties.
+ * @returns Rendered HTML div element.
+ */
 export const CardContent = ({
     children,
     style,
     className = '',
 }: {
+    /**
+     * Child elements.
+     */
     children?: unknown;
+    /**
+     * Custom style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class name.
+     */
     className?: string;
 }): string => (
     <div class={`tg-card-content ${className}`.trim()} style={style}>
@@ -133,13 +251,28 @@ export const CardContent = ({
     </div>
 );
 
+/**
+ * Footer action row for Card layouts.
+ *
+ * @param props Subcomponent properties.
+ * @returns Rendered HTML div element.
+ */
 export const CardFooter = ({
     children,
     style,
     className = '',
 }: {
+    /**
+     * Child elements.
+     */
     children?: unknown;
+    /**
+     * Custom style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class name.
+     */
     className?: string;
 }): string => (
     <div class={`tg-card-footer ${className}`.trim()} style={style}>
