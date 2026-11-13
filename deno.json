@@ -10,6 +10,12 @@
     "publish": {
         "include": ["src/", "mod.ts", "deno.json", "README.md", "LICENSE", "CHANGELOG.md"]
     },
+    "imports": {
+        "@ipsadt/tg-widgets": "./mod.ts",
+        "@ipsadt/tg-widgets/jsx-runtime": "./src/jsx-runtime.ts",
+        "@ipsadt/tg-widgets/jsx-dev-runtime": "./src/jsx-dev-runtime.ts",
+        "@ipsadt/tg-widgets/components": "./src/components/index.ts"
+    },
     "compilerOptions": {
         "jsx": "react-jsx",
         "jsxImportSource": "@ipsadt/tg-widgets"

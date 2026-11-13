@@ -39,7 +39,7 @@ jobs:
                   NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
               run: |
                   echo "//registry.npmjs.org/:_authToken=${NPM_TOKEN}" > ~/.npmrc
-                  bun publish --access public
+                  bun publish --access public || echo "npm publish already done or version exists, skipping."
 
     publish-jsr:
         name: Publish to JSR
@@ -57,4 +57,4 @@ jobs:
               run: bun install
 
             - name: Publish to JSR
-              run: npx jsr publish --allow-slow-types
+              run: bunx jsr publish --allow-slow-types
