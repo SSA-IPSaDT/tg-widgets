@@ -108,10 +108,12 @@ describe('Automation Scripts Module', () => {
             expect(updated.indexOf('0.3.0')).toBeLessThan(updated.indexOf('0.2.0'));
         });
 
-        it('supports dry-run mode without modifying filesystem', () => {
+        it('supports dry-run mode without modifying filesystem', async () => {
+            const pkg = await import('../package.json');
             const res = bumpVersion({ target: 'patch', dryRun: true });
-            expect(res.oldVersion).toBe('0.2.0');
-            expect(res.newVersion).toBe('0.2.1');
+            expect(res.oldVersion).toBe(pkg.version);
+            expect(res.newVersion).toBe(incrementSemver(pkg.version, 'patch'));
+            expect(res.releaseType).toBe('patch');
         });
     });
 });
