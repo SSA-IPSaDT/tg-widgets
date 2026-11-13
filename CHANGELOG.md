@@ -7,6 +7,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.3.0] - 2026-11-13
+
+### Features
+
+- **examples**: enable max compression pipeline and benchmark diagnostics (72002b1)
+
+### Bug Fixes
+
+- **release**: auto-format files before git add in version bump script (e147245)
+- **controls**: restore rich UI titles, Sliders icon, and stepper geometry via framework CSS/JS minification (aeaa0a4)
+- **sync**: lock interactive switches during in-flight requests and harden bot error handling (2ba85d7)
+- **table**: apply corner border radius to edge cells to prevent background overflow (aab418d)
+- **ui**: add table border and radius, adapt poll to accent theme, and fix stepper disabling (23ad896)
+- **badge**: eliminate border clipping by removing overflow:hidden and using explicit --badge-radius for pseudo-elements (9f29ee1)
+- **alert**: isolate info alert to stable informational blue and decouple from theme accent color (54aed44)
+- **badge**: resolve accent color inheritance using currentColor pseudo-elements without hardcoded blue fallbacks (84dbb81)
+- **table**: simplify styling to standard CSS divider lines without duplicate or bottom row borders (851fb3a)
+- **controls**: disable codec by default, use native data-action and ensure multi-device sync (3daaf49)
+
+### Performance Improvements
+
+- **ecommerce**: optimize repeated styles with centralized classes and minifier style hoisting (065aba1)
+
+### Documentation
+
+- embed live showcase demos, component screenshot gallery, and polish previews (a3eb477)
+- add mobile compact mode showcase, strategic roadmap, and early access status (7092f3b)
+
 ## [0.2.0] - 2026-11-13
 
 - **Three Page Paradigms (`src/screen.ts`)**:
