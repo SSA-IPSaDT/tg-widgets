@@ -1,31 +1,6 @@
 import type { PollState } from './screen';
 
 /**
- * Normalizes poll state from raw JSON payload, supporting both full and codec keys.
- */
-const decodePollState = (raw: unknown): Partial<PollState> => {
-    if (!raw || typeof raw !== 'object') return {};
-    const record = raw as Record<string, unknown>;
-    const res: Partial<PollState> = {};
-
-    const rawVotes = (record.votes ?? record.V) as Record<string, unknown> | undefined;
-    if (rawVotes && typeof rawVotes === 'object') {
-        res.votes = {
-            grammy: Number(rawVotes.grammy ?? 0),
-            telegraf: Number(rawVotes.telegraf ?? 0),
-            aiogram: Number(rawVotes.aiogram ?? 0),
-        };
-    }
-
-    const rawUserVote = (record.userVote ?? record.U) as PollState['userVote'];
-    if (rawUserVote) {
-        res.userVote = rawUserVote;
-    }
-
-    return res;
-};
-
-/**
  * Client-side script providing instant optimistic UI updates and multi-device state synchronization for poll.
  */
 export const pollClientScript = (initial: PollState) => {
@@ -33,6 +8,28 @@ export const pollClientScript = (initial: PollState) => {
     let state: PollState = {
         votes: { ...initial.votes },
         userVote: initial.userVote,
+    };
+
+    const decodePollState = (raw: unknown): Partial<PollState> => {
+        if (!raw || typeof raw !== 'object') return {};
+        const record = raw as Record<string, unknown>;
+        const res: Partial<PollState> = {};
+
+        const rawVotes = (record.votes ?? record.V) as Record<string, unknown> | undefined;
+        if (rawVotes && typeof rawVotes === 'object') {
+            res.votes = {
+                grammy: Number(rawVotes.grammy ?? 0),
+                telegraf: Number(rawVotes.telegraf ?? 0),
+                aiogram: Number(rawVotes.aiogram ?? 0),
+            };
+        }
+
+        const rawUserVote = (record.userVote ?? record.U) as PollState['userVote'];
+        if (rawUserVote) {
+            res.userVote = rawUserVote;
+        }
+
+        return res;
     };
 
     const updatePollUI = (partialState: Partial<PollState>) => {
@@ -63,12 +60,7 @@ export const pollClientScript = (initial: PollState) => {
                 if (countElement) countElement.textContent = `${count} votes`;
 
                 const isSelected = state.userVote === optionKey;
-                row.style.borderColor = isSelected
-                    ? 'var(--tg-theme-button-color, #2481cc)'
-                    : 'rgba(120, 120, 128, 0.16)';
-                row.style.background = isSelected
-                    ? 'rgba(36, 129, 204, 0.12)'
-                    : 'rgba(120, 120, 128, 0.06)';
+                row.classList.toggle('selected', isSelected);
             }
         }
 

@@ -78,7 +78,6 @@ export const TableRow = ({
 
 export const TableHead = ({ children, align, style, className = '' }: TableCellProps): string => (
     <th
-        align={align}
         class={className || undefined}
         style={{
             ...(align ? { textAlign: align } : {}),
@@ -100,7 +99,6 @@ export const TableCell = ({
     <td
         colspan={colspan}
         rowspan={rowspan}
-        align={align}
         class={className || undefined}
         style={{
             ...(align ? { textAlign: align } : {}),

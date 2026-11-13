@@ -55,6 +55,7 @@ export const BASE_RESET_CSS =
     '.tg-badge-md{--badge-radius:var(--tg-radius-sm,7px);padding:4px 8px;font-size:12px;}' +
     '.tg-badge-square{--badge-radius:var(--tg-radius-sm,8px);width:26px!important;height:26px!important;min-width:26px!important;min-height:26px!important;max-width:26px!important;max-height:26px!important;flex:0 0 26px!important;aspect-ratio:1/1!important;padding:0!important;box-sizing:border-box!important;border-radius:var(--badge-radius);}' +
     '.tg-badge-square.tg-badge-md{width:30px!important;height:30px!important;min-width:30px!important;min-height:30px!important;max-width:30px!important;max-height:30px!important;flex:0 0 30px!important;}' +
+    '.tg-badge-icon{display:inline-flex;align-items:center;justify-content:center;line-height:0;flex-shrink:0;}' +
     '.tg-badge-default{background:var(--tg-theme-secondary-bg-color,rgba(0,0,0,0.06));color:var(--tg-theme-text-color,inherit);border:none;}' +
     '.tg-badge-accent{color:var(--tg-accent-color,var(--tg-theme-accent-text-color,var(--tg-theme-link-color,var(--tg-theme-button-color,#2481cc))));background:transparent;border:none;}' +
     '.tg-badge-accent::before{content:"";position:absolute;inset:0;border-radius:var(--badge-radius);background:currentColor;opacity:0.15;pointer-events:none;z-index:-1;}' +
@@ -102,7 +103,7 @@ export const BASE_RESET_CSS =
     '.tg-stepper-btn:active{transform:scale(0.92);background:var(--tg-theme-secondary-bg-color,rgba(120,120,128,0.22));}' +
     '.tg-stepper-btn:disabled{opacity:0.4;cursor:default;}' +
     '.tg-stepper-val{font-weight:600;font-size:14px;min-width:24px;text-align:center;}' +
-    '.tg-table{border-collapse:collapse;width:100%;font-size:13px;text-align:left;}' +
+    '.tg-table{border-collapse:separate;border-spacing:0;width:100%;font-size:13px;text-align:left;border:1px solid var(--tg-theme-section-separator-color,rgba(120,120,128,0.20));border-radius:var(--tg-radius-md,10px);overflow:hidden;}' +
     '.tg-table th,.tg-table td{padding:8px 10px;border-bottom:1px solid var(--tg-theme-section-separator-color,rgba(120,120,128,0.16));color:var(--tg-theme-text-color,inherit);}' +
     '.tg-table th{font-weight:600;color:var(--tg-theme-subtitle-text-color,var(--tg-theme-hint-color,#888));font-size:11px;text-transform:uppercase;letter-spacing:0.4px;background:var(--tg-theme-secondary-bg-color,rgba(120,120,128,0.06));}' +
     '.tg-table tfoot td{font-weight:600;background:var(--tg-theme-secondary-bg-color,rgba(120,120,128,0.04));}' +

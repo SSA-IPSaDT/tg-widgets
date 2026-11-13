@@ -32,7 +32,7 @@ export const Card = ({
     const overrides: Record<string, string | number | undefined | null> = {
         ...(radius !== undefined ? { borderRadius: radius } : {}),
         ...(gap !== 8 ? { gap } : {}),
-        ...(fullWidth ? { width: '100%' } : {}),
+        ...(!fullWidth ? { width: 'auto' } : {}),
         ...(fullHeight ? { height: '100%', flex: 1 } : {}),
         ...style,
     };

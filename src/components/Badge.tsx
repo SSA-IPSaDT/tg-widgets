@@ -45,32 +45,15 @@ export const Badge = ({
                     ? {
                           width: squareDim,
                           height: squareDim,
-                          minWidth: squareDim,
-                          minHeight: squareDim,
-                          maxWidth: squareDim,
-                          maxHeight: squareDim,
-                          flex: `0 0 ${squareDim}px`,
                           aspectRatio: '1 / 1',
                           padding: 0,
                           '--badge-radius': 'var(--tg-radius-sm, 8px)',
-                          borderRadius: 'var(--badge-radius)',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                          boxSizing: 'border-box',
                       }
                     : {
-                          minHeight: size === 'md' ? 26 : 22,
                           '--badge-radius':
                               size === 'md'
                                   ? 'var(--tg-radius-sm, 7px)'
                                   : 'var(--tg-radius-sm, 6px)',
-                          borderRadius: 'var(--badge-radius)',
-                          padding: size === 'md' ? '3px 8px' : '2px 7px',
-                          display: 'inline-flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
                       }),
                 ...style,
             }}
@@ -89,18 +72,7 @@ export const Badge = ({
                 />
             )}
             {icon && (
-                <span
-                    class={pulse ? 'tg-badge-pulse' : ''}
-                    style={{
-                        display: 'inline-flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        lineHeight: 0,
-                        flexShrink: 0,
-                    }}
-                >
-                    {icon}
-                </span>
+                <span class={`tg-badge-icon ${pulse ? 'tg-badge-pulse' : ''}`.trim()}>{icon}</span>
             )}
             {children}
         </span>

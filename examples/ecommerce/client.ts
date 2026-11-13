@@ -1,26 +1,6 @@
 import type { EcommerceState } from './screen';
 
 /**
- * Normalizes e-commerce state from raw JSON payload, supporting both full and codec keys.
- */
-const decodeEcommerceState = (raw: unknown): Partial<EcommerceState> => {
-    if (!raw || typeof raw !== 'object') return {};
-    const record = raw as Record<string, unknown>;
-    const res: Partial<EcommerceState> = {};
-
-    const sz = record.size ?? record.Z;
-    if (typeof sz === 'number') res.size = sz;
-
-    const qty = record.quantity ?? record.q;
-    if (typeof qty === 'number') res.quantity = qty;
-
-    const price = record.pricePerUnit ?? record.price ?? record.P;
-    if (typeof price === 'number') res.pricePerUnit = price;
-
-    return res;
-};
-
-/**
  * Client-side script handling size selection, quantity calculation, and checkout feedback.
  * Leverages centralized class-based styling (.active) instead of imperative inline style mutations.
  */
@@ -28,6 +8,23 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
     const toast = document.getElementById('ecom-toast');
+
+    const decodeEcommerceState = (raw: unknown): Partial<EcommerceState> => {
+        if (!raw || typeof raw !== 'object') return {};
+        const record = raw as Record<string, unknown>;
+        const res: Partial<EcommerceState> = {};
+
+        const sz = record.size ?? record.Z;
+        if (typeof sz === 'number') res.size = sz;
+
+        const qty = record.quantity ?? record.q;
+        if (typeof qty === 'number') res.quantity = qty;
+
+        const price = record.pricePerUnit ?? record.price ?? record.P;
+        if (typeof price === 'number') res.pricePerUnit = price;
+
+        return res;
+    };
 
     const updateEcomUI = (partial?: Partial<EcommerceState>) => {
         if (partial) state = { ...state, ...partial };

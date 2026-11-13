@@ -1,37 +1,34 @@
 import type { ProfileState } from './screen';
 
 /**
- * Normalizes state from raw JSON payload, supporting both full and codec keys.
- */
-const decodeProfileState = (raw: unknown): Partial<ProfileState> => {
-    if (!raw || typeof raw !== 'object') return {};
-    const record = raw as Record<string, unknown>;
-    const res: Partial<ProfileState> = {};
-
-    const notif = record.notifications ?? record.o;
-    if (typeof notif === 'boolean') res.notifications = notif;
-
-    const priv = record.privateMode ?? record.m;
-    if (typeof priv === 'boolean') res.privateMode = priv;
-
-    const sound = record.soundEffects ?? record.e;
-    if (typeof sound === 'boolean') res.soundEffects = sound;
-
-    const name = record.name ?? record.n;
-    if (typeof name === 'string') res.name = name;
-
-    const username = record.username ?? record.u;
-    if (typeof username === 'string') res.username = username;
-
-    return res;
-};
-
-/**
  * Client-side script handling toggle synchronization, optimistic feedback, and text fallback.
  */
 export const profileClientScript = (initial: ProfileState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
+
+    const decodeProfileState = (raw: unknown): Partial<ProfileState> => {
+        if (!raw || typeof raw !== 'object') return {};
+        const record = raw as Record<string, unknown>;
+        const res: Partial<ProfileState> = {};
+
+        const notif = record.notifications ?? record.o;
+        if (typeof notif === 'boolean') res.notifications = notif;
+
+        const priv = record.privateMode ?? record.m;
+        if (typeof priv === 'boolean') res.privateMode = priv;
+
+        const sound = record.soundEffects ?? record.e;
+        if (typeof sound === 'boolean') res.soundEffects = sound;
+
+        const name = record.name ?? record.n;
+        if (typeof name === 'string') res.name = name;
+
+        const username = record.username ?? record.u;
+        if (typeof username === 'string') res.username = username;
+
+        return res;
+    };
 
     const updateProfileUI = (data?: Partial<ProfileState> | null) => {
         if (!data) return;

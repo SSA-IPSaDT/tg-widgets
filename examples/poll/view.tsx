@@ -44,7 +44,6 @@ export const PollView = (props: PollState) => {
                         <CardTitle>Framework Poll</CardTitle>
                         <Badge
                             variant="accent"
-                            pulse
                             icon={LucideIcon({
                                 icon: LucideIcons.Flame,
                                 size: 15,
@@ -56,6 +55,12 @@ export const PollView = (props: PollState) => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
+                    <style>
+                        {'.poll-row{position:relative;overflow:hidden;border-radius:var(--tg-radius-md,10px);border:1px solid rgba(120,120,128,0.16);background:rgba(120,120,128,0.06);padding:12px 14px;min-height:46px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;cursor:pointer;user-select:none;touch-action:manipulation;transition:border-color .12s,background .12s;}' +
+                            '.poll-row.selected{border-color:var(--tg-accent-color,var(--tg-theme-button-color,#2481cc));}' +
+                            '.poll-row.selected::before{content:"";position:absolute;inset:0;background:var(--tg-accent-color,var(--tg-theme-button-color,#2481cc));opacity:0.08;pointer-events:none;}' +
+                            '.poll-bar{position:absolute;top:0;left:0;bottom:0;background:var(--tg-accent-color,var(--tg-theme-button-color,#2481cc));opacity:0.22;border-radius:var(--tg-radius-md,9px);transition:width .15s cubic-bezier(0.2,0,0,1);z-index:0;}'}
+                    </style>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                         {options.map((opt) => {
                             const pct = Math.round((opt.count / total) * 100);
@@ -63,41 +68,10 @@ export const PollView = (props: PollState) => {
                             return (
                                 <div
                                     id={`poll-row-${opt.key}`}
+                                    class={`poll-row ${isSelected ? 'selected' : ''}`.trim()}
                                     data-action={`vote:${opt.key}`}
-                                    style={{
-                                        position: 'relative',
-                                        overflow: 'hidden',
-                                        borderRadius: 'var(--tg-radius-md, 10px)',
-                                        border: `1px solid ${isSelected ? 'var(--tg-theme-button-color, #2481cc)' : 'rgba(120, 120, 128, 0.16)'}`,
-                                        background: isSelected
-                                            ? 'rgba(36, 129, 204, 0.12)'
-                                            : 'rgba(120, 120, 128, 0.06)',
-                                        padding: '12px 14px',
-                                        minHeight: 46,
-                                        boxSizing: 'border-box',
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        justifyContent: 'center',
-                                        cursor: 'pointer',
-                                        userSelect: 'none',
-                                        touchAction: 'manipulation',
-                                        transition: 'border-color 0.12s, background 0.12s',
-                                    }}
                                 >
-                                    <div
-                                        class="poll-bar"
-                                        style={{
-                                            position: 'absolute',
-                                            top: 0,
-                                            left: 0,
-                                            bottom: 0,
-                                            width: `${pct}%`,
-                                            background: 'rgba(36, 129, 204, 0.2)',
-                                            borderRadius: 'var(--tg-radius-md, 9px)',
-                                            transition: 'width 0.15s cubic-bezier(0.2, 0, 0, 1)',
-                                            zIndex: 0,
-                                        }}
-                                    />
+                                    <div class="poll-bar" style={{ width: `${pct}%` }} />
                                     <div
                                         style={{
                                             position: 'relative',
@@ -119,12 +93,7 @@ export const PollView = (props: PollState) => {
                                         >
                                             <span
                                                 class="poll-count tg-description"
-                                                style={{
-                                                    fontSize: 12,
-                                                    fontWeight: 500,
-                                                    color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, #111827))',
-                                                    opacity: 0.85,
-                                                }}
+                                                style={{ fontSize: 12 }}
                                             >
                                                 {opt.count} votes
                                             </span>

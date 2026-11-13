@@ -1,34 +1,25 @@
 import type { ControlsState } from './screen';
 
 /**
- * Normalizes state from raw JSON payload, supporting both full and codec keys.
- */
-const decodeControlsState = (raw: unknown): Partial<ControlsState> => {
-    if (!raw || typeof raw !== 'object') return {};
-    const record = raw as Record<string, unknown>;
-    const res: Partial<ControlsState> = {};
-
-    const notif = record.notifications ?? record.o;
-    if (typeof notif === 'boolean') res.notifications = notif;
-
-    const news = record.newsletter ?? record.w;
-    if (typeof news === 'boolean') res.newsletter = news;
-
-    const tickets = record.tickets ?? record.k;
-    if (typeof tickets === 'number') res.tickets = tickets;
-
-    const plan = record.plan ?? record.l;
-    if (typeof plan === 'string') res.plan = plan;
-
-    return res;
-};
-
-/**
  * Client-side script providing instant optimistic UI feedback and multi-device state synchronization.
  */
 export const controlsClientScript = (initial: ControlsState) => {
     const widget = window.TelegramWidget;
     let state = { ...initial };
+
+    const decodeControlsState = (raw: unknown): Partial<ControlsState> => {
+        const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
+        const res: Partial<ControlsState> = {};
+        const o = r.notifications ?? r.o;
+        if (typeof o === 'boolean') res.notifications = o;
+        const w = r.newsletter ?? r.w;
+        if (typeof w === 'boolean') res.newsletter = w;
+        const k = r.tickets ?? r.k;
+        if (typeof k === 'number') res.tickets = k;
+        const l = r.plan ?? r.l;
+        if (typeof l === 'string') res.plan = l;
+        return res;
+    };
 
     const updateUI = (partialState: Partial<ControlsState>) => {
         state = { ...state, ...partialState };
@@ -43,24 +34,28 @@ export const controlsClientScript = (initial: ControlsState) => {
         if (typeof state.newsletter === 'boolean') {
             const checkboxSvg = document.getElementById('chk-newsletter')?.querySelector('svg');
             if (checkboxSvg) {
-                checkboxSvg.outerHTML = state.newsletter
-                    ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect width="20" height="20" rx="5" fill="var(--tg-theme-button-color,#2481cc)"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>'
-                    : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><rect x="1" y="1" width="18" height="18" rx="5" stroke="var(--tg-theme-hint-color,rgba(120,120,128,0.4))" stroke-width="1.5"/></svg>';
+                checkboxSvg.outerHTML = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">${
+                    state.newsletter
+                        ? '<rect width="20" height="20" rx="5" fill="var(--tg-theme-button-color,#2481cc)"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
+                        : '<rect x="1" y="1" width="18" height="18" rx="5" stroke="var(--tg-theme-hint-color,rgba(120,120,128,0.4))" stroke-width="1.5"/>'
+                }</svg>`;
             }
         }
 
         if (typeof state.tickets === 'number') {
-            const stepperVal = document
-                .getElementById('stepper-tickets')
-                ?.querySelector('.tg-stepper-val');
+            const stepperEl = document.getElementById('stepper-tickets');
+            const stepperVal = stepperEl?.querySelector('.tg-stepper-val');
             if (stepperVal) stepperVal.textContent = String(state.tickets);
+            const buttons = stepperEl?.querySelectorAll('button');
+            if (buttons && buttons[0] && buttons[1]) {
+                (buttons[0] as HTMLButtonElement).disabled = state.tickets <= 1;
+                (buttons[1] as HTMLButtonElement).disabled = state.tickets >= 10;
+            }
         }
 
         if (state.plan) {
             const renderRadioSvg = (isSelected: boolean) =>
-                isSelected
-                    ? '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-button-color,#2481cc)" stroke-width="2"/><circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color,#2481cc)"/></svg>'
-                    : '<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="var(--tg-theme-hint-color,rgba(120,120,128,0.4))" stroke-width="1.5"/></svg>';
+                `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="${isSelected ? 'var(--tg-theme-button-color,#2481cc)' : 'var(--tg-theme-hint-color,rgba(120,120,128,0.4))'}" stroke-width="${isSelected ? 2 : 1.5}"/>${isSelected ? '<circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color,#2481cc)"/>' : ''}</svg>`;
 
             const basicSvg = document.getElementById('plan-basic')?.querySelector('svg');
             if (basicSvg) basicSvg.outerHTML = renderRadioSvg(state.plan === 'basic');
@@ -71,13 +66,8 @@ export const controlsClientScript = (initial: ControlsState) => {
 
     const syncState = () => {
         try {
-            if (widget?.chatData) {
-                const parsedData = JSON.parse(widget.chatData);
-                updateUI(decodeControlsState(parsedData));
-            }
-        } catch {
-            // ignore JSON parse errors
-        }
+            if (widget?.chatData) updateUI(decodeControlsState(JSON.parse(widget.chatData)));
+        } catch {}
     };
 
     syncState();
@@ -85,14 +75,11 @@ export const controlsClientScript = (initial: ControlsState) => {
 
     const sendAction = (action: string) => {
         Promise.resolve(widget?.request?.(action))
-            .then((response?: { result?: string | null }) => {
-                if (response?.result) {
+            .then((res?: { result?: string | null }) => {
+                if (res?.result) {
                     try {
-                        const parsedData = JSON.parse(response.result);
-                        updateUI(decodeControlsState(parsedData));
-                    } catch {
-                        // ignore JSON parse errors
-                    }
+                        updateUI(decodeControlsState(JSON.parse(res.result)));
+                    } catch {}
                 }
             })
             .catch(() => {});
