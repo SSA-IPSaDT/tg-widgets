@@ -53,10 +53,10 @@ export const mangleClassesAndIds = (html: string, options: WidgetMinifyOptions =
             }
         }
 
-        // Only mangle classes defined in CSS and used in the document
+        // Only mangle classes defined in CSS or component classes with tg- prefix
         const classes = new Set<string>();
         for (const c of htmlClasses) {
-            if (cssClasses.has(c)) classes.add(c);
+            if (cssClasses.has(c) || c.startsWith('tg-')) classes.add(c);
         }
 
         // Sort by length descending so longer compound names are replaced first

@@ -142,7 +142,7 @@ export const WidgetLayout = ({
         display: 'flex',
         flexDirection: 'column',
         gap,
-        maxHeight: maxHeight ?? 600,
+        ...(maxHeight !== undefined ? { maxHeight } : {}),
         ...themeStyle,
         ...safeAreaStyle,
         ...radiusTokens,

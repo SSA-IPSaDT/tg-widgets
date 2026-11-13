@@ -15,9 +15,9 @@ export const RADIUS_PRESETS: Record<'none' | 'sm' | 'md' | 'lg' | 'xl', WidgetRa
  * Base CSS stylesheet injected into widget root for reset and default component styles.
  */
 export const BASE_RESET_CSS: string =
-    ':root{color-scheme:light dark;--tg-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--tg-radius-xs:4px;--tg-radius-sm:8px;--tg-radius-md:12px;--tg-radius-lg:16px;--tg-radius-xl:20px;--tg-radius-xxl:24px;--tg-radius-full:9999px;--tg-accent-color:var(--tg-theme-accent-text-color,var(--tg-theme-link-color,var(--tg-theme-button-color,#2481cc)));--tg-destructive-color:var(--tg-theme-destructive-text-color,#ef4444);}' +
-    'html,body,button,label,input,select,textarea,div,span,p{font-family:var(--tg-font-family);}' +
-    'html,body{margin:0;padding:0;width:100%;height:auto;background:transparent;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;touch-action:manipulation;-webkit-text-size-adjust:100%;}' +
+    ':root{color-scheme:light dark;--tg-font-family:system-ui,-apple-system,sans-serif;--tg-radius-xs:4px;--tg-radius-sm:8px;--tg-radius-md:12px;--tg-radius-lg:16px;--tg-radius-xl:20px;--tg-radius-xxl:24px;--tg-radius-full:9999px;--tg-accent-color:var(--tg-theme-accent-text-color,var(--tg-theme-link-color,var(--tg-theme-button-color,#2481cc)));--tg-destructive-color:var(--tg-theme-destructive-text-color,#ef4444);}' +
+    'html,body,button,input,select,textarea{font-family:var(--tg-font-family);}' +
+    'html,body{margin:0;padding:0;width:100%;height:auto;background:transparent;-webkit-font-smoothing:antialiased;touch-action:manipulation;}' +
     '*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}' +
     'button,[role="button"],summary,.tg-btn,.tg-switch,.tg-checkbox,.tg-radio,.tg-stepper-btn,.tg-segmented-btn,.tg-choice-btn,[data-action]{touch-action:manipulation;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none;cursor:pointer;}' +
     '@keyframes tg-pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.3;transform:scale(0.85);}}' +
