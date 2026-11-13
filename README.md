@@ -199,6 +199,61 @@ bot.start();
 
 ---
 
+## ⚙️ Plugin Configuration Options
+
+The `createTelegramWidgetsPlugin` factory provides complete control over minification, codec key compression, payload size enforcement, and storage:
+
+```typescript
+const widgets = createTelegramWidgetsPlugin({
+    screens,
+
+    // 1. Global execution mode ('prod' | 'production' | 'dev' | 'development')
+    // Dev preserves unminified HTML and readable JSON keys; Prod optimizes for byte size.
+    mode: process.env.NODE_ENV === 'production' ? 'prod' : 'dev',
+
+    // 2. Codec key minification ('prod' | 'dev' | 'off' | CodecOptions)
+    // In 'prod', minimizes object keys to 1-2 letters (notifications -> o, plan -> l, __screen -> _s)
+    codec: {
+        mode: 'prod',
+        customKeys: { userLevel: 'ul', gems: 'gm' }, // Domain-specific dictionary
+        compressState: true,                         // Compress chat_data
+        compressAnswer: true,                        // Compress answerWidgetQuery responses
+    },
+
+    // 3. HTML/CSS/JS minifier ('terser' | 'fast' | false | WidgetMinifyConfig)
+    minifier: {
+        engine: 'terser',                            // 'terser' (deep), 'fast' (regex), or 'none'
+        purgeCss: true,                              // Prune unused CSS rules from <style>
+    },
+
+    // 4. Payload size limit verification (Telegram limit: 4096B deflate level 9)
+    sizeLimit: {
+        maxBytes: 4096,
+        onExceeded: 'error',                         // 'error' throws, 'warn' logs warning
+        autoInspect: true,                           // Log size metrics on send
+    },
+
+    // 5. State storage (WidgetsStorage instance or convenient memory config)
+    storage: {
+        defaultTtlSeconds: 86400,                    // State expiration TTL (24h)
+        maxEntries: 2000,                            // Maximum LRU entries
+    },
+
+    // 6. Global defaults for sent widgets
+    defaults: {
+        width: 2,
+        height: 2,
+        allowQueries: true,
+        parseMode: 'Markdown',
+    },
+
+    // 7. Verbose diagnostic logging
+    debug: false,
+});
+```
+
+---
+
 ## 🎮 Context Methods (`ctx.widgets`)
 
 | Method                                             | Description                                                                                             |

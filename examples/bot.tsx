@@ -37,8 +37,24 @@ const bot = new Bot<BotContext>(token, {
     },
 });
 
-// Register Telegram widgets plugin
-const widgets = createTelegramWidgetsPlugin({ screens });
+// Register Telegram widgets plugin with flexible configuration:
+// - mode: 'dev' on Telegram Test DC for readable JSON, 'prod' in production
+// - codec: 'dev' preserves full key names; 'prod' minimizes object keys to 1-2 letters
+// - sizeLimit: enforces Telegram's 4096-byte deflate limit
+// - storage: in-memory LRU cache with 24h TTL
+const widgets = createTelegramWidgetsPlugin({
+    screens,
+    mode: isTestEnv ? 'dev' : 'prod',
+    codec: isTestEnv ? 'dev' : 'prod',
+    sizeLimit: {
+        maxBytes: 4096,
+        onExceeded: isTestEnv ? 'warn' : 'error',
+    },
+    storage: {
+        defaultTtlSeconds: 86400,
+        maxEntries: 2000,
+    },
+});
 bot.use(widgets.middleware);
 
 /**

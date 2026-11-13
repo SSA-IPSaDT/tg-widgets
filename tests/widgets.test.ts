@@ -825,4 +825,186 @@ describe('@ipsadt/tg-widgets', () => {
         const customUnpacked = unpackPayload(customPacked);
         expect(customUnpacked).toEqual({ customField: 'hello' });
     });
+
+    test('createTelegramWidgetsPlugin supports full configuration: mode, codec {prod, dev}, minifier, sizeLimit, storage shortcuts, defaults', async () => {
+        const dummyScreen = defineWidgetScreen({
+            id: 'settings',
+            component: (props: { plan: string }) =>
+                `<div class="tg-settings">Plan: ${props.plan}</div>`,
+            initialState: (props: { plan: string }) => ({
+                plan: props.plan,
+                notifications: true,
+            }),
+            actions: {
+                toggle: async (ctx: WidgetActionContext<{ plan: string; notifications: boolean }>) => {
+                    const next = { ...ctx.state, notifications: !ctx.state.notifications };
+                    await ctx.setState(next);
+                    return next;
+                },
+            },
+        });
+
+        // 1. Test 'dev' mode defaults: uncompressed codec keys, raw readable HTML
+        const devPlugin = createTelegramWidgetsPlugin({
+            screens: { settings: dummyScreen },
+            mode: 'dev',
+            debug: true,
+        });
+
+        expect(devPlugin.config.mode).toBe('dev');
+        expect(devPlugin.config.codec.enabled).toBe(false);
+        expect(devPlugin.config.codec.mode).toBe('dev');
+        expect(devPlugin.config.minifier.enabled).toBe(false);
+        expect(devPlugin.config.debug).toBe(true);
+
+        let sentParams: Record<string, unknown> | undefined;
+        let mockApi = {
+            raw: {
+                sendWidget: async (params: Record<string, unknown>) => {
+                    sentParams = params;
+                    return { message_id: 101 };
+                },
+                editMessageWidgetData: async () => true,
+                answerWidgetQuery: async () => true,
+            },
+        };
+
+        const devCtx = {
+            chat: { id: 777 },
+            api: mockApi,
+        } as unknown as Context & WidgetsFlavor<{ settings: typeof dummyScreen }>;
+
+        await devPlugin.middleware(devCtx, async () => {});
+
+        // Send in dev mode: chat_data should have full readable keys ("notifications", "plan", "__screen")
+        await devCtx.widgets.send('settings', {
+            props: { plan: 'pro' },
+        });
+
+        expect(sentParams).toBeDefined();
+        const devChatData = JSON.parse(sentParams?.chat_data as string);
+        expect(devChatData.notifications).toBe(true);
+        expect(devChatData.plan).toBe('pro');
+        expect(devChatData.__screen).toBe('settings');
+        // Unminified HTML in dev mode contains comments/original format
+        expect(sentParams?.html).toContain('Plan: pro');
+
+        // 2. Test 'prod' mode with codec minification: compressed keys ("o", "l", "_s")
+        const prodPlugin = createTelegramWidgetsPlugin({
+            screens: { settings: dummyScreen },
+            mode: 'prod',
+            codec: 'prod',
+            minifier: 'fast',
+            sizeLimit: {
+                maxBytes: 4096,
+                onExceeded: 'error',
+            },
+            defaults: {
+                width: 2,
+                height: 3,
+                parseMode: 'HTML',
+            },
+            storage: {
+                defaultTtlSeconds: 120,
+                maxEntries: 10,
+            },
+        });
+
+        expect(prodPlugin.config.mode).toBe('prod');
+        expect(prodPlugin.config.codec.enabled).toBe(true);
+        expect(prodPlugin.config.codec.mode).toBe('prod');
+        expect(prodPlugin.config.minifier.enabled).toBe(true);
+        expect(prodPlugin.config.minifier.engine).toBe('fast');
+        expect(prodPlugin.config.defaults.width).toBe(2);
+        expect(prodPlugin.config.defaults.parseMode).toBe('HTML');
+
+        const prodCtx = {
+            chat: { id: 777 },
+            api: mockApi,
+        } as unknown as Context & WidgetsFlavor<{ settings: typeof dummyScreen }>;
+
+        await prodPlugin.middleware(prodCtx, async () => {});
+
+        await prodCtx.widgets.send('settings', {
+            props: { plan: 'pro' },
+        });
+
+        const prodChatData = JSON.parse(sentParams?.chat_data as string);
+        expect(prodChatData.o).toBe(true);       // notifications -> o
+        expect(prodChatData.l).toBe('pro');      // plan -> l
+        expect(prodChatData._s).toBe('settings'); // __screen -> _s
+        expect(prodChatData.notifications).toBeUndefined();
+        expect(sentParams?.width).toBe(2);
+        expect(sentParams?.height).toBe(3);
+        expect(sentParams?.parse_mode).toBe('HTML');
+
+        // 3. Test codec customKeys dictionary
+        const customPlugin = createTelegramWidgetsPlugin({
+            screens: { settings: dummyScreen },
+            codec: {
+                mode: 'prod',
+                customKeys: { userScore: 'us' },
+            },
+        });
+        expect(customPlugin.config.codec.customKeys).toEqual({ userScore: 'us' });
+
+        // 4. Test sizeLimit validation onExceeded: 'error'
+        const strictPlugin = createTelegramWidgetsPlugin({
+            screens: { settings: dummyScreen },
+            sizeLimit: {
+                maxBytes: 20, // artificially tiny
+                onExceeded: 'error',
+            },
+        });
+
+        const strictCtx = {
+            chat: { id: 777 },
+            api: mockApi,
+        } as unknown as Context & WidgetsFlavor<{ settings: typeof dummyScreen }>;
+
+        await strictPlugin.middleware(strictCtx, async () => {});
+
+        expect(
+            strictCtx.widgets.send('settings', { props: { plan: 'pro' } }),
+        ).rejects.toThrow(/exceeds maximum limit/);
+
+        // 5. Test sizeLimit validation onExceeded: 'warn' (does not throw)
+        let warnLogged = false;
+        const warnPlugin = createTelegramWidgetsPlugin({
+            screens: { settings: dummyScreen },
+            sizeLimit: {
+                maxBytes: 20,
+                onExceeded: 'warn',
+            },
+            logger: {
+                info: () => {},
+                warn: (msg) => {
+                    if (msg.includes('exceeds maximum limit')) warnLogged = true;
+                },
+                error: () => {},
+            },
+        });
+
+        const warnCtx = {
+            chat: { id: 777 },
+            api: mockApi,
+        } as unknown as Context & WidgetsFlavor<{ settings: typeof dummyScreen }>;
+
+        await warnPlugin.middleware(warnCtx, async () => {});
+        await warnCtx.widgets.send('settings', { props: { plan: 'pro' } });
+        expect(warnLogged).toBe(true);
+
+        // 6. Test storage config object auto-creates MemoryWidgetsStorage
+        const storagePlugin = createTelegramWidgetsPlugin({
+            screens: { settings: dummyScreen },
+            storage: { defaultTtlSeconds: 50, maxEntries: 25 },
+        });
+        expect(storagePlugin.storage).toBeInstanceOf(MemoryWidgetsStorage);
+
+        // 7. Test inspect helper on controller
+        const inspectReport = await prodCtx.widgets.inspect('settings', { plan: 'pro' });
+        expect(inspectReport.html).toContain('Plan: pro');
+        expect(inspectReport.compressedByteLength).toBeGreaterThan(0);
+        expect(inspectReport.maxAllowed).toBe(4096);
+    });
 });
