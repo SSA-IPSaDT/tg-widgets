@@ -163,17 +163,13 @@ describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
             expect(iconBadge).toContain('svg');
         });
 
-        test('supports dynamic Telegram theme accent variables and color-mix in stylesheet', () => {
+        test('supports dynamic Telegram theme accent variables via currentColor pseudo-elements', () => {
             expect(BASE_RESET_CSS).toContain('--tg-accent-color:var(--tg-theme-accent-text-color');
-            expect(BASE_RESET_CSS).toContain(
-                '.tg-badge-accent{--badge-accent:var(--tg-accent-color',
-            );
-            expect(BASE_RESET_CSS).toContain(
-                'color-mix(in srgb,var(--badge-accent) 15%,transparent)',
-            );
-            expect(BASE_RESET_CSS).toContain(
-                'color-mix(in srgb,var(--badge-accent) 30%,transparent)',
-            );
+            expect(BASE_RESET_CSS).toContain('.tg-badge-accent{color:var(--tg-accent-color');
+            expect(BASE_RESET_CSS).toContain('.tg-badge-accent::before{content:"";');
+            expect(BASE_RESET_CSS).toContain('background:currentColor;opacity:0.15');
+            expect(BASE_RESET_CSS).toContain('.tg-badge-accent::after{content:"";');
+            expect(BASE_RESET_CSS).toContain('border:1px solid currentColor;opacity:0.28');
         });
     });
 

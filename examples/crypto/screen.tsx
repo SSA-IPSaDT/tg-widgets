@@ -83,7 +83,6 @@ export const cryptoScreen = defineWidgetScreen({
                                 icon={LucideIcon({
                                     icon: LucideIcons.Sparkles,
                                     size: 15,
-                                    color: 'var(--tg-theme-link-color, #2481cc)',
                                 })}
                             />
                         </div>

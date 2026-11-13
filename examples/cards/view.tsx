@@ -51,7 +51,6 @@ export const CardsView = () => (
                         icon={LucideIcon({
                             icon: LucideIcons.Crown,
                             size: 15,
-                            color: '#f59e0b',
                         })}
                     />
                 </div>

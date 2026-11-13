@@ -78,7 +78,6 @@ export const tableScreen = defineWidgetScreen({
                             icon={LucideIcon({
                                 icon: LucideIcons.Check,
                                 size: 15,
-                                color: '#10b981',
                             })}
                         />
                     </div>

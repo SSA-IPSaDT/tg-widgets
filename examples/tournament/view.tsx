@@ -33,7 +33,6 @@ export const TournamentView = (props: TournamentState): string => (
                         icon={LucideIcon({
                             icon: LucideIcons.Trophy,
                             size: 15,
-                            color: '#f59e0b',
                         })}
                     />
                 </div>
