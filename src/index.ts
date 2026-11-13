@@ -1,4 +1,3 @@
-/// <reference path="./react-shim.d.ts" />
 export * from './action';
 export * from './codec';
 export * from './components';

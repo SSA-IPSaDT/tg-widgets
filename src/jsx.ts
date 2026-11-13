@@ -1,10 +1,8 @@
-declare global {
-    namespace JSX {
-        interface IntrinsicElements {
-            [elemName: string]: Record<string, unknown>;
-        }
-        type Element = string;
+export namespace JSX {
+    export interface IntrinsicElements {
+        [elemName: string]: Record<string, unknown>;
     }
+    export type Element = string;
 }
 
 export * from './jsx/types';

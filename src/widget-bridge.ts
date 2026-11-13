@@ -92,10 +92,3 @@ export interface TelegramWidgetBridge {
      */
     offEvent?(eventName: string, handler: () => void): void;
 }
-
-declare global {
-    interface Window {
-        TelegramWidget?: TelegramWidgetBridge;
-    }
-    var TelegramWidget: TelegramWidgetBridge | undefined;
-}

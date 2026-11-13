@@ -8,7 +8,8 @@
         "./jsx-dev-runtime": "./src/jsx-dev-runtime.ts"
     },
     "publish": {
-        "include": ["src/", "mod.ts", "deno.json", "README.md", "LICENSE", "CHANGELOG.md"]
+        "include": ["src/", "mod.ts", "deno.json", "README.md", "LICENSE", "CHANGELOG.md"],
+        "exclude": ["src/react-shim.d.ts"]
     },
     "compilerOptions": {
         "jsx": "react",
