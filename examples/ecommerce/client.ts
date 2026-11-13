@@ -45,15 +45,23 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
 
         const minusBtn = document.getElementById('ecom-minus') as HTMLButtonElement | null;
         const plusBtn = document.getElementById('ecom-plus') as HTMLButtonElement | null;
-        if (minusBtn) minusBtn.disabled = state.quantity <= 1;
-        if (plusBtn) plusBtn.disabled = state.quantity >= 5;
+        if (minusBtn && !isPending.quantity) minusBtn.disabled = state.quantity <= 1;
+        if (plusBtn && !isPending.quantity) plusBtn.disabled = state.quantity >= 5;
+    };
+
+    const isPending = {
+        size: false,
+        quantity: false,
+        checkout: false,
     };
 
     const syncState = () => {
         try {
             if (widget?.chatData) {
-                const parsedData = JSON.parse(widget.chatData);
-                updateEcomUI(decodeEcommerceState(parsedData));
+                const incoming = decodeEcommerceState(JSON.parse(widget.chatData));
+                if (isPending.size) delete incoming.size;
+                if (isPending.quantity) delete incoming.quantity;
+                updateEcomUI(incoming);
             }
         } catch {
             // ignore JSON parse errors
@@ -63,7 +71,7 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
     syncState();
     widget?.onEvent?.('chatDataChanged', syncState);
 
-    const sendAction = (action: string) => {
+    const sendAction = (action: string, onDone?: () => void) => {
         Promise.resolve(widget?.request?.(action))
             .then((response?: { result?: string | null }) => {
                 if (response?.result) {
@@ -75,33 +83,67 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
                     }
                 }
             })
-            .catch(() => {});
+            .catch(() => {})
+            .finally(() => {
+                onDone?.();
+            });
     };
 
     [41, 42, 43, 44].forEach((sizeNumber) => {
         document.getElementById(`size-${sizeNumber}`)?.addEventListener('click', () => {
-            if (state.size === sizeNumber) return;
+            if (isPending.size || state.size === sizeNumber) return;
+            isPending.size = true;
             widget?.HapticFeedback?.selectionChanged?.();
             updateEcomUI({ size: sizeNumber });
-            sendAction(`setSize:${sizeNumber}`);
+            sendAction(`setSize:${sizeNumber}`, () => {
+                isPending.size = false;
+            });
         });
     });
 
-    document.getElementById('ecom-minus')?.addEventListener('click', () => {
-        if (state.quantity <= 1) return;
-        widget?.HapticFeedback?.impactOccurred?.('light');
-        updateEcomUI({ quantity: state.quantity - 1 });
-        sendAction('qtyMinus');
-    });
+    const minusBtn = document.getElementById('ecom-minus') as HTMLButtonElement | null;
+    const plusBtn = document.getElementById('ecom-plus') as HTMLButtonElement | null;
 
-    document.getElementById('ecom-plus')?.addEventListener('click', () => {
-        if (state.quantity >= 5) return;
-        widget?.HapticFeedback?.impactOccurred?.('light');
-        updateEcomUI({ quantity: state.quantity + 1 });
-        sendAction('qtyPlus');
-    });
+    const handleQtyChange = (delta: number, action: string) => {
+        if (isPending.quantity) return;
+        const target = state.quantity + delta;
+        if (target < 1 || target > 5) return;
 
-    document.getElementById('btn-checkout')?.addEventListener('click', () => {
+        isPending.quantity = true;
+        if (minusBtn) {
+            minusBtn.disabled = true;
+            minusBtn.style.pointerEvents = 'none';
+        }
+        if (plusBtn) {
+            plusBtn.disabled = true;
+            plusBtn.style.pointerEvents = 'none';
+        }
+
+        widget?.HapticFeedback?.impactOccurred?.('light');
+        updateEcomUI({ quantity: target });
+        sendAction(action, () => {
+            isPending.quantity = false;
+            if (minusBtn) {
+                minusBtn.style.pointerEvents = '';
+                minusBtn.disabled = state.quantity <= 1;
+            }
+            if (plusBtn) {
+                plusBtn.style.pointerEvents = '';
+                plusBtn.disabled = state.quantity >= 5;
+            }
+        });
+    };
+
+    minusBtn?.addEventListener('click', () => handleQtyChange(-1, 'qtyMinus'));
+    plusBtn?.addEventListener('click', () => handleQtyChange(1, 'qtyPlus'));
+
+    const checkoutBtn = document.getElementById('btn-checkout') as HTMLButtonElement | null;
+    checkoutBtn?.addEventListener('click', () => {
+        if (isPending.checkout || checkoutBtn.disabled) return;
+        isPending.checkout = true;
+        checkoutBtn.disabled = true;
+        checkoutBtn.style.pointerEvents = 'none';
+
         widget?.HapticFeedback?.notificationOccurred?.('success');
         if (toast) {
             toast.textContent = `🎉 Order placed! Size: ${state.size}, ${state.quantity} pair(s) for $${(state.quantity * state.pricePerUnit).toFixed(2)}`;
@@ -110,6 +152,10 @@ export const ecommerceClientScript = (initial: EcommerceState) => {
                 toast.style.display = 'none';
             }, 3500);
         }
-        sendAction('checkout');
+        sendAction('checkout', () => {
+            isPending.checkout = false;
+            checkoutBtn.disabled = false;
+            checkoutBtn.style.pointerEvents = '';
+        });
     });
 };

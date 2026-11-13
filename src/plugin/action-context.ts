@@ -56,11 +56,15 @@ export const createActionContext = (
         setState: async (nextState: Partial<Record<string, unknown>> | Record<string, unknown>) => {
             const merged = { ...currentState, ...nextState };
             currentState = merged;
-            await storage.set(storageKey, {
-                screenId,
-                state: merged,
-                updatedAt: Date.now(),
-            });
+            try {
+                await storage.set(storageKey, {
+                    screenId,
+                    state: merged,
+                    updatedAt: Date.now(),
+                });
+            } catch (err) {
+                logger.warn(`Failed to save state to storage for ${storageKey}:`, err);
+            }
 
             const chatData = config.codec.compressState
                 ? packState(screenId, merged, config.codec.customKeys)
@@ -120,10 +124,14 @@ export const createActionContext = (
                 logger.info(`Answering query #${query.id} with data: ${serialized}`);
             }
 
-            await rawApi.answerWidgetQuery({
-                widget_query_id: query.id,
-                data: serialized,
-            });
+            try {
+                await rawApi.answerWidgetQuery({
+                    widget_query_id: query.id,
+                    data: serialized,
+                });
+            } catch (err) {
+                logger.warn(`Failed to answerWidgetQuery #${query.id}:`, err);
+            }
         },
         rawApi,
     };

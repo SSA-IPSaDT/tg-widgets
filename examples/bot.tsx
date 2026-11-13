@@ -50,6 +50,20 @@ bot.use(widgets.middleware);
 // Register command and callback query handlers
 registerBotHandlers(bot, isTestEnv);
 
+// Global error handling to ensure bot resilience against network or runtime failures
+bot.catch((err) => {
+    const ctx = err.ctx;
+    console.error(`❌ [bot.catch] Error handling update ${ctx?.update?.update_id}:`, err.error);
+});
+
+process.on('unhandledRejection', (reason) => {
+    console.error('⚠️ [process] Unhandled Promise Rejection:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+    console.error('💥 [process] Uncaught Exception:', err);
+});
+
 console.log('🚀 Telegram Widgets Bot successfully initialized!');
 console.log(`🌐 Telegram Environment: ${isTestEnv ? '🧪 TEST SERVER (Test DC)' : '🟢 PRODUCTION'}`);
 if (apiRoot) {

@@ -37,8 +37,8 @@ export const profileScreen = defineWidgetScreen({
     id: 'profile',
     component: ProfileView,
     initialState: () => ({
-        name: 'Alex Smirnov',
-        username: '@alex_dev',
+        name: 'Ubaidullozoda Shahriori',
+        username: '@naylour',
         notifications: true,
         privateMode: false,
         soundEffects: true,

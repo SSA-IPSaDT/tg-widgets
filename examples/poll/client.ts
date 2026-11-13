@@ -70,9 +70,11 @@ export const pollClientScript = (initial: PollState) => {
         }
     };
 
+    let isVoting = false;
+
     const syncState = () => {
         try {
-            if (widget?.chatData) {
+            if (!isVoting && widget?.chatData) {
                 const parsedData = JSON.parse(widget.chatData);
                 updatePollUI(decodePollState(parsedData));
             }
@@ -84,8 +86,18 @@ export const pollClientScript = (initial: PollState) => {
     syncState();
     widget?.onEvent?.('chatDataChanged', syncState);
 
+    const setPollInteractive = (interactive: boolean) => {
+        const pollOptions = ['grammy', 'telegraf', 'aiogram'] as const;
+        for (const opt of pollOptions) {
+            const row = document.getElementById(`poll-row-${opt}`);
+            if (row) row.style.pointerEvents = interactive ? '' : 'none';
+        }
+    };
+
     const registerVote = (choice: 'grammy' | 'telegraf' | 'aiogram') => {
-        if (state.userVote === choice) return;
+        if (isVoting || state.userVote === choice) return;
+        isVoting = true;
+        setPollInteractive(false);
         widget?.HapticFeedback?.impactOccurred?.('medium');
 
         if (state.userVote) {
@@ -106,7 +118,11 @@ export const pollClientScript = (initial: PollState) => {
                     }
                 }
             })
-            .catch(() => {});
+            .catch(() => {})
+            .finally(() => {
+                isVoting = false;
+                setPollInteractive(true);
+            });
     };
 
     document

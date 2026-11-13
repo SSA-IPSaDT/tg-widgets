@@ -56,11 +56,21 @@ export const profileClientScript = (initial: ProfileState) => {
         }
     };
 
+    const isPending: Record<string, boolean> = {
+        notifications: false,
+        privateMode: false,
+        soundEffects: false,
+    };
+
     const syncFromChatData = () => {
         try {
             if (widget?.chatData) {
                 const parsed = JSON.parse(widget.chatData);
-                updateProfileUI(decodeProfileState(parsed));
+                const decoded = decodeProfileState(parsed);
+                if (isPending.notifications) delete decoded.notifications;
+                if (isPending.privateMode) delete decoded.privateMode;
+                if (isPending.soundEffects) delete decoded.soundEffects;
+                updateProfileUI(decoded);
             }
         } catch {
             // ignore JSON parse errors
@@ -75,10 +85,15 @@ export const profileClientScript = (initial: ProfileState) => {
         key: 'notifications' | 'privateMode' | 'soundEffects',
         actionBase: string,
     ) => {
-        const element = document.getElementById(elementId);
+        const element = document.getElementById(elementId) as HTMLButtonElement | null;
         if (!element) return;
 
         element.addEventListener('click', () => {
+            if (isPending[key] || element.disabled) return;
+            isPending[key] = true;
+            element.disabled = true;
+            element.style.pointerEvents = 'none';
+
             widget?.HapticFeedback?.impactOccurred?.('light');
             const targetVal = !state[key];
             updateProfileUI({ [key]: targetVal });
@@ -94,7 +109,12 @@ export const profileClientScript = (initial: ProfileState) => {
                         }
                     }
                 })
-                .catch(() => {});
+                .catch(() => {})
+                .finally(() => {
+                    isPending[key] = false;
+                    element.disabled = false;
+                    element.style.pointerEvents = '';
+                });
         });
     };
 
@@ -102,8 +122,17 @@ export const profileClientScript = (initial: ProfileState) => {
     bindToggle('profile-private', 'privateMode', 'toggleProfilePrivate');
     bindToggle('profile-sound', 'soundEffects', 'toggleProfileSound');
 
-    document.getElementById('btn-fallback')?.addEventListener('click', () => {
+    const fallbackBtn = document.getElementById('btn-fallback') as HTMLButtonElement | null;
+    fallbackBtn?.addEventListener('click', () => {
+        if (fallbackBtn.disabled) return;
+        fallbackBtn.disabled = true;
+        fallbackBtn.style.pointerEvents = 'none';
         widget?.HapticFeedback?.notificationOccurred?.('warning');
-        Promise.resolve(widget?.request?.('fallbackToText')).catch(() => {});
+        Promise.resolve(widget?.request?.('fallbackToText'))
+            .catch(() => {})
+            .finally(() => {
+                fallbackBtn.disabled = false;
+                fallbackBtn.style.pointerEvents = '';
+            });
     });
 };

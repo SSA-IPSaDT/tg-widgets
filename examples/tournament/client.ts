@@ -39,10 +39,14 @@ export const tournamentClientScript = (initial: TournamentState) => {
         }
     };
 
+    let isPending = false;
+
     syncState();
     widget?.onEvent?.('chatDataChanged', syncState);
 
     document.getElementById('btn-volunteer')?.addEventListener('click', () => {
+        if (isPending) return;
+        isPending = true;
         widget?.HapticFeedback?.notificationOccurred?.('success');
         if (state.registeredRole !== 'volunteer') {
             if (state.registeredRole === 'participant') state.participantsCount--;
@@ -63,10 +67,16 @@ export const tournamentClientScript = (initial: TournamentState) => {
         } catch {
             // fallback
         }
-        widget?.request?.('registerVolunteer');
+        Promise.resolve(widget?.request?.('registerVolunteer'))
+            .catch(() => {})
+            .finally(() => {
+                isPending = false;
+            });
     });
 
     document.getElementById('btn-participant')?.addEventListener('click', () => {
+        if (isPending) return;
+        isPending = true;
         widget?.HapticFeedback?.notificationOccurred?.('success');
         if (state.registeredRole !== 'participant') {
             if (state.registeredRole === 'volunteer') state.volunteersCount--;
@@ -88,6 +98,10 @@ export const tournamentClientScript = (initial: TournamentState) => {
         } catch {
             // fallback
         }
-        widget?.request?.('registerParticipant');
+        Promise.resolve(widget?.request?.('registerParticipant'))
+            .catch(() => {})
+            .finally(() => {
+                isPending = false;
+            });
     });
 };

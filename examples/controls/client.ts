@@ -4,128 +4,162 @@ import type { ControlsState } from './screen';
  * Client-side script providing instant optimistic UI feedback and multi-device state synchronization.
  */
 export const controlsClientScript = (initial: ControlsState) => {
-    const widget = window.TelegramWidget;
-    let state = { ...initial };
+    const w = window.TelegramWidget;
+    let s = { ...initial };
+    const p: Record<string, boolean> = {};
 
-    const decodeControlsState = (raw: unknown): Partial<ControlsState> => {
+    const dec = (raw: unknown): Partial<ControlsState> => {
         const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
         const res: Partial<ControlsState> = {};
-        const o = r.notifications ?? r.o;
+        const [o, n, k, l] = [
+            r.notifications ?? r.o,
+            r.newsletter ?? r.w,
+            r.tickets ?? r.k,
+            r.plan ?? r.l,
+        ];
         if (typeof o === 'boolean') res.notifications = o;
-        const w = r.newsletter ?? r.w;
-        if (typeof w === 'boolean') res.newsletter = w;
-        const k = r.tickets ?? r.k;
+        if (typeof n === 'boolean') res.newsletter = n;
         if (typeof k === 'number') res.tickets = k;
-        const l = r.plan ?? r.l;
         if (typeof l === 'string') res.plan = l;
         return res;
     };
 
-    const updateUI = (partialState: Partial<ControlsState>) => {
-        state = { ...state, ...partialState };
-
-        if (typeof state.notifications === 'boolean') {
+    const cBtn = 'var(--tg-theme-button-color,#2481cc)';
+    const sWrap = (inner: string) =>
+        `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">${inner}</svg>`;
+    const updateUI = (up: Partial<ControlsState>) => {
+        s = { ...s, ...up };
+        if (typeof s.notifications === 'boolean') {
             document
                 .getElementById('toggle-notify')
                 ?.querySelector('.tg-switch-track')
-                ?.classList.toggle('active', state.notifications);
+                ?.classList.toggle('active', s.notifications);
         }
-
-        if (typeof state.newsletter === 'boolean') {
-            const checkboxSvg = document.getElementById('chk-newsletter')?.querySelector('svg');
-            if (checkboxSvg) {
-                checkboxSvg.outerHTML = `<svg width="20" height="20" viewBox="0 0 20 20" fill="none">${
-                    state.newsletter
-                        ? '<rect width="20" height="20" rx="5" fill="var(--tg-theme-button-color,#2481cc)"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>'
-                        : '<rect x="1" y="1" width="18" height="18" rx="5" stroke="var(--tg-theme-hint-color,rgba(120,120,128,0.4))" stroke-width="1.5"/>'
-                }</svg>`;
+        if (typeof s.newsletter === 'boolean') {
+            const svg = document.getElementById('chk-newsletter')?.querySelector('svg');
+            if (svg) {
+                svg.outerHTML = sWrap(
+                    s.newsletter
+                        ? `<rect width="20" height="20" rx="5" fill="${cBtn}"/><path d="M5.5 10.5L8.5 13.5L14.5 7" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>`
+                        : '<rect x="1" y="1" width="18" height="18" rx="5" stroke="rgba(120,120,128,0.4)" stroke-width="1.5"/>',
+                );
             }
         }
-
-        if (typeof state.tickets === 'number') {
-            const stepperEl = document.getElementById('stepper-tickets');
-            const stepperVal = stepperEl?.querySelector('.tg-stepper-val');
-            if (stepperVal) stepperVal.textContent = String(state.tickets);
-            const buttons = stepperEl?.querySelectorAll('button');
-            if (buttons && buttons[0] && buttons[1]) {
-                (buttons[0] as HTMLButtonElement).disabled = state.tickets <= 1;
-                (buttons[1] as HTMLButtonElement).disabled = state.tickets >= 10;
+        if (typeof s.tickets === 'number') {
+            const st = document.getElementById('stepper-tickets');
+            const sv = st?.querySelector('.tg-stepper-val');
+            if (sv) sv.textContent = String(s.tickets);
+            const btns = st?.querySelectorAll('button');
+            if (btns && btns[0] && btns[1]) {
+                btns[0].disabled = s.tickets <= 1;
+                btns[1].disabled = s.tickets >= 10;
             }
         }
-
-        if (state.plan) {
-            const renderRadioSvg = (isSelected: boolean) =>
-                `<svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="${isSelected ? 'var(--tg-theme-button-color,#2481cc)' : 'var(--tg-theme-hint-color,rgba(120,120,128,0.4))'}" stroke-width="${isSelected ? 2 : 1.5}"/>${isSelected ? '<circle cx="10" cy="10" r="5" fill="var(--tg-theme-button-color,#2481cc)"/>' : ''}</svg>`;
-
-            const basicSvg = document.getElementById('plan-basic')?.querySelector('svg');
-            if (basicSvg) basicSvg.outerHTML = renderRadioSvg(state.plan === 'basic');
-            const proSvg = document.getElementById('plan-pro')?.querySelector('svg');
-            if (proSvg) proSvg.outerHTML = renderRadioSvg(state.plan === 'pro');
+        if (s.plan) {
+            const rSvg = (sel: boolean) =>
+                sWrap(
+                    `<circle cx="10" cy="10" r="9" stroke="${sel ? cBtn : 'rgba(120,120,128,0.4)'}" stroke-width="${sel ? 2 : 1.5}"/>${sel ? `<circle cx="10" cy="10" r="5" fill="${cBtn}"/>` : ''}`,
+                );
+            (['basic', 'pro'] as const).forEach((k) => {
+                const el = document.getElementById(`plan-${k}`)?.querySelector('svg');
+                if (el) el.outerHTML = rSvg(s.plan === k);
+            });
         }
     };
 
-    const syncState = () => {
+    const sync = () => {
         try {
-            if (widget?.chatData) updateUI(decodeControlsState(JSON.parse(widget.chatData)));
+            if (w?.chatData) {
+                const inc = dec(JSON.parse(w.chatData));
+                for (const k of ['notifications', 'newsletter', 'tickets', 'plan']) {
+                    if (p[k]) delete inc[k as keyof ControlsState];
+                }
+                updateUI(inc);
+            }
         } catch {}
     };
 
-    syncState();
-    widget?.onEvent?.('chatDataChanged', syncState);
+    sync();
+    w?.onEvent?.('chatDataChanged', sync);
 
-    const sendAction = (action: string) => {
-        Promise.resolve(widget?.request?.(action))
+    const act = (a: string) =>
+        Promise.resolve(w?.request?.(a))
             .then((res?: { result?: string | null }) => {
                 if (res?.result) {
                     try {
-                        updateUI(decodeControlsState(JSON.parse(res.result)));
+                        updateUI(dec(JSON.parse(res.result)));
                     } catch {}
                 }
             })
             .catch(() => {});
+
+    const bindToggle = (
+        id: string,
+        key: 'notifications' | 'newsletter',
+        action: string,
+        hap: 'medium' | 'light',
+    ) => {
+        const btn = document.getElementById(id) as HTMLButtonElement | null;
+        btn?.addEventListener('click', () => {
+            if (p[key] || btn.disabled) return;
+            p[key] = true;
+            btn.disabled = true;
+            btn.style.pointerEvents = 'none';
+            w?.HapticFeedback?.impactOccurred?.(hap);
+            const target = !s[key];
+            updateUI({ [key]: target });
+            act(`${action}:${target}`).finally(() => {
+                p[key] = false;
+                btn.disabled = false;
+                btn.style.pointerEvents = '';
+            });
+        });
     };
 
-    document.getElementById('toggle-notify')?.addEventListener('click', () => {
-        widget?.HapticFeedback?.impactOccurred?.('medium');
-        const targetVal = !state.notifications;
-        updateUI({ notifications: targetVal });
-        sendAction(`toggleNotifications:${targetVal}`);
-    });
+    bindToggle('toggle-notify', 'notifications', 'toggleNotifications', 'medium');
+    bindToggle('chk-newsletter', 'newsletter', 'toggleNewsletter', 'light');
 
-    document.getElementById('chk-newsletter')?.addEventListener('click', () => {
-        widget?.HapticFeedback?.impactOccurred?.('light');
-        const targetVal = !state.newsletter;
-        updateUI({ newsletter: targetVal });
-        sendAction(`toggleNewsletter:${targetVal}`);
-    });
-
-    const stepperButtons = document.getElementById('stepper-tickets')?.querySelectorAll('button');
-    if (stepperButtons && stepperButtons[0] && stepperButtons[1]) {
-        stepperButtons[0].addEventListener('click', () => {
-            if (state.tickets <= 1) return;
-            widget?.HapticFeedback?.impactOccurred?.('light');
-            updateUI({ tickets: state.tickets - 1 });
-            sendAction('ticketMinus');
-        });
-        stepperButtons[1].addEventListener('click', () => {
-            if (state.tickets >= 10) return;
-            widget?.HapticFeedback?.impactOccurred?.('light');
-            updateUI({ tickets: state.tickets + 1 });
-            sendAction('ticketPlus');
-        });
+    const sBtns = document.getElementById('stepper-tickets')?.querySelectorAll('button');
+    if (sBtns && sBtns[0] && sBtns[1]) {
+        const [mBtn, pBtn] = [sBtns[0], sBtns[1]];
+        const onTicket = (delta: number, a: string) => {
+            if (p.tickets) return;
+            const target = s.tickets + delta;
+            if (target < 1 || target > 10) return;
+            p.tickets = true;
+            mBtn.disabled = pBtn.disabled = true;
+            mBtn.style.pointerEvents = pBtn.style.pointerEvents = 'none';
+            w?.HapticFeedback?.impactOccurred?.('light');
+            updateUI({ tickets: target });
+            act(a).finally(() => {
+                p.tickets = false;
+                mBtn.style.pointerEvents = pBtn.style.pointerEvents = '';
+                mBtn.disabled = s.tickets <= 1;
+                pBtn.disabled = s.tickets >= 10;
+            });
+        };
+        mBtn.addEventListener('click', () => onTicket(-1, 'ticketMinus'));
+        pBtn.addEventListener('click', () => onTicket(1, 'ticketPlus'));
     }
 
-    document.getElementById('plan-basic')?.addEventListener('click', () => {
-        if (state.plan === 'basic') return;
-        widget?.HapticFeedback?.selectionChanged?.();
-        updateUI({ plan: 'basic' });
-        sendAction('setPlan:basic');
-    });
+    const onPlan = (newPlan: 'basic' | 'pro') => {
+        if (p.plan || s.plan === newPlan) return;
+        p.plan = true;
+        const els = (['basic', 'pro'] as const).map((k) => document.getElementById(`plan-${k}`));
+        els.forEach((el) => {
+            if (el) el.style.pointerEvents = 'none';
+        });
+        w?.HapticFeedback?.selectionChanged?.();
+        updateUI({ plan: newPlan });
+        act(`setPlan:${newPlan}`).finally(() => {
+            p.plan = false;
+            els.forEach((el) => {
+                if (el) el.style.pointerEvents = '';
+            });
+        });
+    };
 
-    document.getElementById('plan-pro')?.addEventListener('click', () => {
-        if (state.plan === 'pro') return;
-        widget?.HapticFeedback?.selectionChanged?.();
-        updateUI({ plan: 'pro' });
-        sendAction('setPlan:pro');
+    (['basic', 'pro'] as const).forEach((k) => {
+        document.getElementById(`plan-${k}`)?.addEventListener('click', () => onPlan(k));
     });
 };

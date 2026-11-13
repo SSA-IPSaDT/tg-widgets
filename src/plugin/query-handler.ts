@@ -17,6 +17,14 @@ import type {
 } from './types';
 import { extractQueryContext, serializeByStorageKey } from './utils';
 
+const safeAnswer = (rawApi: RawWidgetApiMethods, queryId: string, data: unknown) =>
+    rawApi
+        .answerWidgetQuery({
+            widget_query_id: queryId,
+            data: typeof data === 'string' ? data : JSON.stringify(data),
+        })
+        .catch(() => {});
+
 export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidgetScreen>>(
     ctx: Context & WidgetsFlavor<TScreens>,
     rawApi: RawWidgetApiMethods,
@@ -49,129 +57,121 @@ export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidge
 
     if (!storageKey) {
         logger.warn('[telegram-widgets] Missing chat/message identifier in widget_query.');
-        await rawApi.answerWidgetQuery({
-            widget_query_id: query.id,
-            data: JSON.stringify({ error: 'MISSING_MESSAGE_CONTEXT' }),
-        });
+        await safeAnswer(rawApi, query.id, { error: 'MISSING_MESSAGE_CONTEXT' });
         return;
     }
 
-    await serializeByStorageKey(storageKey, async () => {
-        let registeredRecord = await storage.get(storageKey);
+    try {
+        await serializeByStorageKey(storageKey, async () => {
+            let registeredRecord = await storage.get(storageKey);
 
-        // Fallback: If not found in storage, attempt to recover screenId and state if embedded in query data
-        if (!registeredRecord && query.data && typeof query.data === 'string') {
-            if (query.data.includes('"_s"') || query.data.includes('"__screen"')) {
-                const recovered = unpackState(query.data, config.codec.customReverseKeys);
-                if (recovered.screenId) {
-                    registeredRecord = {
-                        screenId: recovered.screenId,
-                        state: recovered.state,
-                        updatedAt: Date.now(),
-                    };
+            // Fallback: If not found in storage, attempt to recover screenId and state if embedded in query data
+            if (!registeredRecord && query.data && typeof query.data === 'string') {
+                if (query.data.includes('"_s"') || query.data.includes('"__screen"')) {
+                    const recovered = unpackState(query.data, config.codec.customReverseKeys);
+                    if (recovered.screenId) {
+                        registeredRecord = {
+                            screenId: recovered.screenId,
+                            state: recovered.state,
+                            updatedAt: Date.now(),
+                        };
+                    }
                 }
             }
-        }
 
-        const screen = registeredRecord ? screensById.get(registeredRecord.screenId) : undefined;
-        if (!registeredRecord || !screen) {
-            logger.warn(
-                `[telegram-widgets] No registered screen found for storage key ${storageKey}. Consider configuring persistent storage.`,
-            );
-            await rawApi.answerWidgetQuery({
-                widget_query_id: query.id,
-                data: JSON.stringify({ error: 'SCREEN_NOT_FOUND' }),
-            });
-            return;
-        }
-
-        const rawDataStr = query.data ?? '';
-        const isRefresh = !rawDataStr || rawDataStr === 'refresh' || rawDataStr === 'reload';
-        const screenType = getWidgetScreenType(screen);
-
-        if (
-            screenType === 'static' ||
-            screenType === 'client' ||
-            !screen.actions ||
-            Object.keys(screen.actions).length === 0
-        ) {
-            if (isRefresh) {
-                await rawApi.answerWidgetQuery({
-                    widget_query_id: query.id,
-                    data: JSON.stringify(registeredRecord.state ?? {}),
-                });
+            const screen = registeredRecord
+                ? screensById.get(registeredRecord.screenId)
+                : undefined;
+            if (!registeredRecord || !screen) {
+                logger.warn(
+                    `[telegram-widgets] No registered screen found for storage key ${storageKey}. Consider configuring persistent storage.`,
+                );
+                await safeAnswer(rawApi, query.id, { error: 'SCREEN_NOT_FOUND' });
                 return;
             }
-            logger.warn(
-                `[telegram-widgets] Received widget_query for non-interactive screen "${screen.id}" (type: ${screenType}).`,
-            );
-            await rawApi.answerWidgetQuery({
-                widget_query_id: query.id,
-                data: JSON.stringify({ error: 'NON_INTERACTIVE_SCREEN' }),
-            });
-            return;
-        }
 
-        // Parse action name and payload with codec support
-        const { action: actionName, payload } = decodeWidgetAction(rawDataStr, {
-            decompress: config.codec.decompressActionPayload,
-            customReverseMap: config.codec.customReverseKeys,
+            const rawDataStr = query.data ?? '';
+            const isRefresh = !rawDataStr || rawDataStr === 'refresh' || rawDataStr === 'reload';
+            const screenType = getWidgetScreenType(screen);
+
+            if (
+                screenType === 'static' ||
+                screenType === 'client' ||
+                !screen.actions ||
+                Object.keys(screen.actions).length === 0
+            ) {
+                if (isRefresh) {
+                    await safeAnswer(rawApi, query.id, registeredRecord.state ?? {});
+                    return;
+                }
+                logger.warn(
+                    `[telegram-widgets] Received widget_query for non-interactive screen "${screen.id}" (type: ${screenType}).`,
+                );
+                await safeAnswer(rawApi, query.id, { error: 'NON_INTERACTIVE_SCREEN' });
+                return;
+            }
+
+            // Parse action name and payload with codec support
+            const { action: actionName, payload } = decodeWidgetAction(rawDataStr, {
+                decompress: config.codec.decompressActionPayload,
+                customReverseMap: config.codec.customReverseKeys,
+            });
+
+            const actions = (screen.actions ?? {}) as Record<
+                string,
+                (c: WidgetActionContext<Record<string, unknown>>, p: unknown) => unknown
+            >;
+            const handler = actions[actionName];
+            if (!handler) {
+                if (isRefresh) {
+                    await safeAnswer(rawApi, query.id, registeredRecord.state ?? {});
+                    return;
+                }
+                logger.warn(
+                    `[telegram-widgets] Unhandled action "${actionName}" for screen "${screen.id}".`,
+                );
+                await safeAnswer(rawApi, query.id, { error: 'UNKNOWN_ACTION' });
+                return;
+            }
+
+            const runner = createActionContext(
+                query,
+                screen.id,
+                registeredRecord.state,
+                storageKey,
+                rawApi,
+                storage,
+                config,
+                logger,
+                { chatId, messageId, inlineMessageId },
+            );
+
+            try {
+                const result = await handler(runner.actionCtx, payload);
+                if (!runner.getIsAnswered()) {
+                    await runner.actionCtx.answer(result ?? runner.getCurrentState());
+                }
+            } catch (error) {
+                logger.error(
+                    `[telegram-widgets] Error executing action "${actionName}" on screen "${screen.id}":`,
+                    error,
+                );
+                if (!runner.getIsAnswered()) {
+                    await runner.actionCtx.answer({ error: 'INTERNAL_ERROR' });
+                }
+            } finally {
+                const pending = runner.getPendingEditPromise();
+                if (pending) {
+                    // Ensure slow network or rate limits do not block serialization queue for > 1500ms
+                    await Promise.race([pending, new Promise((r) => setTimeout(r, 1500))]);
+                }
+            }
         });
-
-        const actions = (screen.actions ?? {}) as Record<
-            string,
-            (c: WidgetActionContext<Record<string, unknown>>, p: unknown) => unknown
-        >;
-        const handler = actions[actionName];
-        if (!handler) {
-            if (isRefresh) {
-                await rawApi.answerWidgetQuery({
-                    widget_query_id: query.id,
-                    data: JSON.stringify(registeredRecord.state ?? {}),
-                });
-                return;
-            }
-            logger.warn(
-                `[telegram-widgets] Unhandled action "${actionName}" for screen "${screen.id}".`,
-            );
-            await rawApi.answerWidgetQuery({
-                widget_query_id: query.id,
-                data: JSON.stringify({ error: 'UNKNOWN_ACTION' }),
-            });
-            return;
-        }
-
-        const runner = createActionContext(
-            query,
-            screen.id,
-            registeredRecord.state,
-            storageKey,
-            rawApi,
-            storage,
-            config,
-            logger,
-            { chatId, messageId, inlineMessageId },
+    } catch (topLevelError) {
+        logger.error(
+            `[telegram-widgets] Unexpected error processing widget_query #${query.id}:`,
+            topLevelError,
         );
-
-        try {
-            const result = await handler(runner.actionCtx, payload);
-            if (!runner.getIsAnswered()) {
-                await runner.actionCtx.answer(result ?? runner.getCurrentState());
-            }
-        } catch (error) {
-            logger.error(
-                `[telegram-widgets] Error executing action "${actionName}" on screen "${screen.id}":`,
-                error,
-            );
-            if (!runner.getIsAnswered()) {
-                await runner.actionCtx.answer({ error: 'INTERNAL_ERROR' });
-            }
-        } finally {
-            const pending = runner.getPendingEditPromise();
-            if (pending) {
-                // Ensure slow network or rate limits do not block serialization queue for > 1500ms
-                await Promise.race([pending, new Promise((r) => setTimeout(r, 1500))]);
-            }
-        }
-    });
+        await safeAnswer(rawApi, query.id, { error: 'INTERNAL_ERROR' });
+    }
 };
