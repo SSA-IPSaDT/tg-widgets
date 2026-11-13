@@ -66,7 +66,7 @@ export const TableRow = ({
                       borderBottom:
                           '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.12))',
                   }
-                : {}),
+                : { borderBottom: 'none' }),
             cursor: interactive ? 'pointer' : 'default',
             ...style,
         }}

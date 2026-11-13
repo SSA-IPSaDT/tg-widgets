@@ -338,6 +338,17 @@ describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
             expect(table).toContain('Coffee');
             expect(table).toContain('$8.00');
         });
+
+        test('TableRow respects borderBottom=false without duplicating cell borders', () => {
+            const rowWithBorder = TableRow({ children: TableCell({ children: 'Item' }) });
+            expect(rowWithBorder).toContain('border-bottom:1px solid');
+
+            const rowWithoutBorder = TableRow({
+                borderBottom: false,
+                children: TableCell({ children: 'Item' }),
+            });
+            expect(rowWithoutBorder).toContain('border-bottom:none');
+        });
     });
 
     describe('Accordion & Collapsible', () => {
