@@ -8,15 +8,16 @@ Source code: [`screen.tsx`](./screen.tsx)
 
 ## 💡 Key Architectural Features
 
-1. **100% Native HTML**: Built on standard `<details>` and `<summary>` elements, officially supported in **Telegram QuickJS Profile 1**.
-2. **Zero JavaScript Overhead**: Expanding and collapsing items occurs natively without executing client-side JavaScript or sending network requests.
-3. **Smooth Chevron Transitions**: Uses CSS transforms to rotate the chevron icon when opened:
+1. **Client-Interactive Screen Paradigm (`defineClientWidgetScreen`)**: Local interactivity with zero server round-trip queries (`allow_queries: false`) and bypassed server storage (0 memory allocation).
+2. **100% Native HTML**: Built on standard `<details>` and `<summary>` elements, officially supported in **Telegram QuickJS Profile 1**.
+3. **Zero JavaScript Overhead**: Expanding and collapsing items occurs natively without executing client-side JavaScript or sending network requests.
+4. **Smooth Chevron Transitions**: Uses CSS transforms to rotate the chevron icon when opened:
    ```css
    details[open] .tg-accordion-chevron {
      transform: rotate(90deg) !important;
    }
    ```
-4. **Fast Touch Interaction**: Configured with `touch-action: manipulation` to eliminate the 300ms mobile tap delay.
+5. **Fast Touch Interaction**: Configured with `touch-action: manipulation` to eliminate the 300ms mobile tap delay.
 
 ---
 
@@ -34,12 +35,12 @@ import {
   CardHeader,
   CardTitle,
   Collapsible,
-  defineWidgetScreen,
+  defineClientWidgetScreen,
   h,
   WidgetLayout,
 } from '@ipsadt/tg-widgets';
 
-export const accordionScreen = defineWidgetScreen({
+export const accordionScreen = defineClientWidgetScreen({
   id: 'accordion',
   component: () => (
     <WidgetLayout fullWidth padding="6px 8px">
@@ -64,7 +65,6 @@ export const accordionScreen = defineWidgetScreen({
       </Card>
     </WidgetLayout>
   ),
-  initialState: () => ({}),
 });
 ```
 

@@ -20,10 +20,11 @@ import {
     minifyHtmlSync,
     type WidgetMinifyOptions,
 } from './minifier';
-import type {
-    AnyWidgetScreen,
-    RawWidgetApiMethods,
-    WidgetActionContext,
+import {
+    getWidgetScreenType,
+    type AnyWidgetScreen,
+    type RawWidgetApiMethods,
+    type WidgetActionContext,
 } from './screen';
 import { MemoryWidgetsStorage, type WidgetsStorage } from './storage';
 
@@ -267,7 +268,7 @@ export interface TelegramWidgetQueryPayload {
 
 export interface SendWidgetOptions<TProps> {
     chatId?: number | string;
-    props: TProps;
+    props?: TProps;
     messageThreadId?: number;
     width?: number;
     height?: number;
@@ -295,6 +296,11 @@ export interface SendWidgetOptions<TProps> {
      * Override size limit validation for this specific send call.
      */
     sizeLimit?: SizeLimitConfig;
+
+    /**
+     * Explicitly skip state storage allocation (automatically skipped for static and client-only screens).
+     */
+    skipStorage?: boolean;
 }
 
 export type SendBubbleOptions<TProps> = SendWidgetOptions<TProps>;
@@ -852,25 +858,81 @@ export const createTelegramWidgetsPlugin = <
                     );
                 }
 
+                const screenType = getWidgetScreenType(screen);
+
+                // Minifier optimization for static screens:
+                // Bypass JavaScript minification pass when rendering static markup with no scripts
+                let minifierOverride = sendOpts.minifier;
+                if (
+                    screenType === 'static' &&
+                    minifierOverride === undefined &&
+                    config.minifier.options.minifyJS !== false
+                ) {
+                    minifierOverride = {
+                        ...config.minifier.options,
+                        minifyJS: false,
+                    };
+                }
+
                 const rawMarkup = screen.component(sendOpts.props as never);
-                const html = await renderHtml(rawMarkup, sendOpts.minifier);
+                const html = await renderHtml(rawMarkup, minifierOverride);
 
                 // Check payload size
                 validateSize(screen.id, html, sendOpts.sizeLimit);
 
-                const initState = (screen.initialState(
-                    sendOpts.props as never,
-                ) ?? {}) as Record<string, unknown>;
+                // Determine chat_data based on screen paradigm:
+                // - 'dynamic': Full compressed or JSON state
+                // - 'client': Optional initial state if defined
+                // - 'static': Omitted (undefined) to save bandwidth and bytes
+                let chatData: string | undefined = undefined;
+                let initState: Record<string, unknown> = {};
 
-                const shouldCompress =
-                    sendOpts.compressState ?? config.codec.compressState;
+                if (screenType === 'dynamic') {
+                    initState = (screen.initialState
+                        ? screen.initialState(sendOpts.props as never)
+                        : {}) as Record<string, unknown>;
 
-                const chatData = shouldCompress
-                    ? packState(screen.id, initState, config.codec.customKeys)
-                    : JSON.stringify({
-                          ...initState,
-                          __screen: screen.id,
-                      });
+                    const shouldCompress =
+                        sendOpts.compressState ?? config.codec.compressState;
+
+                    chatData = shouldCompress
+                        ? packState(
+                              screen.id,
+                              initState,
+                              config.codec.customKeys,
+                          )
+                        : JSON.stringify({
+                              ...initState,
+                              __screen: screen.id,
+                          });
+                } else if (screenType === 'client' && screen.initialState) {
+                    initState = (screen.initialState(
+                        sendOpts.props as never,
+                    ) ?? {}) as Record<string, unknown>;
+
+                    const shouldCompress =
+                        sendOpts.compressState ?? config.codec.compressState;
+
+                    chatData = shouldCompress
+                        ? packState(
+                              screen.id,
+                              initState,
+                              config.codec.customKeys,
+                          )
+                        : JSON.stringify({
+                              ...initState,
+                              __screen: screen.id,
+                          });
+                }
+
+                // Queries configuration:
+                // - 'dynamic' screens enable queries by default (bidirectional)
+                // - 'static' and 'client' screens disable queries by default (purely local)
+                const defaultAllowQueries = screenType === 'dynamic';
+                const allowQueries =
+                    sendOpts.allowQueries ??
+                    config.defaults.allowQueries ??
+                    defaultAllowQueries;
 
                 const parseMode =
                     sendOpts.parseMode ??
@@ -886,10 +948,7 @@ export const createTelegramWidgetsPlugin = <
                     height: sendOpts.height ?? config.defaults.height,
                     chat_data: chatData,
                     public_data: sendOpts.publicData,
-                    allow_queries:
-                        sendOpts.allowQueries ??
-                        config.defaults.allowQueries ??
-                        true,
+                    allow_queries: allowQueries,
                     is_shared: sendOpts.isShared,
                     caption: sendOpts.caption,
                     caption_entities: sendOpts.captionEntities,
@@ -898,7 +957,16 @@ export const createTelegramWidgetsPlugin = <
                     reply_parameters: sendOpts.replyParameters,
                 });
 
-                if (result && typeof result.message_id === 'number') {
+                // Storage allocation:
+                // Only persist state for dynamic screens; bypass storage for static and client-only
+                const shouldSaveStorage =
+                    screenType === 'dynamic' && sendOpts.skipStorage !== true;
+
+                if (
+                    shouldSaveStorage &&
+                    result &&
+                    typeof result.message_id === 'number'
+                ) {
                     const storageKey = getStorageKey(
                         targetChatId,
                         result.message_id,
@@ -914,7 +982,7 @@ export const createTelegramWidgetsPlugin = <
 
                 if (config.debug) {
                     logger.info(
-                        `Sent screen "${screen.id}" to chat ${targetChatId} (msg: ${result?.message_id}, compressState: ${shouldCompress})`,
+                        `Sent ${screenType} screen "${screen.id}" to chat ${targetChatId} (msg: ${result?.message_id}, allowQueries: ${allowQueries}, chatData: ${chatData !== undefined ? 'present' : 'omitted'}, storage: ${shouldSaveStorage ? 'saved' : 'skipped'})`,
                     );
                 }
 
@@ -985,6 +1053,13 @@ export const createTelegramWidgetsPlugin = <
                     );
                 }
 
+                const screenType = getWidgetScreenType(screen);
+                if (screenType === 'static') {
+                    logger.warn(
+                        `[telegram-widgets] Screen "${screenId}" is a static screen without dynamic state. Calling update() on static screens is not recommended.`,
+                    );
+                }
+
                 const targetChatId = updateOpts.chatId ?? ctx.chat?.id;
                 if (!targetChatId) {
                     throw new Error(
@@ -1002,7 +1077,7 @@ export const createTelegramWidgetsPlugin = <
                 const existingRecord = await storage.get(storageKey);
                 const currentState =
                     updateOpts.state ??
-                    (updateOpts.props
+                    (updateOpts.props && screen.initialState
                         ? (screen.initialState(
                               updateOpts.props as never,
                           ) as Record<string, unknown>)
@@ -1133,6 +1208,23 @@ export const createTelegramWidgetsPlugin = <
             return;
         }
 
+        const screenType = getWidgetScreenType(screen);
+        if (
+            screenType === 'static' ||
+            screenType === 'client' ||
+            !screen.actions ||
+            Object.keys(screen.actions).length === 0
+        ) {
+            logger.warn(
+                `[telegram-widgets] Received widget_query for non-interactive screen "${screen.id}" (type: ${screenType}).`,
+            );
+            await rawApi.answerWidgetQuery({
+                widget_query_id: query.id,
+                data: JSON.stringify({ error: 'NON_INTERACTIVE_SCREEN' }),
+            });
+            return;
+        }
+
         // Parse action name and payload with codec support
         const { action: actionName, payload } = decodeWidgetAction(
             query.data ?? '',
@@ -1142,7 +1234,7 @@ export const createTelegramWidgetsPlugin = <
             },
         );
 
-        const actions = screen.actions as Record<
+        const actions = (screen.actions ?? {}) as Record<
             string,
             (
                 c: WidgetActionContext<Record<string, unknown>>,

@@ -6,7 +6,7 @@ import {
     CardDescription,
     CardHeader,
     CardTitle,
-    defineWidgetScreen,
+    defineDynamicWidgetScreen,
     h,
     LucideIcon,
     LucideIcons,
@@ -85,6 +85,10 @@ const clientCounterScript = (args: { count: number }) => {
 /**
  * Interactive counter widget screen demonstrating client-side IIFE scripting,
  * haptic feedback, and server action synchronization via `window.TelegramWidget.request()`.
+ * Defines a dynamic widget screen:
+ * - Full bidirectional communication with the Telegram bot (allow_queries: true)
+ * - State synchronization and persistence via storage
+ * - Handles inc and dec action queries
  *
  * @example
  * ```tsx
@@ -100,7 +104,7 @@ const clientCounterScript = (args: { count: number }) => {
  * });
  * ```
  */
-export const counterScreen = defineWidgetScreen({
+export const counterScreen = defineDynamicWidgetScreen({
     id: 'counter',
     component: (props: CounterState) => (
         <WidgetLayout fullWidth padding="6px 8px">

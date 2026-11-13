@@ -1,23 +1,27 @@
 import {
     Alert,
-    defineWidgetScreen,
+    defineStaticWidgetScreen,
     h,
     WidgetLayout,
 } from '../../src';
 
 /**
- * State contract for the alerts widget.
+ * State contract for the alerts widget (static screen, no mutable state).
  */
 export type AlertsState = Record<string, never>;
 
 /**
  * Alerts screen showcasing informative callout statuses and alerts.
- * Utilizes official Lucide SVG icons and adaptive theme colors.
+ * Defines a completely static widget screen:
+ * - 0 bytes client JS runtime
+ * - 0 round-trip server queries (allow_queries: false)
+ * - 0 storage allocation
+ * - Pure HTML/CSS layout
  *
  * @example
  * await ctx.widgets.reply('alerts', { props: {} });
  */
-export const alertsScreen = defineWidgetScreen({
+export const alertsScreen = defineStaticWidgetScreen({
     id: 'alerts',
     component: () => (
         <WidgetLayout gap={8} fullWidth padding="8px 10px">
@@ -43,5 +47,4 @@ export const alertsScreen = defineWidgetScreen({
             />
         </WidgetLayout>
     ),
-    initialState: () => ({}),
 });

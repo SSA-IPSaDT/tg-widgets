@@ -132,18 +132,79 @@ export const CounterBubble = ({ count }: CounterBubbleProps): string => (
 );
 ```
 
-### 3. Define the Screen Contract & Actions (`screen.ts`)
+### 3. Choose the Screen Paradigm (`screen.ts`)
+
+`@ipsadt/tg-widgets` supports three purpose-built screen paradigms tailored to your interaction needs:
+
+| Paradigm | Builder Function | Queries (`allow_queries`) | State Storage | Payload Byte Overhead | Ideal For |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Completely Static** | `defineStaticWidgetScreen` | `false` | Bypassed (0 bytes) | Minimal (No JS, no `chat_data`) | Receipts, alert banners, announcements, static dashboards |
+| **Client-Interactive** | `defineClientWidgetScreen` | `false` | Bypassed (0 bytes) | Ultra-light | Accordions (`<details>`), tabs, local calculators, haptics |
+| **Dynamic Interactive** | `defineDynamicWidgetScreen` | `true` | Persisted & Synced | Standard (Compressed codec) | Counters, polls, shopping carts, checkout, games |
+
+#### A. Completely Static Screen (`defineStaticWidgetScreen`)
+
+Pure HTML and CSS representation with zero client JS runtime, zero server queries, and zero storage overhead:
 
 ```typescript
-import { defineWidgetScreen } from '@ipsadt/tg-widgets';
+import { Alert, defineStaticWidgetScreen, WidgetLayout } from '@ipsadt/tg-widgets';
 
+export const receiptScreen = defineStaticWidgetScreen({
+    id: 'receipt',
+    component: () => (
+        <WidgetLayout>
+            <Alert
+                variant="success"
+                title="Payment Approved"
+                description="Transaction #9842 has been verified."
+            />
+        </WidgetLayout>
+    ),
+});
+```
+
+#### B. Client-Interactive Screen (`defineClientWidgetScreen`)
+
+Interactive client-side behavior (DOM folding, tabs, accordions, local calculators) without sending bot queries:
+
+```typescript
+import {
+    Accordion,
+    AccordionItem,
+    defineClientWidgetScreen,
+    WidgetLayout,
+} from '@ipsadt/tg-widgets';
+
+export const faqScreen = defineClientWidgetScreen({
+    id: 'faq',
+    component: () => (
+        <WidgetLayout>
+            <Accordion>
+                <AccordionItem title="Delivery terms" open>
+                    Instant delivery across all regions.
+                </AccordionItem>
+                <AccordionItem title="Refund policy">
+                    30-day money-back guarantee.
+                </AccordionItem>
+            </Accordion>
+        </WidgetLayout>
+    ),
+});
+```
+
+#### C. Dynamic Interactive Screen (`defineDynamicWidgetScreen` / `defineWidgetScreen`)
+
+Full bidirectional communication with server actions, state persistence, and `update.widget_query` routing:
+
+```typescript
+import { defineDynamicWidgetScreen } from '@ipsadt/tg-widgets';
 import { CounterBubble, type CounterBubbleProps } from './Bubble';
 
 export interface CounterState {
     count: number;
 }
 
-export const counterScreen = defineWidgetScreen({
+export const counterScreen = defineDynamicWidgetScreen({
     id: 'counter',
     component: CounterBubble,
     initialState: (props: CounterBubbleProps): CounterState => ({

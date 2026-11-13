@@ -8,18 +8,19 @@ Source code: [`screen.tsx`](./screen.tsx)
 
 ## 💡 Key Architectural Features
 
-1. **Official Lucide Vector Icons**: Includes `Info`, `CircleCheck`, `TriangleAlert`, and `CircleAlert` with stroke colors matching Telegram's design tokens.
-2. **Clean Accent Borders**: Alerts feature fine-tuned borders tinted with their respective variant accent color, eliminating harsh default borders.
-3. **Typography Standards**: Titles are styled at 14px with `font-weight: 600`, and descriptions are rendered at 13px with `font-weight: 500`.
+1. **Completely Static Screen Paradigm (`defineStaticWidgetScreen`)**: 0 bytes JavaScript runtime, 0 round-trip server queries (`allow_queries: false`), and 0 bytes storage allocation.
+2. **Official Lucide Vector Icons**: Includes `Info`, `CircleCheck`, `TriangleAlert`, and `CircleAlert` with stroke colors matching Telegram's design tokens.
+3. **Clean Accent Borders**: Alerts feature fine-tuned borders tinted with their respective variant accent color, eliminating harsh default borders.
+4. **Typography Standards**: Titles are styled at 14px with `font-weight: 600`, and descriptions are rendered at 13px with `font-weight: 500`.
 
 ---
 
 ## 💻 Screen Code (`screen.tsx`)
 
 ```tsx
-import { Alert, defineWidgetScreen, h, WidgetLayout } from '@ipsadt/tg-widgets';
+import { Alert, defineStaticWidgetScreen, h, WidgetLayout } from '@ipsadt/tg-widgets';
 
-export const alertsScreen = defineWidgetScreen({
+export const alertsScreen = defineStaticWidgetScreen({
   id: 'alerts',
   component: () => (
     <WidgetLayout gap={8} fullWidth padding="8px 10px">
@@ -45,7 +46,6 @@ export const alertsScreen = defineWidgetScreen({
       />
     </WidgetLayout>
   ),
-  initialState: () => ({}),
 });
 ```
 

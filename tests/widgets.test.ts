@@ -22,6 +22,9 @@ import {
     Collapsible,
     createTelegramWidgetsPlugin,
     decodeWidgetAction,
+    defineClientWidgetScreen,
+    defineDynamicWidgetScreen,
+    defineStaticWidgetScreen,
     defineWidgetScreen,
     DescriptionText,
     Divider,
@@ -66,6 +69,7 @@ import {
     unpackState,
     encodeCompressedWidgetAction,
     registerCodecKeys,
+    getWidgetScreenType,
 } from '../src';
 
 describe('@ipsadt/tg-widgets', () => {
@@ -1006,5 +1010,193 @@ describe('@ipsadt/tg-widgets', () => {
         expect(inspectReport.html).toContain('Plan: pro');
         expect(inspectReport.compressedByteLength).toBeGreaterThan(0);
         expect(inspectReport.maxAllowed).toBe(4096);
+    });
+
+    test('supports static, client-interactive, and dynamic screen paradigms with optimized execution', async () => {
+        // 1. Paradigm identification & auto-inference
+        const staticScreen = defineStaticWidgetScreen({
+            id: 'static_notice',
+            component: () => '<div>Static Notice</div>',
+        });
+        expect(staticScreen.type).toBe('static');
+        expect(getWidgetScreenType(staticScreen)).toBe('static');
+
+        const clientScreen = defineClientWidgetScreen({
+            id: 'client_faq',
+            component: () => '<details><summary>FAQ</summary>Content</details>',
+            initialState: () => ({ tab: 'faq' }),
+        });
+        expect(clientScreen.type).toBe('client');
+        expect(getWidgetScreenType(clientScreen)).toBe('client');
+
+        const dynamicScreen = defineDynamicWidgetScreen({
+            id: 'dynamic_counter',
+            component: () => '<div>Counter</div>',
+            initialState: () => ({ value: 10 }),
+            actions: {
+                increment: async (ctx: WidgetActionContext<{ value: number }>) => {
+                    await ctx.setState({ value: ctx.state.value + 1 });
+                    return ctx.state;
+                },
+            },
+        });
+        expect(dynamicScreen.type).toBe('dynamic');
+        expect(getWidgetScreenType(dynamicScreen)).toBe('dynamic');
+
+        // Auto-inference with defineWidgetScreen
+        const inferredStatic = defineWidgetScreen({
+            id: 'inferred_static',
+            component: () => '<div>Simple Text</div>',
+        });
+        expect(inferredStatic.type).toBe('static');
+
+        const inferredClient = defineWidgetScreen({
+            id: 'inferred_client',
+            component: () => '<div>Client only</div>',
+            initialState: () => ({ localTab: 1 }),
+        });
+        expect(inferredClient.type).toBe('client');
+
+        const inferredDynamic = defineWidgetScreen({
+            id: 'inferred_dynamic',
+            component: () => '<div>Dynamic</div>',
+            initialState: () => ({ count: 0 }),
+            actions: {
+                ping: () => 'pong',
+            },
+        });
+        expect(inferredDynamic.type).toBe('dynamic');
+
+        // Explicit override
+        const explicitOverride = defineWidgetScreen({
+            type: 'client',
+            id: 'override',
+            component: () => '<div>Override</div>',
+        });
+        expect(explicitOverride.type).toBe('client');
+
+        // 2. Test send behavior for each screen type
+        const sentCalls: Record<string, unknown>[] = [];
+        let nextMsgId = 200;
+
+        const mockApi = {
+            raw: {
+                sendWidget: async (params: Record<string, unknown>) => {
+                    nextMsgId++;
+                    sentCalls.push({ ...params, message_id: nextMsgId });
+                    return { message_id: nextMsgId };
+                },
+                answerWidgetQuery: async (params: Record<string, unknown>) => params,
+                editMessageWidgetData: async (params: Record<string, unknown>) => params,
+            },
+        };
+
+        const plugin = createTelegramWidgetsPlugin({
+            screens: {
+                notice: staticScreen,
+                faq: clientScreen,
+                counter: dynamicScreen,
+            },
+        });
+
+        const ctx = {
+            chat: { id: 888 },
+            api: mockApi,
+        } as unknown as Context &
+            WidgetsFlavor<{
+                notice: typeof staticScreen;
+                faq: typeof clientScreen;
+                counter: typeof dynamicScreen;
+            }>;
+
+        await plugin.middleware(ctx, async () => {});
+
+        // A. Send static screen:
+        // - allow_queries must be false
+        // - chat_data must be undefined
+        // - storage.get must return undefined (storage allocation skipped)
+        await ctx.widgets.send('notice', {});
+        const staticCall = sentCalls.find((c) => c.message_id === 201)!;
+        expect(staticCall.allow_queries).toBe(false);
+        expect(staticCall.chat_data).toBeUndefined();
+        const staticRecord = await plugin.storage.get('888:201');
+        expect(staticRecord).toBeUndefined();
+
+        // B. Send client-interactive screen:
+        // - allow_queries must be false
+        // - chat_data contains initial state for client scripts
+        // - storage.get must return undefined (storage allocation skipped)
+        await ctx.widgets.send('faq', {});
+        const clientCall = sentCalls.find((c) => c.message_id === 202)!;
+        expect(clientCall.allow_queries).toBe(false);
+        expect(clientCall.chat_data).toContain('faq');
+        const clientRecord = await plugin.storage.get('888:202');
+        expect(clientRecord).toBeUndefined();
+
+        // C. Send dynamic screen:
+        // - allow_queries must be true
+        // - chat_data contains serialized state
+        // - storage.get must contain state (saved)
+        await ctx.widgets.send('counter', {});
+        const dynamicCall = sentCalls.find((c) => c.message_id === 203)!;
+        expect(dynamicCall.allow_queries).toBe(true);
+        expect(dynamicCall.chat_data).toContain('10');
+        const dynamicRecord = await plugin.storage.get('888:203');
+        expect(dynamicRecord).toBeDefined();
+        expect(dynamicRecord?.state).toEqual({ value: 10 });
+
+        // 3. Test incoming widget_query for non-interactive vs dynamic screens
+        let answeredQueryData: string | undefined;
+        mockApi.raw.answerWidgetQuery = async (params: { widget_query_id: string; data?: string }) => {
+            answeredQueryData = params.data;
+            return params;
+        };
+
+        // Query arrives for static screen (malicious or forced client request)
+        // Manually place a record pointing to static screen
+        await plugin.storage.set('888:201', {
+            screenId: 'notice',
+            state: {},
+            updatedAt: Date.now(),
+        });
+
+        const staticQueryCtx = {
+            chat: { id: 888 },
+            api: mockApi,
+            update: {
+                widget_query: {
+                    id: 'q1',
+                    chat: { id: 888 },
+                    message_id: 201,
+                    from: { id: 1, first_name: 'Tester' },
+                    chat_instance: 'inst_1',
+                    data: 'click',
+                },
+            },
+        } as unknown as Context & WidgetsFlavor<{ notice: typeof staticScreen }>;
+
+        await plugin.middleware(staticQueryCtx, async () => {});
+        expect(answeredQueryData).toContain('NON_INTERACTIVE_SCREEN');
+
+        // Query arrives for dynamic screen
+        const dynamicQueryCtx = {
+            chat: { id: 888 },
+            api: mockApi,
+            update: {
+                widget_query: {
+                    id: 'q2',
+                    chat: { id: 888 },
+                    message_id: 203,
+                    from: { id: 1, first_name: 'Tester' },
+                    chat_instance: 'inst_2',
+                    data: 'increment',
+                },
+            },
+        } as unknown as Context & WidgetsFlavor<{ counter: typeof dynamicScreen }>;
+
+        await plugin.middleware(dynamicQueryCtx, async () => {});
+        expect(answeredQueryData).toContain('11');
+        const updatedDynamicRecord = await plugin.storage.get('888:203');
+        expect(updatedDynamicRecord?.state).toEqual({ value: 11 });
     });
 });

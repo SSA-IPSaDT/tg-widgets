@@ -9,8 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.2.0] - 2026-11-13
 
-### Added
-
+- **Three Page Paradigms (`src/screen.ts`)**:
+  - `defineStaticWidgetScreen`: Pure HTML/CSS representation with zero JS runtime, zero server queries (`allow_queries: false`), zero storage overhead, and bypassed JS minifier pass.
+  - `defineClientWidgetScreen`: Client-interactive widgets (accordions, tabs, local calculation) running purely locally without bot round trips (`allow_queries: false`) or server storage overhead.
+  - `defineDynamicWidgetScreen`: Full bidirectional communication with server actions, state persistence, and `update.widget_query` routing.
+  - Automatic paradigm inference and backward compatibility in `defineWidgetScreen`.
 - **Plugin Configuration System**: Complete configuration options in `createTelegramWidgetsPlugin`:
   - `mode`: Global preset (`'prod'` | `'dev'`) for byte-optimized production vs human-readable development.
   - `codec`: Configurable bidirectional object key minification (`'prod'`, `'dev'`, or `{ mode, customKeys, compressState, compressAnswer, injectClientSnippet }`).

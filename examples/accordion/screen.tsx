@@ -9,7 +9,7 @@ import {
     CardHeader,
     CardTitle,
     Collapsible,
-    defineWidgetScreen,
+    defineClientWidgetScreen,
     h,
     LucideIcon,
     LucideIcons,
@@ -23,12 +23,16 @@ export type AccordionState = Record<string, never>;
 
 /**
  * Accordion screen demonstrating native HTML5 `<details>` and `<summary>` folding.
- * Requires 0 bytes of JavaScript runtime for expand/collapse transitions.
+ * Defines a client-side interactive widget screen:
+ * - Local interactive folding without round trips to the bot
+ * - allow_queries: false (disables unnecessary server queries)
+ * - Server state storage is bypassed (0 memory overhead)
+ * - Requires 0 bytes of JavaScript runtime for expand/collapse transitions
  *
  * @example
  * await ctx.widgets.reply('accordion', { props: {} });
  */
-export const accordionScreen = defineWidgetScreen({
+export const accordionScreen = defineClientWidgetScreen({
     id: 'accordion',
     component: () => (
         <WidgetLayout fullWidth padding="6px 8px">
@@ -90,5 +94,4 @@ export const accordionScreen = defineWidgetScreen({
             </Card>
         </WidgetLayout>
     ),
-    initialState: () => ({}),
 });
