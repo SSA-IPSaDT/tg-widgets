@@ -71,6 +71,35 @@ export const minifyHtml = async (html: string, options?: WidgetMinifyOptions): P
 };
 
 /**
+ * Safely compacts JavaScript code by removing comments and unnecessary whitespace
+ * while strictly preserving string literals intact.
+ */
+export const compactJsSync = (code: string): string => {
+    const tokenRegex = /(["'`])(?:\\.|(?!\1)[^\\])*\1/g;
+    let result = '';
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    const cleanNonString = (str: string) =>
+        str
+            .replace(/\/\/[^\n]*/g, '')
+            .replace(/\/\*[\s\S]*?\*\//g, '')
+            .replace(/^\s+|\s+$/gm, '')
+            .replace(/\n+/g, ' ')
+            .replace(/\s*([;{},()=])\s*/g, '$1')
+            .replace(/[ \t]+/g, ' ');
+
+    while ((match = tokenRegex.exec(code)) !== null) {
+        result += cleanNonString(code.slice(lastIndex, match.index));
+        result += match[0];
+        lastIndex = match.index + match[0].length;
+    }
+
+    result += cleanNonString(code.slice(lastIndex));
+    return result.trim();
+};
+
+/**
  * Fast synchronous HTML minifier (collapses whitespace, removes comments, and purges unused CSS).
  *
  * @param html Raw HTML markup.
@@ -92,7 +121,12 @@ export const minifyHtmlSync = (
         preprocessed = purgeUnusedCss(preprocessed);
     }
 
-    return preprocessed
+    const scriptCleaned = preprocessed.replace(
+        /<script([^>]*)>([\s\S]*?)<\/script>/gi,
+        (_, attrs, js) => `<script${attrs}>${compactJsSync(js)}</script>`,
+    );
+
+    return scriptCleaned
         .replace(/<!--[\s\S]*?-->/g, '')
         .replace(/\s*xmlns="http:\/\/www\.w3\.org\/2000\/svg"/g, '')
         .replace(/>\s+</g, '><')

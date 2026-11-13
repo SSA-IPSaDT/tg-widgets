@@ -30,11 +30,15 @@ export const purgeUnusedCss = (html: string): string => {
             }
         }
 
-        const keptRules = rules.filter((rule) => {
-            const selectorPart = rule.split('{')[0].trim();
-            if (!selectorPart) return false;
+        const keptRules: string[] = [];
+        for (const rule of rules) {
+            const firstBrace = rule.indexOf('{');
+            if (firstBrace === -1) continue;
+            const selectorPart = rule.slice(0, firstBrace).trim();
+            const block = rule.slice(firstBrace);
+            if (!selectorPart) continue;
 
-            // Always preserve global resets, :root tokens, body, html, and root widget classes
+            // Preserve global resets, :root tokens, body, html, and root widget classes
             if (
                 selectorPart.startsWith(':root') ||
                 selectorPart.startsWith('html') ||
@@ -42,39 +46,55 @@ export const purgeUnusedCss = (html: string): string => {
                 selectorPart.startsWith('*') ||
                 selectorPart.startsWith('.tg-widget-root')
             ) {
-                return true;
+                keptRules.push(rule);
+                continue;
             }
 
             // Animation keyframes
             if (selectorPart.startsWith('@keyframes tg-pulse')) {
-                return bodyContent.includes('tg-badge-pulse');
+                if (bodyContent.includes('tg-badge-pulse')) keptRules.push(rule);
+                continue;
             }
             if (selectorPart.startsWith('@keyframes')) {
-                return true;
+                keptRules.push(rule);
+                continue;
             }
 
             // Tag-based selectors
             if (selectorPart.startsWith('details')) {
-                return bodyContent.includes('<details') || bodyContent.includes('tg-accordion');
+                if (bodyContent.includes('<details') || bodyContent.includes('tg-accordion')) {
+                    keptRules.push(rule);
+                }
+                continue;
             }
             if (selectorPart.startsWith('table')) {
-                return bodyContent.includes('<table') || bodyContent.includes('tg-table');
+                if (bodyContent.includes('<table') || bodyContent.includes('tg-table')) {
+                    keptRules.push(rule);
+                }
+                continue;
             }
             if (selectorPart.startsWith('svg')) {
-                return bodyContent.includes('<svg') || bodyContent.includes('lucide');
+                if (bodyContent.includes('<svg') || bodyContent.includes('lucide')) {
+                    keptRules.push(rule);
+                }
+                continue;
             }
 
-            // Class selectors
-            const classMatches = selectorPart.match(/\.([a-zA-Z0-9_-]+)/g);
-            if (classMatches && classMatches.length > 0) {
-                return classMatches.some((cls) => {
-                    const className = cls.slice(1);
-                    return bodyContent.includes(className);
-                });
-            }
+            // Comma-separated branches and compound class matching
+            const branches = selectorPart
+                .split(',')
+                .map((b) => b.trim())
+                .filter(Boolean);
+            const validBranches = branches.filter((branch) => {
+                const classMatches = branch.match(/\.([a-zA-Z0-9_-]+)/g);
+                if (!classMatches || classMatches.length === 0) return true;
+                return classMatches.every((cls) => bodyContent.includes(cls.slice(1)));
+            });
 
-            return true;
-        });
+            if (validBranches.length > 0) {
+                keptRules.push(`${validBranches.join(',')}${block}`);
+            }
+        }
 
         if (keptRules.length === 0) {
             return '';

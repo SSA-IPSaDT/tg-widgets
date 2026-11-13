@@ -8,6 +8,8 @@ import {
     Checkbox,
     Divider,
     h,
+    LucideIcon,
+    LucideIcons,
     Radio,
     RadioGroup,
     Script,
@@ -29,10 +31,18 @@ export const ControlsView = (props: ControlsState): string => (
                         alignItems: 'center',
                     }}
                 >
-                    <CardTitle>Settings</CardTitle>
-                    <Badge variant="accent">Active</Badge>
+                    <CardTitle>Subscription Settings</CardTitle>
+                    <Badge
+                        variant="accent"
+                        icon={LucideIcon({
+                            icon: LucideIcons.Sliders,
+                            size: 15,
+                        })}
+                    />
                 </div>
-                <CardDescription>Toggles, steppers, and plans</CardDescription>
+                <CardDescription>
+                    Checkboxes, switches, and steppers with zero native form controls
+                </CardDescription>
             </CardHeader>
             <CardContent style={{ gap: 12 }}>
                 <Switch
@@ -40,7 +50,7 @@ export const ControlsView = (props: ControlsState): string => (
                     checked={props.notifications}
                     action="toggleNotifications"
                     label="Notifications"
-                    description="Alerts"
+                    description="Receive alerts for important updates"
                 />
 
                 <Divider />
@@ -50,7 +60,7 @@ export const ControlsView = (props: ControlsState): string => (
                     checked={props.newsletter}
                     action="toggleNewsletter"
                     label="Weekly Newsletter"
-                    description="Highlights"
+                    description="Product updates and feature highlights"
                 />
 
                 <Divider />
@@ -63,8 +73,8 @@ export const ControlsView = (props: ControlsState): string => (
                     }}
                 >
                     <div>
-                        <div style={{ fontSize: 14, fontWeight: 500 }}>Tickets</div>
-                        <div class="tg-description">Passes</div>
+                        <div style={{ fontSize: 14, fontWeight: 500 }}>Seat Allocation</div>
+                        <div class="tg-description">Event entry passes</div>
                     </div>
                     <Stepper
                         id="stepper-tickets"
@@ -79,7 +89,9 @@ export const ControlsView = (props: ControlsState): string => (
                 <Divider />
 
                 <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>Plan</div>
+                    <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 6 }}>
+                        Subscription Plan
+                    </div>
                     <RadioGroup gap={6}>
                         <Radio
                             id="plan-basic"
@@ -87,7 +99,7 @@ export const ControlsView = (props: ControlsState): string => (
                             checked={props.plan === 'basic'}
                             action="setPlan:basic"
                             label="Basic"
-                            description="Essential features"
+                            description="Free access to essential features"
                         />
                         <Radio
                             id="plan-pro"
@@ -95,7 +107,7 @@ export const ControlsView = (props: ControlsState): string => (
                             checked={props.plan === 'pro'}
                             action="setPlan:pro"
                             label="Pro Plan"
-                            description="Expanded limits"
+                            description="Priority support and expanded limits"
                         />
                     </RadioGroup>
                 </div>

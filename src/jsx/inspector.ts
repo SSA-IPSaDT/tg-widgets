@@ -15,13 +15,13 @@ export const inspectWidgetSize = (
     options: WidgetRenderOptions = {},
 ): WidgetSizeReport => {
     const shouldMinify = options.minify !== false;
-    const processedBody = shouldMinify ? minifyHtmlSync(html) : html;
+    const processedBody = shouldMinify ? minifyHtmlSync(html, options) : html;
 
     const fullHtml = processedBody.startsWith('<!DOCTYPE html>')
         ? processedBody
         : `<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head><body>${processedBody}</body></html>`;
 
-    const finalHtml = shouldMinify ? minifyHtmlSync(fullHtml) : fullHtml;
+    const finalHtml = shouldMinify ? minifyHtmlSync(fullHtml, options) : fullHtml;
     const buf = Buffer.from(finalHtml, 'utf-8');
     const compressed = deflateSync(buf, { level: 9 });
     const maxAllowed = 4096;

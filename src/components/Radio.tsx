@@ -97,19 +97,7 @@ export const Radio = ({
                     }}
                 >
                     {label && <span style={{ fontSize: 14, fontWeight: 500 }}>{label}</span>}
-                    {description && (
-                        <span
-                            class="tg-description"
-                            style={{
-                                fontSize: 12,
-                                fontWeight: 500,
-                                color: 'var(--tg-theme-subtitle-text-color, var(--tg-theme-text-color, inherit))',
-                                opacity: 0.85,
-                            }}
-                        >
-                            {description}
-                        </span>
-                    )}
+                    {description && <span class="tg-description">{description}</span>}
                 </div>
             )}
         </button>

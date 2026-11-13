@@ -93,26 +93,51 @@ export const controlsClientScript = (initial: ControlsState) => {
             })
             .catch(() => {});
 
+    const lock = (
+        k: string,
+        btn: HTMLElement | (HTMLElement | null | undefined)[],
+        fn: () => void,
+        a: string,
+    ) => {
+        if (p[k]) return;
+        p[k] = true;
+        const els = Array.isArray(btn) ? btn.filter(Boolean) : [btn];
+        els.forEach((b) => {
+            if (b) {
+                if ('disabled' in b) (b as HTMLButtonElement).disabled = true;
+                b.style.pointerEvents = 'none';
+            }
+        });
+        fn();
+        act(a).finally(() => {
+            p[k] = false;
+            els.forEach((b) => {
+                if (b) {
+                    if ('disabled' in b) (b as HTMLButtonElement).disabled = false;
+                    b.style.pointerEvents = '';
+                }
+            });
+            updateUI({});
+        });
+    };
+
     const bindToggle = (
         id: string,
         key: 'notifications' | 'newsletter',
         action: string,
         hap: 'medium' | 'light',
     ) => {
-        const btn = document.getElementById(id) as HTMLButtonElement | null;
+        const btn = document.getElementById(id);
         btn?.addEventListener('click', () => {
-            if (p[key] || btn.disabled) return;
-            p[key] = true;
-            btn.disabled = true;
-            btn.style.pointerEvents = 'none';
-            w?.HapticFeedback?.impactOccurred?.(hap);
-            const target = !s[key];
-            updateUI({ [key]: target });
-            act(`${action}:${target}`).finally(() => {
-                p[key] = false;
-                btn.disabled = false;
-                btn.style.pointerEvents = '';
-            });
+            lock(
+                key,
+                btn,
+                () => {
+                    w?.HapticFeedback?.impactOccurred?.(hap);
+                    updateUI({ [key]: !s[key] });
+                },
+                `${action}:${!s[key]}`,
+            );
         });
     };
 
@@ -121,45 +146,39 @@ export const controlsClientScript = (initial: ControlsState) => {
 
     const sBtns = document.getElementById('stepper-tickets')?.querySelectorAll('button');
     if (sBtns && sBtns[0] && sBtns[1]) {
-        const [mBtn, pBtn] = [sBtns[0], sBtns[1]];
         const onTicket = (delta: number, a: string) => {
-            if (p.tickets) return;
             const target = s.tickets + delta;
             if (target < 1 || target > 10) return;
-            p.tickets = true;
-            mBtn.disabled = pBtn.disabled = true;
-            mBtn.style.pointerEvents = pBtn.style.pointerEvents = 'none';
-            w?.HapticFeedback?.impactOccurred?.('light');
-            updateUI({ tickets: target });
-            act(a).finally(() => {
-                p.tickets = false;
-                mBtn.style.pointerEvents = pBtn.style.pointerEvents = '';
-                mBtn.disabled = s.tickets <= 1;
-                pBtn.disabled = s.tickets >= 10;
-            });
+            lock(
+                'tickets',
+                [sBtns[0], sBtns[1]],
+                () => {
+                    w?.HapticFeedback?.impactOccurred?.('light');
+                    updateUI({ tickets: target });
+                },
+                a,
+            );
         };
-        mBtn.addEventListener('click', () => onTicket(-1, 'ticketMinus'));
-        pBtn.addEventListener('click', () => onTicket(1, 'ticketPlus'));
+        sBtns[0].addEventListener('click', () => onTicket(-1, 'ticketMinus'));
+        sBtns[1].addEventListener('click', () => onTicket(1, 'ticketPlus'));
     }
 
-    const onPlan = (newPlan: 'basic' | 'pro') => {
-        if (p.plan || s.plan === newPlan) return;
-        p.plan = true;
-        const els = (['basic', 'pro'] as const).map((k) => document.getElementById(`plan-${k}`));
-        els.forEach((el) => {
-            if (el) el.style.pointerEvents = 'none';
-        });
-        w?.HapticFeedback?.selectionChanged?.();
-        updateUI({ plan: newPlan });
-        act(`setPlan:${newPlan}`).finally(() => {
-            p.plan = false;
-            els.forEach((el) => {
-                if (el) el.style.pointerEvents = '';
-            });
-        });
-    };
-
     (['basic', 'pro'] as const).forEach((k) => {
-        document.getElementById(`plan-${k}`)?.addEventListener('click', () => onPlan(k));
+        const el = document.getElementById(`plan-${k}`);
+        el?.addEventListener('click', () => {
+            if (s.plan === k) return;
+            const all = (['basic', 'pro'] as const)
+                .map((x) => document.getElementById(`plan-${x}`))
+                .filter(Boolean) as HTMLElement[];
+            lock(
+                'plan',
+                all,
+                () => {
+                    w?.HapticFeedback?.selectionChanged?.();
+                    updateUI({ plan: k });
+                },
+                `setPlan:${k}`,
+            );
+        });
     });
 };
