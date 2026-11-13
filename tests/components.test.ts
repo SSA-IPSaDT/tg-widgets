@@ -188,14 +188,14 @@ describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
             expect(alert).not.toContain('border: 1px solid #ffffff');
         });
 
-        test('adapts info alert border and icon to dynamic theme accent color', () => {
+        test('renders info alert with stable informational blue styling and border', () => {
             const infoAlert = Alert({ variant: 'info', title: 'Note' });
-            expect(infoAlert).toContain('color-mix(in srgb, var(--tg-theme-accent-text-color');
+            expect(infoAlert).toContain('1px solid rgba(36, 129, 204, 0.28)');
             expect(infoAlert).toContain('tg-alert-info');
         });
 
-        test('renders all 4 variants: info, success, warning, destructive', () => {
-            const variants = ['info', 'success', 'warning', 'destructive'] as const;
+        test('renders all 5 variants: info, success, warning, destructive, accent', () => {
+            const variants = ['info', 'success', 'warning', 'destructive', 'accent'] as const;
             for (const variant of variants) {
                 const el = Alert({ variant, title: `${variant} title` });
                 expect(el).toContain(`tg-alert-${variant}`);
