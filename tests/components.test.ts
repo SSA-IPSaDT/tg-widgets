@@ -360,7 +360,13 @@ describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
         });
 
         test('TableRow respects borderBottom=false without duplicating cell borders', () => {
-            const rowWithBorder = TableRow({ children: TableCell({ children: 'Item' }) });
+            const defaultRow = TableRow({ children: TableCell({ children: 'Item' }) });
+            expect(defaultRow).not.toContain('border-bottom:1px solid');
+
+            const rowWithBorder = TableRow({
+                borderBottom: true,
+                children: TableCell({ children: 'Item' }),
+            });
             expect(rowWithBorder).toContain('border-bottom:1px solid');
 
             const rowWithoutBorder = TableRow({
@@ -368,6 +374,7 @@ describe('Telegram UI Component Catalog & Profile 1 Compliance', () => {
                 children: TableCell({ children: 'Item' }),
             });
             expect(rowWithoutBorder).toContain('border-bottom:none');
+            expect(rowWithoutBorder).toContain('tg-table-row-noborder');
         });
     });
 

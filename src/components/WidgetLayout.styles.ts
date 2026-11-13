@@ -97,11 +97,11 @@ export const BASE_RESET_CSS =
     '.tg-stepper-btn:active{transform:scale(0.92);background:var(--tg-theme-secondary-bg-color,rgba(120,120,128,0.22));}' +
     '.tg-stepper-btn:disabled{opacity:0.4;cursor:default;}' +
     '.tg-stepper-val{font-weight:600;font-size:14px;min-width:24px;text-align:center;}' +
-    '.tg-table{border-collapse:collapse;width:100%;}' +
-    '.tg-table th,.tg-table td{padding:8px 10px;}' +
-    '.tg-table th{font-weight:600;color:var(--tg-theme-subtitle-text-color,var(--tg-theme-hint-color,#888));font-size:11px;text-transform:uppercase;letter-spacing:0.4px;}' +
-    '.tg-table thead tr{border-bottom:none!important;}' +
-    '.tg-table tbody tr{border-bottom:1px solid var(--tg-theme-section-separator-color,rgba(120,120,128,0.12));}' +
-    '.tg-table tbody tr:last-child{border-bottom:none!important;}' +
-    '.tg-table tfoot tr{border-bottom:none!important;}' +
+    '.tg-table{border-collapse:collapse;width:100%;font-size:13px;text-align:left;}' +
+    '.tg-table th,.tg-table td{padding:8px 10px;border-bottom:1px solid var(--tg-theme-section-separator-color,rgba(120,120,128,0.16));color:var(--tg-theme-text-color,inherit);}' +
+    '.tg-table th{font-weight:600;color:var(--tg-theme-subtitle-text-color,var(--tg-theme-hint-color,#888));font-size:11px;text-transform:uppercase;letter-spacing:0.4px;background:var(--tg-theme-secondary-bg-color,rgba(120,120,128,0.06));}' +
+    '.tg-table tfoot td{font-weight:600;background:var(--tg-theme-secondary-bg-color,rgba(120,120,128,0.04));}' +
+    '.tg-table tbody:last-child tr:last-child td,.tg-table tfoot tr:last-child td,.tg-table>tr:last-child td,.tg-table-row-noborder td{border-bottom:none!important;}' +
+    '.tg-table-row-interactive{cursor:pointer;}' +
+    '.tg-table-caption{padding:6px 10px;font-size:11.5px;color:var(--tg-theme-subtitle-text-color,var(--tg-theme-hint-color,#888));text-align:center;}' +
     'svg.lucide{fill:none;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;display:inline-block;vertical-align:middle;flex-shrink:0;}';

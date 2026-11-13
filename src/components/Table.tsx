@@ -28,29 +28,8 @@ export const Table = ({
     ...dataAttrs
 }: TableProps): string => {
     return (
-        <div
-            style={{
-                width: '100%',
-                overflow: 'hidden',
-                borderRadius: 'var(--tg-radius-md, 12px)',
-                border: '1px solid var(--tg-theme-section-separator-color, rgba(120, 120, 128, 0.16))',
-            }}
-        >
-            <table
-                id={id}
-                class={`tg-table ${className}`.trim()}
-                style={{
-                    width: '100%',
-                    borderCollapse: 'collapse',
-                    fontSize: 13,
-                    textAlign: 'left',
-                    captionSide: 'bottom',
-                    ...style,
-                }}
-                {...dataAttrs}
-            >
-                {children}
-            </table>
-        </div>
+        <table id={id} class={`tg-table ${className}`.trim()} style={style} {...dataAttrs}>
+            {children}
+        </table>
     );
 };

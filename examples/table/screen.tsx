@@ -113,7 +113,7 @@ export const tableScreen = defineWidgetScreen({
                             </TableRow>
                         </TableBody>
                         <TableFooter>
-                            <TableRow borderBottom={false}>
+                            <TableRow>
                                 <TableCell colspan={2}>Total Due</TableCell>
                                 <TableCell align="right">$24.00</TableCell>
                             </TableRow>
