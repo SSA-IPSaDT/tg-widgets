@@ -1,12 +1,43 @@
+/**
+ * Telegram Widgets Built-in SVG Icons.
+ *
+ * Provides lightweight zero-dependency inline SVG icons for chevron, check, close, info, warning, copy, and star.
+ *
+ * @module components/Icon
+ */
+
 import { h } from '../jsx';
 
+/**
+ * Common properties for built-in SVG icons.
+ */
 export interface IconProps {
+    /**
+     * Width and height dimension in pixels.
+     * @default 18
+     */
     size?: number;
+    /**
+     * Stroke color in hex or CSS color format.
+     * @default 'currentColor'
+     */
     color?: string;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
 }
 
+/**
+ * Chevron right navigation arrow icon.
+ *
+ * @param props Icon properties.
+ * @returns Rendered SVG string.
+ */
 export const ChevronRightIcon = ({
     size = 18,
     color = 'currentColor',
@@ -29,6 +60,12 @@ export const ChevronRightIcon = ({
     </svg>
 );
 
+/**
+ * Checkmark confirmation icon.
+ *
+ * @param props Icon properties.
+ * @returns Rendered SVG string.
+ */
 export const CheckIcon = ({
     size = 18,
     color = 'currentColor',
@@ -51,6 +88,12 @@ export const CheckIcon = ({
     </svg>
 );
 
+/**
+ * Close/cross dismissal icon.
+ *
+ * @param props Icon properties.
+ * @returns Rendered SVG string.
+ */
 export const CloseIcon = ({
     size = 18,
     color = 'currentColor',
@@ -74,6 +117,12 @@ export const CloseIcon = ({
     </svg>
 );
 
+/**
+ * Informational circle icon.
+ *
+ * @param props Icon properties.
+ * @returns Rendered SVG string.
+ */
 export const InfoIcon = ({
     size = 18,
     color = 'currentColor',
@@ -98,6 +147,12 @@ export const InfoIcon = ({
     </svg>
 );
 
+/**
+ * Warning alert triangle icon.
+ *
+ * @param props Icon properties.
+ * @returns Rendered SVG string.
+ */
 export const WarningIcon = ({
     size = 18,
     color = 'currentColor',
@@ -122,6 +177,12 @@ export const WarningIcon = ({
     </svg>
 );
 
+/**
+ * Copy to clipboard overlapping sheets icon.
+ *
+ * @param props Icon properties.
+ * @returns Rendered SVG string.
+ */
 export const CopyIcon = ({
     size = 18,
     color = 'currentColor',
@@ -145,13 +206,24 @@ export const CopyIcon = ({
     </svg>
 );
 
+/**
+ * Star bookmark and rating icon.
+ *
+ * @param props Icon properties with optional fill color.
+ * @returns Rendered SVG string.
+ */
 export const StarIcon = ({
     size = 18,
     color = 'currentColor',
     fill = 'none',
     style,
     className = '',
-}: IconProps & { fill?: string }): string => (
+}: IconProps & {
+    /**
+     * Optional SVG fill color (e.g. 'gold' or '#f59e0b').
+     */
+    fill?: string;
+}): string => (
     <svg
         width={size}
         height={size}

@@ -1,17 +1,62 @@
+/**
+ * Telegram Widgets Avatar Component.
+ *
+ * @module components/Avatar
+ */
+
 import { h } from '../jsx';
 
+/**
+ * Properties for the Avatar component.
+ */
 export interface AvatarProps {
+    /**
+     * Image source URL.
+     */
     src?: string;
+    /**
+     * Image alternate text.
+     */
     alt?: string;
+    /**
+     * Fallback initials or text displayed when image is unavailable.
+     * @default '?'
+     */
     fallback?: string;
+    /**
+     * Avatar size dimension ('xs', 'sm', 'md', or 'lg').
+     * @default 'md'
+     */
     size?: 'xs' | 'sm' | 'md' | 'lg';
+    /**
+     * Avatar shape ('circle' or 'rounded').
+     * @default 'circle'
+     */
     shape?: 'circle' | 'rounded';
+    /**
+     * Custom corner radius override in pixels.
+     */
     radius?: number;
+    /**
+     * Optional badge or status indicator element overlaid on the corner.
+     */
     badge?: unknown;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
 }
 
+/**
+ * Renders a user profile avatar or fallback initials with optional status badge overlay.
+ *
+ * @param props Avatar properties.
+ * @returns Rendered HTML div element.
+ */
 export const Avatar = ({
     src,
     alt = '',

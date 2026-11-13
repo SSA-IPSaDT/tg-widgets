@@ -1,10 +1,18 @@
 import { h } from '../jsx';
 
+/**
+ * Props for the Table container component (`<table>`).
+ */
 export interface TableProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Table parts (`TableHeader`, `TableBody`, `TableFooter`, `TableCaption`, rows). */
     children?: unknown;
+    /** Data attributes passed to root table element. */
     [key: `data-${string}`]: string | undefined;
 }
 

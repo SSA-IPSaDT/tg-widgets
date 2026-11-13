@@ -1,14 +1,48 @@
+/**
+ * Telegram Widgets Banner Component.
+ *
+ * @module components/Banner
+ */
+
 import { h } from '../jsx';
 
+/**
+ * Properties for the Banner component.
+ */
 export interface BannerProps {
+    /**
+     * Optional corner badge text (e.g. 'NEW', 'PROMO').
+     */
     badge?: string;
+    /**
+     * CSS background gradient or solid color string.
+     */
     gradient?: string;
+    /**
+     * Banner height in pixels or CSS units.
+     * @default 110
+     */
     height?: number | string;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
+    /**
+     * Child elements rendered inside banner.
+     */
     children?: unknown;
 }
 
+/**
+ * Renders a full-width decorative hero banner with optional corner badge.
+ *
+ * @param props Banner properties.
+ * @returns Rendered HTML div element.
+ */
 export const Banner = ({
     badge,
     gradient = 'linear-gradient(135deg, var(--tg-theme-secondary-bg-color, #242c38) 0%, var(--tg-theme-bg-color, #18222d) 100%)',

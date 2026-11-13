@@ -1,15 +1,52 @@
+/**
+ * Telegram Widgets Alert Callout Component.
+ *
+ * @module components/Alert
+ */
+
 import { h } from '../jsx';
 import { LucideIcon, LucideIcons } from './LucideIcon';
 
+/**
+ * Properties for the Alert component.
+ */
 export interface AlertProps {
+    /**
+     * Unique HTML element ID.
+     */
     id?: string;
+    /**
+     * Callout tone variant ('default', 'destructive', 'warning', 'success', 'info', or 'accent').
+     * @default 'default'
+     */
     variant?: 'default' | 'destructive' | 'warning' | 'success' | 'info' | 'accent';
+    /**
+     * Custom icon element or SVG.
+     */
     icon?: unknown;
+    /**
+     * Alert header title text or element.
+     */
     title?: unknown;
+    /**
+     * Descriptive body message.
+     */
     description?: unknown;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
+    /**
+     * Child elements.
+     */
     children?: unknown;
+    /**
+     * Arbitrary data-* attributes.
+     */
     [key: `data-${string}`]: string | undefined;
 }
 
@@ -25,6 +62,9 @@ const variantBorders: Record<NonNullable<AlertProps['variant']>, string> = {
 /**
  * Callout alert component for Telegram Widgets.
  * Displays informative, success, warning, or error messages with Lucide SVG iconography.
+ *
+ * @param props Alert properties.
+ * @returns Rendered HTML div element.
  *
  * @example
  * <Alert variant="success" title="Payment Complete" description="Your TON transaction was confirmed." />
@@ -100,10 +140,22 @@ export const Alert = ({
     );
 };
 
+/**
+ * Header title element for Alert callouts.
+ *
+ * @param props Subcomponent properties.
+ * @returns Rendered HTML div element.
+ */
 export const AlertTitle = ({ children }: { children?: unknown }): string => (
     <div class="tg-alert-title">{children}</div>
 );
 
+/**
+ * Body description element for Alert callouts.
+ *
+ * @param props Subcomponent properties.
+ * @returns Rendered HTML div element.
+ */
 export const AlertDescription = ({ children }: { children?: unknown }): string => (
     <div class="tg-alert-desc" style={{ fontWeight: 500 }}>
         {children}

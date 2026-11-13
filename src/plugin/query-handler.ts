@@ -25,6 +25,17 @@ const safeAnswer = (rawApi: RawWidgetApiMethods, queryId: string, data: unknown)
         })
         .catch(() => {});
 
+/**
+ * Handles incoming Telegram widget_query updates and dispatches them to matching widget screen handlers.
+ *
+ * @param ctx - grammY context with WidgetsFlavor.
+ * @param rawApi - Telegram raw Bot API methods for widgets.
+ * @param config - Resolved plugin configuration.
+ * @param storage - Storage backend instance.
+ * @param screensById - Map of registered screens by ID.
+ * @param logger - Plugin logger instance.
+ * @param next - Next middleware function in grammY pipeline.
+ */
 export const handleWidgetQuery = async <TScreens extends Record<string, AnyWidgetScreen>>(
     ctx: Context & WidgetsFlavor<TScreens>,
     rawApi: RawWidgetApiMethods,

@@ -1,38 +1,74 @@
 import { h } from '../jsx';
 import { BASE_RESET_CSS, RADIUS_PRESETS } from './WidgetLayout.styles';
 
+/**
+ * Configuration for border radii across widget components.
+ */
 export interface WidgetRadii {
+    /** Extra small radius in px. */
     xs: number;
+    /** Small radius in px. */
     sm: number;
+    /** Medium radius in px. */
     md: number;
+    /** Large radius in px. */
     lg: number;
+    /** Extra large radius in px. */
     xl: number;
+    /** Extra extra large radius in px. */
     xxl: number;
+    /** Full (pill/circular) radius in px. */
     full: number;
 }
 
+/**
+ * Props for the WidgetLayout component.
+ */
 export interface WidgetLayoutProps {
+    /** Widget children elements. */
     children?: unknown;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Force light or dark theme or adhere to auto Telegram theme. */
     theme?: 'auto' | 'light' | 'dark';
+    /** Spacing between vertical children elements in px. */
     gap?: number;
+    /** Radius preset name or explicit uniform radius number. */
     radius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | number;
+    /** Fine-grained customization of individual radius scale tokens. */
     radii?: Partial<WidgetRadii>;
+    /** Inner padding of the widget container. */
     padding?: number | string;
+    /** Whether to respect Telegram safe-area insets. */
     safeArea?: boolean;
+    /** Maximum height constraint for widget container. */
     maxHeight?: number | string;
+    /** Minimum height constraint for widget container. */
     minHeight?: number | string;
+    /** Fixed width constraint for widget container. */
     width?: number | string;
+    /** Fixed height constraint for widget container. */
     height?: number | string;
+    /** Whether widget expands horizontally to full width. */
     fullWidth?: boolean;
+    /** Whether widget expands vertically to full container height. */
     fullHeight?: boolean;
+    /** Whether widget root expands in flex container. */
     expand?: boolean;
+    /** Data attributes passed to root container. */
     [key: `data-${string}`]: string | undefined;
 }
 
 export { RADIUS_PRESETS, BASE_RESET_CSS } from './WidgetLayout.styles';
 
+/**
+ * Root container layout for Telegram widgets with base reset CSS and theme variables.
+ *
+ * @param props - Layout configuration props.
+ * @returns Rendered HTML string.
+ */
 export const WidgetLayout = ({
     children,
     style,
@@ -121,4 +157,7 @@ export const WidgetLayout = ({
     );
 };
 
-export const BubbleLayout = WidgetLayout;
+/**
+ * Alias for WidgetLayout representing a bubble-style widget layout.
+ */
+export const BubbleLayout: (props: WidgetLayoutProps) => string = WidgetLayout;

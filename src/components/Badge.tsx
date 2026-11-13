@@ -1,18 +1,67 @@
+/**
+ * Telegram Widgets Badge Component.
+ *
+ * @module components/Badge
+ */
+
 import { h } from '../jsx';
 
+/**
+ * Properties for the Badge component.
+ */
 export interface BadgeProps {
+    /**
+     * Unique HTML element ID.
+     */
     id?: string;
+    /**
+     * Visual color variant.
+     * @default 'default'
+     */
     variant?: 'default' | 'accent' | 'destructive' | 'outline' | 'success' | 'warning';
+    /**
+     * Size dimension ('sm' or 'md').
+     * @default 'sm'
+     */
     size?: 'sm' | 'md';
+    /**
+     * When true, displays a status indicator dot.
+     * @default false
+     */
     dot?: boolean;
+    /**
+     * When true, displays an animated pulse indicator.
+     * @default false
+     */
     pulse?: boolean;
+    /**
+     * Forces square 1:1 aspect ratio when displaying icons.
+     */
     square?: boolean;
+    /**
+     * Icon element or SVG rendered inside badge.
+     */
     icon?: unknown;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
+    /**
+     * Text or child content.
+     */
     children?: unknown;
 }
 
+/**
+ * Renders a compact badge or counter indicator.
+ *
+ * @param props Badge properties.
+ * @returns Rendered HTML span element.
+ */
 export const Badge = ({
     id,
     variant = 'default',

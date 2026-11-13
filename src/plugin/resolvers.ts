@@ -1,12 +1,22 @@
 import { MemoryWidgetsStorage, type WidgetsStorage } from '../storage';
 import type { StorageOptions, WidgetsLogger } from './types';
 
+/**
+ * Default logger instance logging to console.
+ */
 export const defaultLogger: WidgetsLogger = {
     info: (msg, ...args) => console.log(`[telegram-widgets] ${msg}`, ...args),
     warn: (msg, ...args) => console.warn(`[telegram-widgets] ${msg}`, ...args),
     error: (msg, ...args) => console.error(`[telegram-widgets] ${msg}`, ...args),
 };
 
+/**
+ * Resolves logger option into a concrete WidgetsLogger instance.
+ *
+ * @param loggerOption - Logger instance, preset string ('silent', 'debug', 'verbose'), or boolean.
+ * @param debugOption - Whether debug mode is explicitly enabled.
+ * @returns Configured WidgetsLogger instance.
+ */
 export const resolveLogger = (
     loggerOption?: WidgetsLogger | 'silent' | 'debug' | 'verbose' | boolean,
     debugOption?: boolean,
@@ -32,6 +42,12 @@ export const resolveLogger = (
     return defaultLogger;
 };
 
+/**
+ * Resolves storage option into a concrete WidgetsStorage instance.
+ *
+ * @param storageOption - Custom WidgetsStorage implementation or configuration options.
+ * @returns Initialized WidgetsStorage instance.
+ */
 export const resolveStorage = (storageOption?: WidgetsStorage | StorageOptions): WidgetsStorage => {
     if (storageOption && typeof (storageOption as WidgetsStorage).get === 'function') {
         return storageOption as WidgetsStorage;

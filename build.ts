@@ -42,7 +42,6 @@ export interface BuildArtifactReport {
 export const EXTERNAL_DEPENDENCIES = [
     'grammy',
     'lucide-static',
-    'html-minifier-terser',
     'node:buffer',
     'node:zlib',
     'node:child_process',

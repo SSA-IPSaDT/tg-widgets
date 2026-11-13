@@ -1,21 +1,80 @@
+/**
+ * Telegram Widgets Button Component.
+ *
+ * @module components/Button
+ */
+
 import { h } from '../jsx';
 
+/**
+ * Properties for the Button component.
+ */
 export interface ButtonProps {
+    /**
+     * Unique HTML element ID.
+     */
     id?: string;
+    /**
+     * Visual style variant ('primary', 'secondary', 'destructive', 'outline', or 'ghost').
+     * @default 'primary'
+     */
     variant?: 'primary' | 'secondary' | 'destructive' | 'outline' | 'ghost';
+    /**
+     * Button dimension size ('sm', 'md', or 'lg').
+     * @default 'md'
+     */
     size?: 'sm' | 'md' | 'lg';
+    /**
+     * Custom border radius in pixels.
+     */
     radius?: number;
+    /**
+     * When true, expands button to fill 100% of parent width.
+     * @default false
+     */
     fullWidth?: boolean;
+    /**
+     * When true, disables clicks and dims button opacity.
+     * @default false
+     */
     disabled?: boolean;
+    /**
+     * When true, renders an animated loading spinner inside the button.
+     * @default false
+     */
     loading?: boolean;
+    /**
+     * Action string dispatched via data-action on click.
+     */
     action?: string;
+    /**
+     * Optional icon element or SVG rendered preceding the label.
+     */
     icon?: unknown;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
+    /**
+     * Child elements or text label.
+     */
     children?: unknown;
+    /**
+     * Arbitrary data-* attributes.
+     */
     [key: `data-${string}`]: string | undefined;
 }
 
+/**
+ * Renders an official Telegram interactive button adhering to Telegram UI design tokens.
+ *
+ * @param props Button properties.
+ * @returns Rendered HTML button element.
+ */
 export const Button = ({
     id,
     action,

@@ -1,5 +1,8 @@
 import type { WidgetRadii } from './WidgetLayout';
 
+/**
+ * Radius presets mapped to pixel values across different scales.
+ */
 export const RADIUS_PRESETS: Record<'none' | 'sm' | 'md' | 'lg' | 'xl', WidgetRadii> = {
     none: { xs: 0, sm: 0, md: 0, lg: 0, xl: 0, xxl: 0, full: 9999 },
     sm: { xs: 3, sm: 6, md: 9, lg: 12, xl: 16, xxl: 20, full: 9999 },
@@ -8,7 +11,10 @@ export const RADIUS_PRESETS: Record<'none' | 'sm' | 'md' | 'lg' | 'xl', WidgetRa
     xl: { xs: 8, sm: 12, md: 18, lg: 24, xl: 30, xxl: 36, full: 9999 },
 };
 
-export const BASE_RESET_CSS =
+/**
+ * Base CSS stylesheet injected into widget root for reset and default component styles.
+ */
+export const BASE_RESET_CSS: string =
     ':root{color-scheme:light dark;--tg-font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;--tg-radius-xs:4px;--tg-radius-sm:8px;--tg-radius-md:12px;--tg-radius-lg:16px;--tg-radius-xl:20px;--tg-radius-xxl:24px;--tg-radius-full:9999px;--tg-accent-color:var(--tg-theme-accent-text-color,var(--tg-theme-link-color,var(--tg-theme-button-color,#2481cc)));--tg-destructive-color:var(--tg-theme-destructive-text-color,#ef4444);}' +
     'html,body,button,label,input,select,textarea,div,span,p{font-family:var(--tg-font-family);}' +
     'html,body{margin:0;padding:0;width:100%;height:auto;background:transparent;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;touch-action:manipulation;-webkit-text-size-adjust:100%;}' +

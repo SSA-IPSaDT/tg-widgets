@@ -1,13 +1,26 @@
 import { h } from '../jsx';
 import { ChevronRightIcon } from './Icon';
 
+/**
+ * Props for the List container component.
+ */
 export interface ListProps {
+    /** Visual style variant: card with background and rounded corners, or plain transparent list. */
     variant?: 'card' | 'plain';
+    /** List items or content elements. */
     children?: unknown;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
 }
 
+/**
+ * List container for grouping vertical list items.
+ *
+ * @param props - List container configuration props.
+ * @returns Rendered HTML string.
+ */
 export const List = ({ variant = 'card', children, style, className = '' }: ListProps): string => {
     const isCard = variant === 'card';
     return (
@@ -29,20 +42,40 @@ export const List = ({ variant = 'card', children, style, className = '' }: List
     );
 };
 
+/**
+ * Props for the ListItem component.
+ */
 export interface ListItemProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Left slot element (typically an avatar or icon). */
     left?: unknown;
+    /** Primary title text or element. */
     title: unknown;
+    /** Secondary descriptive subtitle text or element. */
     subtitle?: unknown;
+    /** Right slot element (e.g. badge, value, or accessory). */
     right?: unknown;
+    /** Whether to show a right chevron arrow. */
     chevron?: boolean;
+    /** Whether item has interactive hover/pointer states. */
     interactive?: boolean;
+    /** Whether interaction is disabled. */
     disabled?: boolean;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Data attributes passed to root element. */
     [key: `data-${string}`]: string | undefined;
 }
 
+/**
+ * Individual item row inside a List container.
+ *
+ * @param props - List item configuration props.
+ * @returns Rendered HTML string.
+ */
 export const ListItem = ({
     id,
     left,

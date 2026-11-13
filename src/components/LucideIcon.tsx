@@ -1,3 +1,12 @@
+/**
+ * Telegram Widgets Lucide SVG Icon Integration.
+ *
+ * Provides official Lucide icons inlined into compact SVG markup with custom sizing,
+ * colors, stroke widths, and styling for Telegram widgets.
+ *
+ * @module components/LucideIcon
+ */
+
 import {
     AlertCircle,
     AlertTriangle,
@@ -30,21 +39,45 @@ import {
 } from 'lucide-static';
 import { formatStyle } from '../jsx';
 
+/**
+ * Properties configuring LucideIcon rendering.
+ */
 export interface LucideIconProps {
     /**
      * Raw SVG markup string from `lucide-static` (e.g. `Info`, `CircleCheck`, `Download`).
      */
     icon: string;
+    /**
+     * Icon width and height in pixels.
+     * @default 18
+     */
     size?: number;
+    /**
+     * Stroke color in hex or CSS color format.
+     * @default 'currentColor'
+     */
     color?: string;
+    /**
+     * Stroke line thickness.
+     * @default 1.75
+     */
     strokeWidth?: number;
+    /**
+     * Custom CSS class names.
+     */
     className?: string;
+    /**
+     * Custom inline style overrides.
+     */
     style?: Record<string, string | number | undefined | null>;
 }
 
 /**
  * Renders an official Lucide SVG icon with custom sizing, stroke color, and styling.
  * Automatically purges redundant XML namespaces to minimize byte weight.
+ *
+ * @param props LucideIcon properties.
+ * @returns Rendered SVG markup string.
  *
  * @example
  * LucideIcon({ icon: LucideIcons.Flame, size: 16, color: '#2481cc' })
@@ -61,22 +94,22 @@ export const LucideIcon = ({
         return '';
     }
 
-    let svg = icon.trim();
+    let svg = icon;
 
-    // Strip redundant xmlns attribute for HTML5/QuickJS bubble context
-    svg = svg.replace(/\s*xmlns="[^"]*"/g, '');
+    // Purge redundant XML namespaces
+    svg = svg.replace(/\s*xmlns="http:\/\/www\.w3\.org\/2000\/svg"/g, '');
 
-    // Replace width and height dimensions
-    svg = svg.replace(/\bwidth="[^"]*"/, `width="${size}"`);
-    svg = svg.replace(/\bheight="[^"]*"/, `height="${size}"`);
+    // Replace dimensions
+    svg = svg.replace(/\bwidth="[0-9]+"/, `width="${size}"`);
+    svg = svg.replace(/\bheight="[0-9]+"/, `height="${size}"`);
 
-    // Override stroke width (1.75 default provides crisp modern aesthetic)
-    if (strokeWidth !== undefined) {
-        svg = svg.replace(/\bstroke-width="[^"]*"/g, `stroke-width="${strokeWidth}"`);
+    // Replace stroke width
+    if (strokeWidth !== 2) {
+        svg = svg.replace(/\bstroke-width="[0-9.]+"/, `stroke-width="${strokeWidth}"`);
     }
 
-    // Replace stroke color if custom value provided
-    if (color && color !== 'currentColor') {
+    // Replace color
+    if (color !== 'currentColor') {
         svg = svg.replace(/\bstroke="currentColor"/, `stroke="${color}"`);
     }
 
@@ -99,8 +132,10 @@ export const LucideIcon = ({
     return svg;
 };
 
-// Export curated set of commonly used Lucide icons
-export const LucideIcons = {
+/**
+ * Curated dictionary of commonly used Lucide SVG icon markup strings.
+ */
+export const LucideIcons: Record<string, string> = {
     Info,
     CircleCheck,
     CheckCircle2,

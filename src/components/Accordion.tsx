@@ -1,14 +1,25 @@
 import { h } from '../jsx';
 import { ChevronRightIcon } from './Icon';
 
+/**
+ * Props for the AccordionItem component.
+ */
 export interface AccordionItemProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Header title or JSX element displayed in summary bar. */
     title: unknown;
+    /** Expandable content elements. */
     children?: unknown;
+    /** Whether the item is expanded by default. */
     open?: boolean;
+    /** Whether interaction is disabled. */
     disabled?: boolean;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
+    /** Data attributes passed to root element. */
     [key: `data-${string}`]: string | undefined;
 }
 
@@ -88,10 +99,17 @@ export const AccordionItem = ({
     );
 };
 
+/**
+ * Props for the Accordion container component.
+ */
 export interface AccordionProps {
+    /** Unique DOM element identifier. */
     id?: string;
+    /** Accordion items or content elements. */
     children?: unknown;
+    /** Custom CSS styles. */
     style?: Record<string, string | number | undefined | null>;
+    /** Additional CSS class names. */
     className?: string;
 }
 
@@ -121,4 +139,7 @@ export const Accordion = ({ id, children, style, className = '' }: AccordionProp
     );
 };
 
-export const Collapsible = AccordionItem;
+/**
+ * Alias for AccordionItem representing a collapsible section.
+ */
+export const Collapsible: (props: AccordionItemProps) => string = AccordionItem;
