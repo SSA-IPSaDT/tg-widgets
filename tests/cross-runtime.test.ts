@@ -153,8 +153,9 @@ describe('Cross-Runtime & Packaging Module', () => {
             expect(denoJson.exports['./components']).toBe('./src/components/index.ts');
             expect(denoJson.exports['./jsx-runtime']).toBe('./src/jsx-runtime.ts');
             expect(denoJson.exports['./jsx-dev-runtime']).toBe('./src/jsx-dev-runtime.ts');
-            expect(denoJson.compilerOptions.jsx).toBe('react-jsx');
-            expect(denoJson.compilerOptions.jsxImportSource).toBe('@ipsadt/tg-widgets');
+            expect(denoJson.compilerOptions.jsx).toBe('react');
+            expect(denoJson.compilerOptions.jsxFactory).toBe('h');
+            expect(denoJson.compilerOptions.jsxFragmentFactory).toBe('Fragment');
         });
     });
 
