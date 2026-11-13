@@ -52,7 +52,8 @@ export const Badge = ({
                           flex: `0 0 ${squareDim}px`,
                           aspectRatio: '1 / 1',
                           padding: 0,
-                          borderRadius: 'var(--tg-radius-sm, 8px)',
+                          '--badge-radius': 'var(--tg-radius-sm, 8px)',
+                          borderRadius: 'var(--badge-radius)',
                           display: 'inline-flex',
                           alignItems: 'center',
                           justifyContent: 'center',
@@ -61,7 +62,11 @@ export const Badge = ({
                       }
                     : {
                           minHeight: size === 'md' ? 26 : 22,
-                          borderRadius: 'var(--tg-radius-sm, 7px)',
+                          '--badge-radius':
+                              size === 'md'
+                                  ? 'var(--tg-radius-sm, 7px)'
+                                  : 'var(--tg-radius-sm, 6px)',
+                          borderRadius: 'var(--badge-radius)',
                           padding: size === 'md' ? '3px 8px' : '2px 7px',
                           display: 'inline-flex',
                           alignItems: 'center',
