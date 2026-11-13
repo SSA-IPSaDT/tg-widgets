@@ -31,6 +31,7 @@ async function main() {
     let totalMinHtml = 0;
     let totalRawDeflate = 0;
     let totalMinDeflate = 0;
+    let hasViolations = false;
 
     for (const [name, screen] of Object.entries(screens)) {
         const rawMarkup = screen.component(
@@ -52,6 +53,10 @@ async function main() {
         const savedDeflate = uncompressed.compressedByteLength - compressed.compressedByteLength;
         const pctSaved = ((savedDeflate / uncompressed.compressedByteLength) * 100).toFixed(1);
         const limitPct = ((compressed.compressedByteLength / 4096) * 100).toFixed(1);
+
+        if (compressed.compressedByteLength > 4096) {
+            hasViolations = true;
+        }
 
         console.log(
             '| ' +
@@ -93,6 +98,14 @@ async function main() {
             ' |',
     );
     console.log('='.repeat(98));
+
+    if (hasViolations) {
+        console.error(
+            '\n❌ One or more screens exceed the Telegram 4096-byte deflate payload limit.\n',
+        );
+        process.exit(1);
+    }
+
     console.log('\n✅ All screens strictly satisfy Telegram 4096-byte deflate payload limit.\n');
 }
 

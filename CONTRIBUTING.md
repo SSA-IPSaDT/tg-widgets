@@ -22,8 +22,15 @@ bun install
 # Typecheck
 bun run check
 
+# Code formatting
+bun run format:check   # Check formatting
+bun run format         # Auto-format
+
 # Run test suite
 bun run test
+
+# Validate 4096B Telegram deflate limit
+bun run check:compression
 
 # Build bundle and declaration files to dist/
 bun run build
@@ -42,7 +49,8 @@ bun run build
 3. **Payload Compression Constraints**:
     - Keep generated HTML and inline styles minimal and concise.
     - Telegram enforces a strict 4096-byte deflate level 9 payload limit.
-4. **Strict TypeScript & Arrow Functions**:
+4. **Architectural & File Size Constraints**:
+    - Every file in `src/`, `examples/`, and `scripts/` must strictly not exceed 200 lines of code.
     - Use strict TypeScript typing without `any`.
     - Use arrow functions: `export const MyComponent = (props: MyComponentProps): string => ...`.
 
@@ -54,8 +62,10 @@ Before submitting a pull request, please verify:
 
 - [ ] `bun run build` runs and compiles cleanly without errors.
 - [ ] `bun run check` reports zero TypeScript errors.
-- [ ] `bun run test` passes all unit tests.
-- [ ] Code is formatted with `bun fmt`.
+- [ ] `bun run format:check` reports clean code style.
+- [ ] `bun run test` passes all unit and integration tests.
+- [ ] `bun run check:compression` confirms all screens fit within 4096 bytes.
+- [ ] No file exceeds 200 lines of code.
 - [ ] Any new component or feature is covered by unit tests in `tests/`.
 
 ---

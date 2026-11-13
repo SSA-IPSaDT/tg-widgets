@@ -64,7 +64,7 @@ export const REVERSE_KEY_MAP: Record<string, string> = Object.fromEntries(
  * Lightweight client script snippet (< 300 B) for embedding into inline `<script>`,
  * providing client-side QuickJS code with transparent state compression helpers.
  */
-export const CLIENT_CODEC_SNIPPET =
+export const CLIENT_CODEC_SNIPPET: string =
     'var __KM=' +
     JSON.stringify(DEFAULT_KEY_MAP) +
     ';var __RM=Object.fromEntries(Object.entries(__KM).map(([k,v])=>[v,k]));' +
