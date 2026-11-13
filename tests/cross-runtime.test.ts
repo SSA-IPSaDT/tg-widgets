@@ -131,8 +131,21 @@ describe('Cross-Runtime & Packaging Module', () => {
             expect(exports['./mod.ts']).toBeDefined();
 
             expect(exports['.'].types).toBe('./dist/index.d.ts');
+            expect(exports['.'].bun).toBe('./dist/bun/index.js');
             expect(exports['.'].import).toBe('./dist/index.js');
             expect(exports['.'].require).toBe('./dist/index.cjs');
+
+            expect(exports['./components'].bun).toBe('./dist/bun/components/index.js');
+            expect(exports['./components'].import).toBe('./dist/components/index.js');
+            expect(exports['./components'].require).toBe('./dist/components/index.cjs');
+
+            expect(exports['./jsx-runtime'].bun).toBe('./dist/bun/jsx-runtime.js');
+            expect(exports['./jsx-runtime'].import).toBe('./dist/jsx-runtime.js');
+            expect(exports['./jsx-runtime'].require).toBe('./dist/jsx-runtime.cjs');
+
+            expect(exports['./jsx-dev-runtime'].bun).toBe('./dist/bun/jsx-dev-runtime.js');
+            expect(exports['./jsx-dev-runtime'].import).toBe('./dist/jsx-dev-runtime.js');
+            expect(exports['./jsx-dev-runtime'].require).toBe('./dist/jsx-dev-runtime.cjs');
         });
 
         it('defines valid exports and JSX compilerOptions in deno.json', () => {
@@ -142,6 +155,46 @@ describe('Cross-Runtime & Packaging Module', () => {
             expect(denoJson.exports['./jsx-dev-runtime']).toBe('./src/jsx-dev-runtime.ts');
             expect(denoJson.compilerOptions.jsx).toBe('react-jsx');
             expect(denoJson.compilerOptions.jsxImportSource).toBe('@ipsadt/tg-widgets');
+        });
+    });
+
+    describe('Distribution Artifacts Verification', () => {
+        it('has all built bundles in dist and dist/bun', async () => {
+            const { existsSync } = await import('node:fs');
+            expect(existsSync('dist/bun/index.js')).toBe(true);
+            expect(existsSync('dist/bun/components/index.js')).toBe(true);
+            expect(existsSync('dist/bun/jsx-runtime.js')).toBe(true);
+            expect(existsSync('dist/bun/jsx-dev-runtime.js')).toBe(true);
+            expect(existsSync('dist/bun/react-shim.d.ts')).toBe(true);
+
+            expect(existsSync('dist/index.js')).toBe(true);
+            expect(existsSync('dist/index.cjs')).toBe(true);
+            expect(existsSync('dist/index.d.ts')).toBe(true);
+            expect(existsSync('dist/components/index.js')).toBe(true);
+            expect(existsSync('dist/components/index.cjs')).toBe(true);
+            expect(existsSync('dist/components/index.d.ts')).toBe(true);
+            expect(existsSync('dist/jsx-runtime.js')).toBe(true);
+            expect(existsSync('dist/jsx-runtime.cjs')).toBe(true);
+            expect(existsSync('dist/jsx-runtime.d.ts')).toBe(true);
+            expect(existsSync('dist/react-shim.d.ts')).toBe(true);
+        });
+
+        it('can dynamically import the Bun-optimized dist bundle', async () => {
+            const bunDistPath = new URL('../dist/bun/index.js', import.meta.url).pathname;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const bunDist = (await import(bunDistPath)) as Record<string, any>;
+            expect(typeof bunDist.createTelegramWidgetsPlugin).toBe('function');
+            expect(typeof bunDist.defineWidgetScreen).toBe('function');
+            expect(typeof bunDist.Button).toBe('function');
+        });
+
+        it('can dynamically import the Node ESM dist bundle', async () => {
+            const nodeEsmDistPath = new URL('../dist/index.js', import.meta.url).pathname;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const nodeEsmDist = (await import(nodeEsmDistPath)) as Record<string, any>;
+            expect(typeof nodeEsmDist.createTelegramWidgetsPlugin).toBe('function');
+            expect(typeof nodeEsmDist.defineWidgetScreen).toBe('function');
+            expect(typeof nodeEsmDist.Button).toBe('function');
         });
     });
 });

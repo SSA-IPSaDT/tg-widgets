@@ -19,5 +19,6 @@
         "jsxFactory": "h",
         "jsxFragmentFactory": "Fragment"
     },
-    "include": ["src/**/*", "mod.ts", "tests/**/*", "examples/**/*"]
+    "include": ["src/**/*", "mod.ts", "tests/**/*", "examples/**/*"],
+    "exclude": ["node_modules", "dist"]
 }

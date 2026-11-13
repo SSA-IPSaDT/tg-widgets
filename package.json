@@ -9,24 +9,28 @@
     "exports": {
         ".": {
             "types": "./dist/index.d.ts",
+            "bun": "./dist/bun/index.js",
             "import": "./dist/index.js",
             "require": "./dist/index.cjs",
             "default": "./dist/index.js"
         },
         "./components": {
             "types": "./dist/components/index.d.ts",
+            "bun": "./dist/bun/components/index.js",
             "import": "./dist/components/index.js",
             "require": "./dist/components/index.cjs",
             "default": "./dist/components/index.js"
         },
         "./jsx-runtime": {
             "types": "./dist/jsx-runtime.d.ts",
+            "bun": "./dist/bun/jsx-runtime.js",
             "import": "./dist/jsx-runtime.js",
             "require": "./dist/jsx-runtime.cjs",
             "default": "./dist/jsx-runtime.js"
         },
         "./jsx-dev-runtime": {
             "types": "./dist/jsx-dev-runtime.d.ts",
+            "bun": "./dist/bun/jsx-dev-runtime.js",
             "import": "./dist/jsx-dev-runtime.js",
             "require": "./dist/jsx-dev-runtime.cjs",
             "default": "./dist/jsx-dev-runtime.js"
@@ -51,10 +55,10 @@
         "CHANGELOG.md"
     ],
     "scripts": {
-        "build": "bun run build:clean && bun run build:bundle && bun run build:types",
+        "build": "bun build.ts",
+        "build:watch": "bun build.ts --watch",
+        "build:fast": "bun build.ts --no-types",
         "build:clean": "rm -rf dist",
-        "build:bundle": "bun build src/index.ts --outfile dist/index.js --format esm --target node --external grammy --external lucide-static --external html-minifier-terser && bun build src/index.ts --outfile dist/index.cjs --format cjs --target node --external grammy --external lucide-static --external html-minifier-terser && bun build src/components/index.ts --outfile dist/components/index.js --format esm --target node --external grammy --external lucide-static --external html-minifier-terser && bun build src/components/index.ts --outfile dist/components/index.cjs --format cjs --target node --external grammy --external lucide-static --external html-minifier-terser && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.js --format esm --target node --external grammy --external lucide-static --external html-minifier-terser && bun build src/jsx-runtime.ts --outfile dist/jsx-runtime.cjs --format cjs --target node --external grammy --external lucide-static --external html-minifier-terser && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.js --format esm --target node --external grammy --external lucide-static --external html-minifier-terser && bun build src/jsx-dev-runtime.ts --outfile dist/jsx-dev-runtime.cjs --format cjs --target node --external grammy --external lucide-static --external html-minifier-terser",
-        "build:types": "tsc --project tsconfig.build.json && cp src/react-shim.d.ts dist/react-shim.d.ts && rm -rf dist/src",
         "check": "tsc --noEmit",
         "check:branch": "bun run scripts/check-branch.ts",
         "format": "prettier --write .",
