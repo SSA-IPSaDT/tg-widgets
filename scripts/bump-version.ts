@@ -83,7 +83,12 @@ export function bumpVersion(options: {
 
     // 4. Git commit & tag if requested
     if (options.commit) {
-        console.log(`🔖 Creating git commit and tag v${newVersion}...`);
+        console.log(`🔖 Formatting files and creating git commit and tag v${newVersion}...`);
+        try {
+            execSync('bun run format', { cwd: rootDir, stdio: 'ignore' });
+        } catch {
+            // ignore format failure
+        }
         execSync(`git add ${pkgPath} ${denoPath} ${changelogPath}`, { cwd: rootDir });
         execSync(`git commit -m "chore(release): bump version to v${newVersion}"`, {
             cwd: rootDir,
