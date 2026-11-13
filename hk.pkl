@@ -24,7 +24,9 @@ hooks {
             ["check_merge_conflict"] = Builtins.check_merge_conflict
             ["trailing_whitespace"] = Builtins.trailing_whitespace
             ["detect_private_key"] = Builtins.detect_private_key
-            ["check_added_large_files"] = Builtins.check_added_large_files
+            ["check_added_large_files"] {
+                check = "hk util check-added-large-files --maxkb 35000 {{files}}"
+            }
             ["format"] {
                 glob = "**/*.{ts,tsx,js,jsx,json,md,toml}"
                 check = "bun run format:check"
