@@ -35,6 +35,7 @@ const widgets = createTelegramWidgetsPlugin({
     screens,
     mode: isTestEnv ? 'dev' : 'prod',
     codec: isTestEnv ? 'dev' : 'prod',
+    minifier: 'terser',
     sizeLimit: {
         maxBytes: 4096,
         onExceeded: isTestEnv ? 'warn' : 'error',

@@ -82,19 +82,7 @@ export const Radio = ({
             disabled={disabled}
             class={`tg-radio ${className}`.trim()}
             style={{
-                display: 'inline-flex',
-                alignItems: description ? 'flex-start' : 'center',
-                gap: 10,
-                background: 'transparent',
-                border: 'none',
-                padding: '4px 0',
-                margin: 0,
-                textAlign: 'left',
-                fontFamily: 'inherit',
-                cursor: disabled ? 'default' : 'pointer',
-                opacity: disabled ? 0.5 : 1,
-                color: 'var(--tg-theme-text-color, inherit)',
-                width: '100%',
+                ...(description ? { alignItems: 'flex-start' } : {}),
                 ...style,
             }}
             {...dataAttrs}

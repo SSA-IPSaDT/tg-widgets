@@ -93,6 +93,9 @@ export const LucideIcon = ({
         }
     }
 
+    // Collapse redundant whitespace and newlines for compact single-line SVG payload
+    svg = svg.replace(/\s+/g, ' ').replace(/\s+>/g, '>').replace(/>\s+</g, '><').trim();
+
     return svg;
 };
 
