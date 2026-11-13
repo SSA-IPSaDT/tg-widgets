@@ -54,15 +54,13 @@ export const tournamentClientScript = (initial: TournamentState) => {
             state.volunteersCount++;
             updateCounts();
         }
-        showToast('🤝 Volunteer application received! Launching Telegram Mini App...');
+        showToast('🤝 Volunteer application received!');
 
         try {
             if (widget?.openTelegramLink) {
-                widget.openTelegramLink('https://t.me/bot/tournament?startapp=volunteer');
+                widget.openTelegramLink('https://t.me/BotFather');
             } else if (widget?.openLink) {
-                widget.openLink('https://t.me/bot/tournament?startapp=volunteer');
-            } else {
-                window.location.href = 'tg://resolve?domain=bot&app=tournament&startapp=volunteer';
+                widget.openLink('https://google.com');
             }
         } catch {
             // fallback
@@ -84,16 +82,13 @@ export const tournamentClientScript = (initial: TournamentState) => {
             state.participantsCount++;
             updateCounts();
         }
-        showToast('♟️ Player registration received! Launching Telegram Mini App...');
+        showToast('♟️ You are registered as a tournament player!');
 
         try {
             if (widget?.openTelegramLink) {
-                widget.openTelegramLink('https://t.me/bot/tournament?startapp=participant');
+                widget.openTelegramLink('https://t.me/BotFather');
             } else if (widget?.openLink) {
-                widget.openLink('https://t.me/bot/tournament?startapp=participant');
-            } else {
-                window.location.href =
-                    'tg://resolve?domain=bot&app=tournament&startapp=participant';
+                widget.openLink('https://google.com');
             }
         } catch {
             // fallback

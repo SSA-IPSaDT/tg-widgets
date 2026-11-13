@@ -11,7 +11,12 @@ export const controlsClientScript = (initial: ControlsState) => {
     const dec = (raw: unknown): Partial<ControlsState> => {
         const r = (raw && typeof raw === 'object' ? raw : {}) as Record<string, unknown>;
         const res: Partial<ControlsState> = {};
-        const [o, n, k, l] = [r.notify ?? r.o, r.news ?? r.w, r.tickets ?? r.k, r.plan ?? r.l];
+        const [o, n, k, l] = [
+            r.notify ?? r.notifications ?? r.o,
+            r.news ?? r.newsletter ?? r.w,
+            r.tickets ?? r.k,
+            r.plan ?? r.l,
+        ];
         if (typeof o === 'boolean') res.notify = o;
         if (typeof n === 'boolean') res.news = n;
         if (typeof k === 'number') res.tickets = k;

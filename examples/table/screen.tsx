@@ -37,6 +37,7 @@ const tableClientScript = () => {
 
     downloadButton?.addEventListener('click', () => {
         widget?.HapticFeedback?.notificationOccurred?.('success');
+        widget?.openLink?.('https://google.com');
         widget?.request?.('downloadReceipt');
     });
 };

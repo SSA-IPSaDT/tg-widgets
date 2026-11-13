@@ -93,10 +93,8 @@ export const minifyCssString = (css: string, options: CssMinifyOptions = {}): st
 export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): string => {
     if (!html || typeof html !== 'string') return '';
 
-    // Extract document body without <style> and <script> tags for exact matching
-    const bodyContent = html
-        .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '')
-        .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+    // Extract document content without <style> tags for selector matching
+    const contentToMatch = html.replace(/<style[^>]*>[\s\S]*?<\/style>/gi, '');
 
     return html.replace(/<style([^>]*)>([\s\S]*?)<\/style>/gi, (_, attrs, css) => {
         const rules: string[] = [];
@@ -129,7 +127,7 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
                 const decls = block.slice(1, -1).split(';');
                 const kept = decls.filter((d) => {
                     const m = d.match(/^(--[a-zA-Z0-9_-]+):/);
-                    return !m || bodyContent.includes(m[1]) || css.includes(`var(${m[1]}`);
+                    return !m || contentToMatch.includes(m[1]) || css.includes(`var(${m[1]}`);
                 });
                 keptRules.push(`:root{${kept.join(';')}}`);
                 continue;
@@ -146,7 +144,7 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
             }
 
             if (selectorPart.startsWith('@keyframes tg-pulse')) {
-                if (bodyContent.includes('tg-badge-pulse')) keptRules.push(rule);
+                if (contentToMatch.includes('tg-badge-pulse')) keptRules.push(rule);
                 continue;
             }
             if (selectorPart.startsWith('@keyframes')) {
@@ -155,11 +153,12 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
             }
             const isElementMatch =
                 (selectorPart.startsWith('details') &&
-                    (bodyContent.includes('<details') || bodyContent.includes('tg-accordion'))) ||
+                    (contentToMatch.includes('<details') ||
+                        contentToMatch.includes('tg-accordion'))) ||
                 (selectorPart.startsWith('table') &&
-                    (bodyContent.includes('<table') || bodyContent.includes('tg-table'))) ||
+                    (contentToMatch.includes('<table') || contentToMatch.includes('tg-table'))) ||
                 (selectorPart.startsWith('svg') &&
-                    (bodyContent.includes('<svg') || bodyContent.includes('lucide')));
+                    (contentToMatch.includes('<svg') || contentToMatch.includes('lucide')));
             if (isElementMatch) {
                 keptRules.push(rule);
                 continue;
@@ -173,7 +172,7 @@ export const purgeUnusedCss = (html: string, options: CssMinifyOptions = {}): st
             const validBranches = branches.filter((branch) => {
                 const classMatches = branch.match(/\.([a-zA-Z0-9_-]+)/g);
                 if (!classMatches || classMatches.length === 0) return true;
-                return classMatches.every((cls) => bodyContent.includes(cls.slice(1)));
+                return classMatches.every((cls) => contentToMatch.includes(cls.slice(1)));
             });
 
             if (validBranches.length > 0) {

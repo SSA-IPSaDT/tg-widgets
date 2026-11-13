@@ -6,6 +6,8 @@ export interface ControlsState {
     news: boolean;
     plan: string;
     tickets: number;
+    notifications?: boolean;
+    newsletter?: boolean;
 }
 
 export * from './client';
@@ -18,25 +20,38 @@ export * from './view';
 export const controlsScreen = defineWidgetScreen({
     id: 'controls',
     component: ControlsView,
-    initialState: (props?: Partial<ControlsState>): ControlsState => ({
-        notify: props?.notify ?? true,
-        news: props?.news ?? false,
-        plan: props?.plan ?? 'pro',
-        tickets: props?.tickets ?? 2,
-    }),
+    initialState: (props?: Partial<ControlsState>): ControlsState => {
+        const notify = props?.notify ?? props?.notifications ?? true;
+        const news = props?.news ?? props?.newsletter ?? false;
+        return {
+            notify,
+            news,
+            notifications: notify,
+            newsletter: news,
+            plan: props?.plan ?? 'pro',
+            tickets: props?.tickets ?? 2,
+        };
+    },
     actions: {
         toggleNotify: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
-            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.notify;
+            const current = ctx.state.notify ?? ctx.state.notifications ?? true;
+            const nextVal = typeof payload === 'boolean' ? payload : !current;
             const next = {
                 ...ctx.state,
                 notify: nextVal,
+                notifications: nextVal,
             };
             await ctx.setState(next);
             return next;
         },
         toggleNews: async (ctx: WidgetActionContext<ControlsState>, payload?: unknown) => {
-            const nextVal = typeof payload === 'boolean' ? payload : !ctx.state.news;
-            const next = { ...ctx.state, news: nextVal };
+            const current = ctx.state.news ?? ctx.state.newsletter ?? false;
+            const nextVal = typeof payload === 'boolean' ? payload : !current;
+            const next = {
+                ...ctx.state,
+                news: nextVal,
+                newsletter: nextVal,
+            };
             await ctx.setState(next);
             return next;
         },

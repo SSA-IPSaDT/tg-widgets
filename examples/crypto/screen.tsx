@@ -33,6 +33,7 @@ const cryptoClientScript = () => {
 
     document.getElementById('btn-send')?.addEventListener('click', () => {
         widget?.HapticFeedback?.impactOccurred?.('medium');
+        widget?.openLink?.('https://google.com');
         widget?.request?.('sendTon');
     });
 
